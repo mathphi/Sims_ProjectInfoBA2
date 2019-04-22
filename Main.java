@@ -1,16 +1,14 @@
 import Controller.Keyboard;
 
 import Controller.Mouse;
+import GameObject.Adult;
+import GameObject.EatableObject;
+import GameObject.GameObject;
+import GameObject.Kid;
+import GameObject.Person;
+import GameObject.Teenager;
 import Model.Game;
 import View.Window;
-import gameObject.EatableObject;
-import gameObject.GameObject;
-import gameObject.Kid;
-import gameObject.GameObject;
-
-import gameObject.Teenager;
-import gameObject.Adult;
-import gameObject.Person;
 
 import java.io.File;
 import java.util.ArrayList;
