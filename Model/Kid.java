@@ -54,6 +54,8 @@ public class Kid extends Person {
 				discuss(people);
 				// TODO augmenter le mood
 			}
+
+			break;
 		}
 		case (1): {
 			if (energy >= 1) {
@@ -68,6 +70,7 @@ public class Kid extends Person {
 				energy -= 2;
 			}
 
+			break;
 		}
 		case (2): {
 			if (energy >= 1) {
@@ -87,10 +90,12 @@ public class Kid extends Person {
 				energy -= 3;
 			}
 
+			break;
 		}
 
 		// not a case 3 because can marry at that age
-
+		default:
+			break;
 		}
 
 	}

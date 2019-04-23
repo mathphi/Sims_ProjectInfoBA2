@@ -46,6 +46,7 @@ public class Adult extends Teenager{
 				energy -= 2;
 			}
 
+			break;
 		}
 		case (2): {
 			if (energy >= 1) {
@@ -65,6 +66,8 @@ public class Adult extends Teenager{
 				// TODO augmenter le mood
 				energy -= 3;
 			}
+			
+			break;
 
 		}
 		case (3): {
@@ -87,8 +90,11 @@ public class Adult extends Teenager{
 				// TODO augmenter le mood
 				energy -= 3;
 			}
-
+			
+			break;
 		}
+		default:
+			break;
 		}
 		// not a case 3 because can marry at that age
 
