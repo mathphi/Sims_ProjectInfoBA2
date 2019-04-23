@@ -1,4 +1,4 @@
-/**  AStar: algorithme de plus chemin
+/**  AStar: algorithme de plus court chemin
  * 
  * Vous ne devez pas commprendre cet algorithm en detail. Vous pouvez simplement l'utiliser
  * de la facon suivante: 

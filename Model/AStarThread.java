@@ -2,12 +2,12 @@ package Model;
 
 public class AStarThread implements Runnable{
 	private Game g;
-	private Player p;
+	private Person p;
 	private int x;
 	private int y;
 
-	public AStarThread(Game g, Player p, int x, int y) {
-		this.g= g;
+	public AStarThread(Game g, Person p, int x, int y) {
+		this.g = g;
 		this.p = p;
 		this.x = x;
 		this.y = y;

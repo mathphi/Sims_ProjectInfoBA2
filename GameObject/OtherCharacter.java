@@ -2,6 +2,11 @@ package GameObject;
 
 import java.util.GregorianCalendar;
 
+import Tools.Random;
+
+import Model.GameObject;
+import Model.Person;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -50,18 +55,18 @@ public class OtherCharacter extends Person implements AutomaticCharacter{
 		switch (type) {
 		// year depends of the type of character 
 		case "child": {
-			year = randBetween(2003, 2010); // TODO inclure année du jeu si création personnage par après C
+			year = Random.range(2003, 2010); // TODO inclure annï¿½e du jeu si crï¿½ation personnage par aprï¿½s C
 		}
 		case "teenager": {
-			year = randBetween(1997, 2003); // TODO inclure année du jeu si création personnage par après
+			year = Random.range(1997, 2003); // TODO inclure annï¿½e du jeu si crï¿½ation personnage par aprï¿½s
 		}
 		case "adult": {
-			year = randBetween(1975, 1997); // TODO inclure année du jeu si création personnage par après
+			year = Random.range(1975, 1997); // TODO inclure annï¿½e du jeu si crï¿½ation personnage par aprï¿½s
 		}
 
 		}
-		int month = randBetween(1, 12);
-		int day = randBetween(1, daysInMonth(month, year)); //need to check if its 30,31 or leapyear
+		int month = Random.range(1, 12);
+		int day = Random.range(1, daysInMonth(month, year)); //need to check if its 30,31 or leapyear
 		GregorianCalendar BirthDay = new GregorianCalendar(year, month, day);
 		return  BirthDay.getTime();
 
@@ -91,12 +96,6 @@ public class OtherCharacter extends Person implements AutomaticCharacter{
 		return res;
 	}
 
-	protected static int randBetween(int start, long l) {
-		//TODO comment la rendre access partout?
-		return start + (int) Math.round(Math.random() * (l - start));
-	}
-	
-
 	private static int getRandomMoney(String type) {
 		int money = 0;
 
@@ -104,15 +103,19 @@ public class OtherCharacter extends Person implements AutomaticCharacter{
 		// money depends of the type of personnage
 		// will probably be adapted with the price of things
 		case "child": {
-			money = randBetween(5, 50);
+			money = Random.range(5, 50);
+			break;
 		}
 		case "teenager": {
-			money = randBetween(20, 150);
+			money = Random.range(20, 150);
+			break;
 		}
 		case "adult": {
-			money = randBetween(100, 1000);
+			money = Random.range(100, 1000);
+			break;
 		}
-
+		default:
+			break;
 		}
 		return money;
 	}

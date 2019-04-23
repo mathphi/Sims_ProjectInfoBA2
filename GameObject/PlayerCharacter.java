@@ -3,6 +3,9 @@ package GameObject;
 import java.util.ArrayList;
 import java.util.Date;
 
+import Model.GameObject;
+import Model.Person;
+
 abstract class PlayerCharacter extends Person implements AutomaticCharacter {
 
 	// general information already in Charater
@@ -30,11 +33,10 @@ abstract class PlayerCharacter extends Person implements AutomaticCharacter {
 	// "little" inventory of object that the player can keep on him, empty at start,
 	// PNJ don't have it
 
-	public PlayerCharacter(int X, int Y, String name, String firstName, Date birthDate, String type, String gender,
-			int money, ArrayList<GameObject> inventoryHouse) {
+	public PlayerCharacter(int X, int Y, String firstName, String lastName, String gender) {
 
 		// general information decided in character
-		super(X, Y, name, firstName, birthDate, gender, money, inventoryHouse);
+		super(X, Y, firstName, lastName, gender);
 		year = birthDate.getYear() + 12; // game start, player is 12 YO to be moove in the main
 		// specific player character caracteristic;
 		health = 10;
@@ -81,13 +83,6 @@ abstract class PlayerCharacter extends Person implements AutomaticCharacter {
 	// GETTER
 
 	// FOR PROGRAMMATION PURPOSE ONLY
-
-	protected static int randBetween(int start, long l) {
-		
-		// TODO comment la rendre access partout créer package tool ou y aura aussi point et size -> Tool 
-		//sera obligatoirement static car Math.round est static -> pas besoin d'avoir un objet pour le faire!
-		return start + (int) Math.round(Math.random() * (l - start));
-	}
 
 	public void getInformation() {
 		// ONLY USED FOR DEBUG

@@ -1,13 +1,13 @@
 import Controller.Keyboard;
 
 import Controller.Mouse;
-import GameObject.Adult;
-import GameObject.EatableObject;
-import GameObject.GameObject;
-import GameObject.Kid;
-import GameObject.Person;
-import GameObject.Teenager;
+import Model.Adult;
+import Model.EatableObject;
 import Model.Game;
+import Model.GameObject;
+import Model.Kid;
+import Model.Person;
+import Model.Teenager;
 import View.Window;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class Main {
 		//creation of the player character
 		Date date = new Date(23 / 07 / 1999);
 		ArrayList<GameObject> startInventory = new ArrayList<GameObject>();
-		startInventory.add(new EatableObject(0, 0, 2, "bar de céréale", 2));
+		startInventory.add(new EatableObject(0, 0, 2, "bar de cï¿½rï¿½ale", 2));
 		Person player = new Kid(0, 0, "Dardenne", "Corentin", date, "m", 50, startInventory);
 	}
 	

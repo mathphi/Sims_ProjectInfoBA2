@@ -1,7 +1,7 @@
 package View;
 
 import Model.GameObject;
-import Model.Player;
+import Model.Person;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -52,7 +52,7 @@ public class Window extends JFrame {
 		return map.MAP_SIZE;
 	}
 	
-	public void setPlayer(Player p) {
+	public void setPlayer(Person p) {
 		status.setPlayer(p);
 	}
 }

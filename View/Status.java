@@ -6,10 +6,10 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-import Model.Player;
+import Model.Person;
 
 public class Status extends JPanel {
-	private Player p;
+	private Person p;
 	private int BAR_LENGTH = 60;
 	private int BAR_WIDTH = 20;
 	private int AVATAR_SIZE = 100;
@@ -41,7 +41,7 @@ public class Status extends JPanel {
         this.repaint();
     }
 
-	public void setPlayer(Player p2) {
+	public void setPlayer(Person p2) {
 		this.p = p2;
 	}
 }

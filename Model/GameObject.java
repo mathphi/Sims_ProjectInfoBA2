@@ -1,31 +1,33 @@
 package Model;
 
 public abstract class GameObject {
-    protected int posX;
-    protected int posY;
-    protected int color;
+	private int posX;
+	private int posY;
+	private int color;
 
-    public GameObject(int X, int Y, int color) {
-        this.posX = X;
-        this.posY = Y;
-        this.color = color;
-    }
 
-    public int getPosX() {
-        return this.posX;
-    }
+	public GameObject(int X, int Y) {
+		this.posX = X;
+		this.posY = Y;
+		this.color = 0;
+	}
 
-    public int getPosY() {
-        return this.posY;
-    }
+	public int getPosX() {
+		return this.posX;
+	}
 
-    public int getColor() {
-        return this.color;
-    }
+	public int getPosY() {
+		return this.posY;
+	}
+	
+	public int getColor() {
+		return color;
+	}
 
-    public boolean isAtPosition(int x, int y) {
-        return this.posX == x && this.posY == y;
-    }
 
-    public abstract boolean isObstacle();
+	public boolean isAtPosition(int x, int y) {
+		return this.posX == x && this.posY == y;
+	}
+
+	public abstract boolean isObstacle();
 }

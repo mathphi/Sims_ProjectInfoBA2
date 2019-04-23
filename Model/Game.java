@@ -15,25 +15,24 @@ import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 public class Game implements DeletableObserver {
     private ArrayList<GameObject> objects = new ArrayList<GameObject>();
-    private ArrayList<Player> players = new ArrayList<Player>();
-    private Player active_player = null;
+    private ArrayList<Person> population = new ArrayList<Person>();
+    private Person active_player = null;
 
     private Window window;
     private int size;
-    // private int bombTimer = 3000;
-    private int numberOfBreakableBlocks = 40;
 
     public Game(Window window) {
         this.window = window;
         size = window.getMapSize();
         // Creating one Player at position (1,1)
-        Player p = new Player(10, 10, 3);
+        Person p = new Kid(10, 10, "Test", "Person", "m");
         objects.add(p);
-        players.add(p);
+        population.add(p);
         window.setPlayer(p);
         active_player = p;
 
         // Map building
+        /*
         for (int i = 0; i < size; i++) {
             objects.add(new BlockUnbreakable(i, 0));
             objects.add(new BlockUnbreakable(0, i));
@@ -48,7 +47,7 @@ public class Game implements DeletableObserver {
             BlockBreakable block = new BlockBreakable(x, y, lifepoints);
             block.attachDeletable(this);
             objects.add(block);
-        }
+        }*/
 
         window.setGameObjects(this.getGameObjects());
         notifyView();
@@ -67,20 +66,16 @@ public class Game implements DeletableObserver {
             if (obstacle == true) {
                 break;
             }
-        }
+        }/*
         active_player.rotate(x, y);
         if (obstacle == false) {
             active_player.move(x, y);
-        }
+        }*/
         notifyView();
     }
 
-    public void tirePlayer() {
-    	active_player.tire();
-    	notifyView();
-    }
     public void action() {
-        Activable aimedObject = null;
+        Activable aimedObject = null;/*
 		for(GameObject object : objects){
 			if(object.isAtPosition(active_player.getFrontX(),active_player.getFrontY())){
 			    if(object instanceof Activable){
@@ -88,10 +83,10 @@ public class Game implements DeletableObserver {
 			    }
 			}
 		}
-		if(aimedObject != null){
+		if (aimedObject != null) {
 		    aimedObject.activate();
             notifyView();
-		}
+		}*/
         
     }
 
