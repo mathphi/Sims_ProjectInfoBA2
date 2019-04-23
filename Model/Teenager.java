@@ -66,6 +66,7 @@ public class Teenager extends Person {
 				energy -= 2;
 			}
 
+			break;
 		}
 		case (2): {
 			if (energy >= 1) {
@@ -86,6 +87,7 @@ public class Teenager extends Person {
 				energy -= 3;
 			}
 
+			break;
 		}
 		case (3): {
 			if (energy >= 1) {
@@ -107,7 +109,10 @@ public class Teenager extends Person {
 				energy -= 3;
 			}
 
+			break;
 		}
+		default:
+			break;
 		}
 		// not a case 3 because can marry at that age
 
