@@ -3,11 +3,11 @@ package GameObject;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Adult extends Teenager{
+public class Adult extends Person{
 
 	public Adult(int X, int Y, String name, String firstName, Date birthDate,  String gender, int money,
 			ArrayList<GameObject> inventoryHouse) {
-		super(X, Y, name, firstName, birthDate, gender, money, inventoryHouse);
+		super(X, Y, name, firstName, birthDate, gender, gender, money, inventoryHouse);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -88,5 +88,15 @@ public class Adult extends Teenager{
 		}
 		// not a case 3 because can marry at that age
 
+	}
+
+	private void goToDrink(Person people) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void embrass(Person people) {
+		// TODO Auto-generated method stub
+		
 	}
 }

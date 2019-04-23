@@ -3,7 +3,7 @@ package GameObject;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Teenager extends Kid {
+public class Teenager extends Person {
 
 	public Teenager(int X, int Y, String name, String firstName, Date birthDate, String gender, int money,
 			ArrayList<GameObject> inventoryHouse) {
