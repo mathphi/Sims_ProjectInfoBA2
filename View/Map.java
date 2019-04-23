@@ -2,6 +2,8 @@ package View;
 
 import Model.Directable;
 import Model.GameObject;
+import Tools.Point;
+import Tools.Size;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,14 +18,14 @@ import Controller.Mouse;
 
 public class Map extends JPanel {
     private ArrayList<GameObject> objects = null;
-    public final int MAP_SIZE = 25;
+    public final Size MAP_SIZE = new Size(25, 25);
     private int BLOC_SIZE = 20;
     private Mouse mouseController = null;
 
     public Map() {
         this.setFocusable(true);
         this.requestFocusInWindow();
-        this.setPreferredSize(new Dimension(MAP_SIZE*BLOC_SIZE, MAP_SIZE*BLOC_SIZE));
+        this.setPreferredSize(new Dimension(MAP_SIZE.getWidth()*BLOC_SIZE, MAP_SIZE.getHeight()*BLOC_SIZE));
         addMouseListener(new MouseListener() {
 			public void mousePressed(MouseEvent e) {
 				int x = e.getX()/BLOC_SIZE;
@@ -38,8 +40,8 @@ public class Map extends JPanel {
     }
 
     public void paint(Graphics g) {
-        for (int i = 0; i < MAP_SIZE; i++) { 
-            for (int j = 0; j < MAP_SIZE; j++) {
+        for (int i = 0; i < MAP_SIZE.getWidth(); i++) { 
+            for (int j = 0; j < MAP_SIZE.getHeight(); j++) {
                 int x = i;
                 int y = j;
                 g.setColor(Color.LIGHT_GRAY);
@@ -50,8 +52,7 @@ public class Map extends JPanel {
         }
 
         for (GameObject object : this.objects) {
-            int x = object.getPosX();
-            int y = object.getPosY();
+            Point pos = object.getPos();
             int color = object.getColor();
 
             if (color == 0) {
@@ -68,9 +69,9 @@ public class Map extends JPanel {
                 g.setColor(Color.ORANGE);
             }
 
-            g.fillRect(x * BLOC_SIZE, y * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
+            g.fillRect(pos.getX() * BLOC_SIZE, pos.getY() * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
             g.setColor(Color.BLACK);
-            g.drawRect(x * BLOC_SIZE, y * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
+            g.drawRect(pos.getX() * BLOC_SIZE, pos.getY() * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
             
             // Decouper en fontions
             if(object instanceof Directable) {
@@ -94,8 +95,8 @@ public class Map extends JPanel {
                     break;
                 }
 
-                int xCenter = x * BLOC_SIZE + (BLOC_SIZE-2)/2;
-                int yCenter = y * BLOC_SIZE + (BLOC_SIZE-2)/2;
+                int xCenter = pos.getX() * BLOC_SIZE + (BLOC_SIZE-2)/2;
+                int yCenter = pos.getY() * BLOC_SIZE + (BLOC_SIZE-2)/2;
                 g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
             }
         }

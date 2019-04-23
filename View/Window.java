@@ -2,6 +2,7 @@ package View;
 
 import Model.GameObject;
 import Model.Person;
+import Tools.Size;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -48,7 +49,7 @@ public class Window extends JFrame {
         this.map.addMouse(m);
     }
 
-	public int getMapSize() {
+	public Size getMapSize() {
 		return map.MAP_SIZE;
 	}
 	

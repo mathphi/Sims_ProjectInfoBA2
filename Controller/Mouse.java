@@ -2,6 +2,8 @@ package Controller;
 
 import Model.Game;
 
+import Tools.Point;
+
 public class Mouse {
     private Game game;
 
@@ -11,7 +13,7 @@ public class Mouse {
 
 	public void mapEvent(int x, int y) {
 		synchronized(game) {
-			game.sendPlayer(x, y);
+			game.sendPlayer(new Point(x, y));
 		}
 	}
 }

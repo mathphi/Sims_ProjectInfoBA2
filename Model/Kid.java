@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import Tools.Random;
+import Tools.Point;
 
 public class Kid extends Person {
 	private float hunger;
@@ -13,9 +14,9 @@ public class Kid extends Person {
 	private int year;
 	private String type;
 
-	public Kid(int X, int Y, String firstName, String lastName, String gender) {
+	public Kid(Point pos, String firstName, String lastName, String gender) {
 		// lot of information are decided in upper class
-		super(X, Y, firstName, lastName, gender);
+		super(pos, firstName, lastName, gender);
 		energy = 8; // as a kid got less energy accessible
 
 	}

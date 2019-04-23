@@ -1,10 +1,13 @@
 package Model;
 
+import Tools.Point;
+import Tools.Size;
+
 public abstract class EatableObject extends TakableObject {
 	protected float nutritionalValue;
 	
-	public EatableObject(int X, int Y, int weight, String name, int price) {
-		super( X, Y, weight, name, price);
+	public EatableObject(Point pos, Size sz, String name, int price) {
+		super(pos, sz, name, price);
 		//TODO: random ?
 		this.nutritionalValue = nutritionalValue;
 	}

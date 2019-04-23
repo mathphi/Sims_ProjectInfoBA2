@@ -2,6 +2,9 @@ package Model;
 
 import View.Window;
 
+import Tools.Point;
+import Tools.Size;
+
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Random;
@@ -19,13 +22,13 @@ public class Game implements DeletableObserver {
     private Person active_player = null;
 
     private Window window;
-    private int size;
+    private Size size;
 
     public Game(Window window) {
         this.window = window;
         size = window.getMapSize();
         // Creating one Player at position (1,1)
-        Person p = new Kid(10, 10, "Test", "Person", "m");
+        Person p = new Kid(new Point(10, 10), "Test", "Person", "m");
         objects.add(p);
         population.add(p);
         window.setPlayer(p);
@@ -55,12 +58,16 @@ public class Game implements DeletableObserver {
 
 
     public void movePlayer(int x, int y) {
-        int nextX = active_player.getPosX() + x;
-        int nextY = active_player.getPosY() + y;
+    	movePlayer(new Point(x, y));
+    }
 
+    public void movePlayer(Point p) {
+        Point nextPos = active_player.getPos().add(p);
+
+        //TODO: this is obselete
         boolean obstacle = false;
         for (GameObject object : objects) {
-            if (object.isAtPosition(nextX, nextY)) {
+            if (object.isAtPosition(nextPos)) {
                 obstacle = object.isObstacle();
             }
             if (obstacle == true) {
@@ -75,7 +82,8 @@ public class Game implements DeletableObserver {
     }
 
     public void action() {
-        Activable aimedObject = null;/*
+    	/*
+        Activable aimedObject = null;
 		for(GameObject object : objects){
 			if(object.isAtPosition(active_player.getFrontX(),active_player.getFrontY())){
 			    if(object instanceof Activable){
@@ -109,7 +117,7 @@ public class Game implements DeletableObserver {
 
 
     public void playerPos() {
-        System.out.println(active_player.getPosX() + ":" + active_player.getPosY());
+        System.out.println(active_player.getPos().getX() + ":" + active_player.getPos().getY());
         
     }
 
@@ -118,8 +126,8 @@ public class Game implements DeletableObserver {
 	}
 
 
-	public void sendPlayer(int x, int y) {
-		Thread t = new Thread(new AStarThread(this, active_player, x,  y));
+	public void sendPlayer(Point p) {
+		Thread t = new Thread(new AStarThread(this, active_player, p));
 		t.start();
 	}
 

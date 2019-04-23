@@ -10,24 +10,24 @@
  * */
 package Model;
 
+import Tools.Point;
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class AStar {
 	private static int mapSize = 25;
 	private boolean closed[][];
-	private int startI, startJ;
-	private int endI, endJ;
+	private Point posStart;
+	private Point posEnd;
 	private Cell [][] grid; 
 	private PriorityQueue<Cell> open;
 	private int V_H_COST = 1;
 	private int DIAGONAL_COST = 100000;
 
-	public AStar(int xi, int yi, int xf, int yf, ArrayList<GameObject> objects) {
-		startI = xi;
-		startJ = yi;
-		endI = xf;
-		endJ = yf;
+	public AStar(Point pos_start, Point pos_end, ArrayList<GameObject> objects) {
+		posStart = pos_start;
+		posEnd = pos_end;
 		grid = new Cell[mapSize][mapSize];
 
 
@@ -44,17 +44,17 @@ public class AStar {
         for(int i=0;i<mapSize;++i){
               for(int j=0;j<mapSize;++j){
                   grid[i][j] = new Cell(i, j);
-                  grid[i][j].heuristicCost = Math.abs(i-endI)+Math.abs(j-endJ);
+                  grid[i][j].heuristicCost = Math.abs(i-posEnd.getX())+Math.abs(j-posEnd.getY());
 //                  System.out.print(grid[i][j].heuristicCost+" ");
               }
 //              System.out.println();
            }
-        grid[endI][endJ].finalCost = 0;
+        grid[posEnd.getX()][posEnd.getY()].finalCost = 0;
 
-		open.add(grid[startI][startJ]);
+		open.add(grid[posEnd.getX()][posEnd.getY()]);
 		for(GameObject o: objects) {
 			if (o.isObstacle()) {
-				setBlocked(o.getPosX(),o.getPosY());
+				setBlocked(o.getPos());
 			}
 		}
 
@@ -65,7 +65,7 @@ public class AStar {
 			if(current==null)break;
 			closed[current.i][current.j]=true; 
 
-			if(current.equals(grid[endI][endJ])){
+			if(current.equals(grid[posEnd.getX()][posEnd.getY()])){
 				return; 
 			} 
 
@@ -130,8 +130,8 @@ public class AStar {
 	}
 
 
-	private void setBlocked(int i, int j){
-		grid[i][j] = null;
+	private void setBlocked(Point p){
+		grid[p.getX()][p.getY()] = null;
 	}
 
 	private void checkAndUpdateCost(Cell current, Cell t, int cost){
@@ -148,15 +148,15 @@ public class AStar {
 	
 	public int getNextStep() {
 		int direction = -1;
-		if(closed[endI][endJ]){
+		if(closed[posEnd.getX()][posEnd.getY()]){
 			int deltai = 0;
 			int deltaj = 0;
 		   //Trace back the path 
-			Cell current = grid[endI][endJ];
+			Cell current = grid[posEnd.getX()][posEnd.getY()];
 			while(current.parent!=null){
-				if (current.parent.i == startI && current.parent.j == startJ) {
-					deltai = current.i - startI;
-					deltaj = current.j - startJ;
+				if (current.parent.i == posStart.getX() && current.parent.j == posStart.getY()) {
+					deltai = current.i - posStart.getX();
+					deltaj = current.j - posStart.getY();
 					direction = 1 - deltai + deltaj*(deltaj + 1);
 				}
 				current = current.parent;
