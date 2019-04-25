@@ -153,7 +153,7 @@ public class AStar {
 			int deltaj = 0;
 			// Trace back the path
 			Cell current = grid[posEnd.getX()][posEnd.getY()];
-			while (current.parent != null) {
+			while (current != null && current.parent != null) {
 				if (current.parent.i == posStart.getX() && current.parent.j == posStart.getY()) {
 					deltai = current.i - posStart.getX();
 					deltaj = current.j - posStart.getY();
