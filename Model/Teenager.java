@@ -14,11 +14,12 @@ public class Teenager extends Person {
 		super(player.getPos(), player.getfirstName(), player.getlastName(), player.getGender(), player.getBirthDate(),
 				player.getMoney(), player.getinventoryHouse(), player.getMother(), player.getFather());
 	}
+
 	public Teenager(Point pos, String firstName, String lastName, String gender, Date birthDate, int money,
-	ArrayList<GameObject> inventoryHouse, Adult mother, Adult father){
-		//constructor if it's a new character (pnj)
+			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father) {
+		// constructor if it's a new character (pnj)
 		super(pos, firstName, lastName, gender, birthDate, money, inventoryHouse, mother, father);
-		
+
 	}
 
 	public void buy(TakableObject achat) {/*
@@ -29,7 +30,7 @@ public class Teenager extends Person {
 
 	protected void goToDrink(Person people) {
 		// TODO energy, move to bar pay
-		modifyRelationship(people,3);
+		modifyRelationship(people, 3);
 
 	}
 
@@ -40,7 +41,7 @@ public class Teenager extends Person {
 			modifyRelationship(people, 5);
 		} else {
 			// the other don't want
-			people.modifyRelationship(people,-10); // value to be adapted
+			people.modifyRelationship(people, -10); // value to be adapted
 		}
 
 	}
@@ -122,34 +123,7 @@ public class Teenager extends Person {
 		default:
 			break;
 		}
-		
 
 	}
 
-	protected static int setEnergy(int energy, int mood, int health) {
-		// function that take in turns the health, mood and a random factor in the
-		// calcul of
-		// energy gain (energy = rest of the energy at the end of the day)
-		// quadratic function, = 0 if health(or mood) = 10 and = need of energy/1.3
-		// (1.5) if
-		// health (or mood) =0
-		double energyNeed = 10 - energy; // need of energy here total is maximum 10!
-
-		double randomFactor = (Random.range(1, (int) Math.round(Math.log(60))));
-		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 60); // on average = 0.7
-		energyNeed -= randomFactor * 2;
-
-		double factHealth = -Math.sqrt(energyNeed * 1.3) * health / 10 + Math.sqrt(energyNeed * 1.3);
-		factHealth = 0.5 * Math.pow(factHealth, 2);// ponderation of the health
-		energyNeed -= factHealth;
-
-		double factMood = -Math.sqrt(energyNeed / 1.5) * mood / 10 + Math.sqrt(energyNeed / 1.5);
-		factMood = 0.4 * Math.pow(factMood, 2);
-		energyNeed -= factMood;
-
-		energyNeed = Math.round(energyNeed); // round of the energy
-
-		return (int) energyNeed; // return of the gain of energy
-
-	}
 }

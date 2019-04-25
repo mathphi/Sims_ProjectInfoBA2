@@ -8,7 +8,7 @@ import java.util.Date;
 public class Adult extends Person {
 
 	public Adult(Person player) {
-		//constructor if the player need to evolve from teenager to kid
+		// constructor if the player need to evolve from teenager to kid
 		super(player.getPos(), player.getfirstName(), player.getlastName(), player.getGender(), player.getBirthDate(),
 				player.getMoney(), player.getinventoryHouse(), player.getMother(), player.getFather());
 	}
@@ -20,7 +20,6 @@ public class Adult extends Person {
 
 	}
 
-	
 	private void marry(Person partner) {
 		// bien jou� morray
 		// TODO big todo to do including to do what's suppose to be done because it
@@ -30,9 +29,6 @@ public class Adult extends Person {
 	public void characterInteraction(Person people) {
 		// function that allows the people to interact with another one
 		// interaction is the type of interaction
-
-		
-		
 
 		switch (getRelationship(people)) {
 		case (0): {
@@ -71,8 +67,8 @@ public class Adult extends Person {
 				energy -= 2;
 			}
 			if (energy >= 4) {
-				//invite(people);
-				//goToDrink(people);
+				// invite(people);
+				// goToDrink(people);
 				// TODO augmenter le mood
 				energy -= 3;
 			}
@@ -84,7 +80,7 @@ public class Adult extends Person {
 			if (energy >= 1) {
 				// discuss(people);
 				// TODO augmenter le mood
-				//embrass(people); 
+				// embrass(people);
 				marry(people);
 				energy -= 1;// on peut faire ainsi ou il faut faire par un setter?
 			}
@@ -95,8 +91,8 @@ public class Adult extends Person {
 				energy -= 2;
 			}
 			if (energy >= 4) {
-				//invite(people);
-				//goToDrink(people);
+				// invite(people);
+				// goToDrink(people);
 				// TODO augmenter le mood
 				energy -= 3;
 			}
@@ -106,7 +102,6 @@ public class Adult extends Person {
 		default:
 			break;
 		}
-	
 
 	}
 }

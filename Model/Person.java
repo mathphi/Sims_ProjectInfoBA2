@@ -22,10 +22,10 @@ public abstract class Person extends GameObject implements Directable {
 	protected int money;
 	protected static int energy;
 
-	// visible properties, if = 10 no need
+	// visible properties, if = 100 no need
 	protected float hunger;
 	protected static int mood;
-	protected int health;
+	protected static int health;
 
 	protected Adult mother;
 	protected Adult father;
@@ -192,11 +192,7 @@ public abstract class Person extends GameObject implements Directable {
 
 	// SETTER
 
-	public void modifyProperties() {// TODO mettre properties
-		energy += modifyEnergy(mood, health);
-		// TODO evetn ohter caracte
 
-	}
 
 	protected float modifyHunger(EatableObject nourriture) {
 		// TODO eatable will be a interface -> need to be modify
@@ -207,27 +203,26 @@ public abstract class Person extends GameObject implements Directable {
 
 	// TODO function that make evolvle the hunger of the player during the game
 
-	protected static double modifyEnergy(int mood, int health) {
+	protected static void modifyEnergy() {
 		// function that take in turns the health, mood and a random factor in the
-		// calcul of
-		// energy gain (energy = rest of the energy at the end of the day)
-		// quadratic function, = 0 if health(or mood) = 10 and = need of energy/1.3
-		// (1.5) if
-		// health (or mood) =0
-		// need to be overwrite for kid because max of energy is 8
-//TODO check que ca renvoit vient un truc entre 0 et 100 
-		double moodFactor = Math.pow(Math.E, -mood / 100);
-		double healthFactor = Math.pow(Math.E, -health / 100);
+		// calcul of energy
+		//will be run when player go to bed
+
+		double moodHealthFactor = Math.pow(Math.E, health * Math.log(2) * mood / 10000) - 1; // always beetween 0 and 1
 		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
 		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
-		double energyAdd = randomFactor * 100 * healthFactor * moodFactor;
 
-		return energyAdd;
+		double energyAdd = 100 * moodHealthFactor * randomFactor;
+		if (energyAdd < 20) {
+			// minimum of energy
+			energyAdd = 20;
+		}
 
+		energy = (int) (energyAdd);
 	}
 
-	protected static double modifyMood(double augmentation) {
-		//TODO check que ça renvoie bien un truc entre 0 et maxmood!
+	protected static void modifyMood(double augmentation) {
+		
 		// fonction that increase the mood after the activity like going out,...
 		double maxMood = 100 - mood; // number of max point
 		if (maxMood < augmentation) {
@@ -239,7 +234,7 @@ public abstract class Person extends GameObject implements Directable {
 		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
 		augmentation = randomFactor * augmentation * moodFactor;
 
-		return augmentation;
+		mood += (int) (augmentation);
 	}
 
 	public String getfirstName() {
