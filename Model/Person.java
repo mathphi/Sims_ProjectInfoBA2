@@ -10,23 +10,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Person extends GameObject implements Directable {
-	private static Size SIZE = new Size(1,1);
+	private static Size SIZE = new Size(1, 1);
 
-    private int direction = EAST; 
-    
+	private int direction = EAST;
+
 	// general information
 	protected String firstName;
 	protected String lastName;
 	protected Date birthDate;
 	protected String gender;
 	protected int money;
-	protected int energy;
+	protected static int energy;
 
 	// visible properties, if = 10 no need
 	protected float hunger;
-	protected int mood;
+	protected static int mood;
 	protected int health;
-	
+
 	protected Adult mother;
 	protected Adult father;
 
@@ -42,10 +42,10 @@ public abstract class Person extends GameObject implements Directable {
 			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father) {
 
 		super(pos, SIZE);
-
-		mood = 10;
-		hunger = 10;
-		health = 10;
+		energy = 100;
+		mood = 100;
+		hunger = 100;
+		health = 100;
 
 		// specific spec for character (player or not) implemented here
 		this.firstName = firstName;
@@ -60,29 +60,28 @@ public abstract class Person extends GameObject implements Directable {
 		this.mother = mother;
 	}
 
-    public void move(Point p) {
-        this.setPos(this.getPos().add(p));
-    }
+	public void move(Point p) {
+		this.setPos(this.getPos().add(p));
+	}
 
-    public void rotate(Point p) {
-        if(p.getX() == 0 && p.getY() == -1)
-            direction = NORTH;
-        else if(p.getX() == 0 && p.getY() == 1)
-            direction = SOUTH;
-        else if(p.getX() == 1 && p.getY() == 0)
-            direction = EAST;
-        else if(p.getX() == -1 && p.getY() == 0)
-            direction = WEST;
-    }
-	
+	public void rotate(Point p) {
+		if (p.getX() == 0 && p.getY() == -1)
+			direction = NORTH;
+		else if (p.getX() == 0 && p.getY() == 1)
+			direction = SOUTH;
+		else if (p.getX() == 1 && p.getY() == 0)
+			direction = EAST;
+		else if (p.getX() == -1 && p.getY() == 0)
+			direction = WEST;
+	}
+
 	public int getDirection() {
-	    return direction;
+		return direction;
 	}
 
 	public boolean isObstacle() {
 		return true;
 	}
-	
 
 	protected int getRelationship(Person friend) {
 		// function who return the level of friendship by reading the hachmap with all
@@ -116,17 +115,18 @@ public abstract class Person extends GameObject implements Directable {
 
 	protected void discuss(Person people) {
 		modifyRelationship(people, 1);
-		// TODO retirer l'energie
+		energy -= 1;
 	}
 
 	protected void playWith(Person people) {
 		modifyRelationship(people, 2);
-		// TODO retirer l'energie
+		energy -= 2;
 	}
 
 	protected void invite(Person people) {
 		modifyRelationship(people, 3);
-		// TODO bringing the people at house! et retirer de l'ï¿½nergie
+		energy -= 3;
+		// TODO bringing the people at house!
 
 	}
 
@@ -193,7 +193,7 @@ public abstract class Person extends GameObject implements Directable {
 	// SETTER
 
 	public void modifyProperties() {// TODO mettre properties
-		energy += modifyEnergy(energy, mood, health);
+		energy += modifyEnergy(mood, health);
 		// TODO evetn ohter caracte
 
 	}
@@ -207,7 +207,7 @@ public abstract class Person extends GameObject implements Directable {
 
 	// TODO function that make evolvle the hunger of the player during the game
 
-	protected static int modifyEnergy(int energy, int mood, int health) {
+	protected static double modifyEnergy(int mood, int health) {
 		// function that take in turns the health, mood and a random factor in the
 		// calcul of
 		// energy gain (energy = rest of the energy at the end of the day)
@@ -215,52 +215,60 @@ public abstract class Person extends GameObject implements Directable {
 		// (1.5) if
 		// health (or mood) =0
 		// need to be overwrite for kid because max of energy is 8
-		double energyNeed = 10 - energy; // need of energy here total is maximum 10!
+//TODO check que ca renvoit vient un truc entre 0 et 100 
+		double moodFactor = Math.pow(Math.E, -mood / 100);
+		double healthFactor = Math.pow(Math.E, -health / 100);
+		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
+		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
+		double energyAdd = randomFactor * 100 * healthFactor * moodFactor;
 
-		double randomFactor = (Random.range(1, (int) Math.round(Math.log(60))));
-		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 60); // on average = 0.7
-		energyNeed -= randomFactor * 2;
+		return energyAdd;
 
-		double factHealth = -Math.sqrt(energyNeed * 1.3) * health / 10 + Math.sqrt(energyNeed * 1.3);
-		factHealth = 0.5 * Math.pow(factHealth, 2);// ponderation of the health
-		energyNeed -= factHealth;
+	}
 
-		double factMood = -Math.sqrt(energyNeed / 1.5) * mood / 10 + Math.sqrt(energyNeed / 1.5);
-		factMood = 0.4 * Math.pow(factMood, 2);
-		energyNeed -= factMood;
+	protected static double modifyMood(double augmentation) {
+		//TODO check que ça renvoie bien un truc entre 0 et maxmood!
+		// fonction that increase the mood after the activity like going out,...
+		double maxMood = 100 - mood; // number of max point
+		if (maxMood < augmentation) {
+			// check that the gain of mood is < max
+			augmentation = maxMood;
+		}
+		double moodFactor = Math.pow(Math.E, -mood / 100);
+		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
+		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
+		augmentation = randomFactor * augmentation * moodFactor;
 
-		energyNeed = Math.round(energyNeed); // round of the energy
-
-		return (int) energyNeed; // return of the gain of energy
+		return augmentation;
 	}
 
 	public String getfirstName() {
-		
+
 		return firstName;
 	}
 
 	public String getlastName() {
-		
+
 		return lastName;
 	}
 
 	public String getGender() {
-	
+
 		return gender;
 	}
 
 	public Date getBirthDate() {
-		
+
 		return birthDate;
 	}
 
 	public ArrayList<GameObject> getinventoryHouse() {
-		
+
 		return inventoryHouse;
 	}
 
 	public Adult getMother() {
-	
+
 		return mother;
 	}
 
@@ -270,7 +278,7 @@ public abstract class Person extends GameObject implements Directable {
 	}
 
 	public int getMoney() {
-		
+
 		return money;
 	}
 
@@ -280,9 +288,15 @@ public abstract class Person extends GameObject implements Directable {
 
 	public int getEnergy() {
 
-		return energy;
+		return energy / 100;
 	}
 
+	public int getMood() {
+		return mood / 100;
+	}
 
+	public int getHealth() {
+		return health / 100;
+	}
 
 }

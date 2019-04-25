@@ -1,7 +1,7 @@
 package Tools;
 
 public class Random {
-	public static int range(int start, int end) {
-		return start + (int) Math.random() * (end - start);
+	public static double range(int start, int end) {
+		return start + Math.random() * (end - start); //suppression of (int) -> was giving an int but factor can not been
 	}
 }
