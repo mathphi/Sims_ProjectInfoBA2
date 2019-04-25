@@ -11,12 +11,13 @@
 package Model;
 
 import Tools.Point;
+import Tools.Size;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class AStar {
-	private static int mapSize = 25;
+	private Size mapSize;
 	private boolean closed[][];
 	private Point posStart;
 	private Point posEnd;
@@ -25,13 +26,15 @@ public class AStar {
 	private int V_H_COST = 1;
 	private int DIAGONAL_COST = 100000;
 
-	public AStar(Point pos_start, Point pos_end, ArrayList<GameObject> objects) {
+	public AStar(Size map_size, Point pos_start, Point pos_end, ArrayList<GameObject> objects) {
 		posStart = pos_start;
 		posEnd = pos_end;
-		grid = new Cell[mapSize][mapSize];
+		mapSize = map_size;
+		
+		grid = new Cell[mapSize.getWidth()][mapSize.getHeight()];
 
 
-        closed = new boolean[mapSize][mapSize];
+        closed = new boolean[mapSize.getWidth()][mapSize.getHeight()];
         open = new PriorityQueue<>((Object o1, Object o2) -> {
                 Cell c1 = (Cell)o1;
                 Cell c2 = (Cell)o2;
@@ -41,8 +44,8 @@ public class AStar {
 
         	});
 
-        for(int i=0;i<mapSize;++i){
-              for(int j=0;j<mapSize;++j){
+        for(int i = 0 ; i<mapSize.getWidth() ; i++) {
+              for(int j = 0 ; j < mapSize.getHeight() ; j++) {
                   grid[i][j] = new Cell(i, j);
                   grid[i][j].heuristicCost = Math.abs(i-posEnd.getX())+Math.abs(j-posEnd.getY());
 //                  System.out.print(grid[i][j].heuristicCost+" ");

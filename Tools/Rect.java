@@ -37,8 +37,8 @@ public class Rect {
 	 * @return
 	 */
 	public boolean contains(Point p) {
-		return (p.getX() >= point.getX() && p.getX() <= point.getX() + size.getWidth() &&
-				p.getY() >= point.getY() && p.getY() <= point.getY() + size.getHeight());
+		return (p.getX() >= point.getX() && p.getX() < point.getX() + size.getWidth() &&
+				p.getY() >= point.getY() && p.getY() < point.getY() + size.getHeight());
 	}
 
 	/**
@@ -50,8 +50,8 @@ public class Rect {
 	 */
 	public boolean contains(Rect r) {
 		return (r.getPos().getX() >= point.getX() &&
-				r.getPos().getX() + r.getSize().getWidth() <= point.getX() + size.getWidth() &&
+				r.getPos().getX() + r.getSize().getWidth() < point.getX() + size.getWidth() &&
 				r.getPos().getY() >= point.getY() &&
-				r.getPos().getY() + r.getSize().getHeight() <= point.getY() + size.getHeight());
+				r.getPos().getY() + r.getSize().getHeight() < point.getY() + size.getHeight());
 	}
 }

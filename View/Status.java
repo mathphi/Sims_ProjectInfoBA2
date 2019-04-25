@@ -10,8 +10,8 @@ import Model.Person;
 
 public class Status extends JPanel {
 	private Person p;
-	private int BAR_LENGTH = 60;
-	private int BAR_WIDTH = 20;
+	private int BAR_LENGTH = 80;
+	private int BAR_WIDTH = 15;
 	private int AVATAR_SIZE = 100;
 
     public Status() {
@@ -29,12 +29,12 @@ public class Status extends JPanel {
 		// bars 
         // Energy 
         g.setColor(Color.BLACK);
-        g.drawString("Energy", 0, 200);
+        g.drawString("Energy", 10, 195);
         g.setColor(Color.RED);
-        g.fillRect(0, 200, BAR_LENGTH, BAR_WIDTH);
+        g.fillRect(10, 200, BAR_LENGTH, BAR_WIDTH);
         g.setColor(Color.GREEN);
         int length_ok = (int) Math.round(BAR_LENGTH*p.getEnergy());
-        g.fillRect(0, 200, length_ok, BAR_WIDTH);
+        g.fillRect(10, 200, length_ok, BAR_WIDTH);
     }
 
     public void redraw() {

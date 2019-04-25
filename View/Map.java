@@ -18,7 +18,7 @@ import Controller.Mouse;
 
 public class Map extends JPanel {
     private ArrayList<GameObject> objects = null;
-    public final Size MAP_SIZE = new Size(25, 25);
+    public final Size MAP_SIZE = new Size(80, 80);
     private int BLOC_SIZE = 20;
     private Mouse mouseController = null;
 

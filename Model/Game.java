@@ -4,17 +4,10 @@ import View.Window;
 
 import Tools.Point;
 import Tools.Size;
+import Tools.Rect;
 
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Random;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-
-
-//ATTENTION LIGNE SUPPRIME
-//import org.omg.CosNaming.IstringHelper;
 
 public class Game implements DeletableObserver {
     private ArrayList<GameObject> objects = new ArrayList<GameObject>();
@@ -22,11 +15,11 @@ public class Game implements DeletableObserver {
     private Person active_player = null;
 
     private Window window;
-    private Size size;
+    private Size mapSize;
 
     public Game(Window window) {
         this.window = window;
-        size = window.getMapSize();
+        mapSize = window.getMapSize();
         // Creating one Player at position (1,1)
         Person p = new Kid(new Point(10, 10), "Test", "Person", "m", null, 0, objects, null, null); //modifi to launch the game
         objects.add(p);
@@ -55,6 +48,10 @@ public class Game implements DeletableObserver {
         window.setGameObjects(this.getGameObjects());
         notifyView();
     }
+    
+    public Size getMapSize() {
+    	return mapSize;
+    }
 
 
     public void movePlayer(int x, int y) {
@@ -63,19 +60,25 @@ public class Game implements DeletableObserver {
 
     public void movePlayer(Point p) {
         Point nextPos = active_player.getPos().add(p);
-
-        boolean obstacle = false;
+        boolean unreachable = false;
+        
+        // Check if the nextPos is in the map
+        Rect mapRect = new Rect(new Point(0,0), mapSize);
+        unreachable = !mapRect.contains(nextPos);
+        
         for (GameObject object : objects) {
             if (object.isAtPosition(nextPos)) {
-                obstacle = object.isObstacle();
+            	unreachable = object.isObstacle();
                 break;
             }
         }
+        
         active_player.rotate(p);
         
-        if (obstacle == false) {
+        if (!unreachable) {
             active_player.move(p);
         }
+        
         notifyView();
     }
 
