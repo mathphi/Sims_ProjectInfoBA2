@@ -26,7 +26,7 @@ public class AStarThread implements Runnable{
 				case 3 : g.movePlayer(0,1); break;
 			}
 			try {
-				Thread.sleep(500);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -40,6 +40,8 @@ public class Map extends JPanel {
     }
 
     public void paint(Graphics g) {
+		super.paintComponent(g);
+		
         for (int i = 0; i < MAP_SIZE.getWidth(); i++) { 
             for (int j = 0; j < MAP_SIZE.getHeight(); j++) {
                 int x = i;
