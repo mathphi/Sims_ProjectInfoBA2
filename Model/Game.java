@@ -64,20 +64,18 @@ public class Game implements DeletableObserver {
     public void movePlayer(Point p) {
         Point nextPos = active_player.getPos().add(p);
 
-        //TODO: this is obselete
         boolean obstacle = false;
         for (GameObject object : objects) {
             if (object.isAtPosition(nextPos)) {
                 obstacle = object.isObstacle();
-            }
-            if (obstacle == true) {
                 break;
             }
-        }/*
-        active_player.rotate(x, y);
+        }
+        active_player.rotate(p);
+        
         if (obstacle == false) {
-            active_player.move(x, y);
-        }*/
+            active_player.move(p);
+        }
         notifyView();
     }
 

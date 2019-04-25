@@ -9,9 +9,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Person extends GameObject {
-	private static Size SIZE = new Size(1, 1);
+public abstract class Person extends GameObject implements Directable {
+	private static Size SIZE = new Size(1,1);
 
+    private int direction = EAST; 
+    
 	// general information
 	protected String firstName;
 	protected String lastName;
@@ -49,19 +51,39 @@ public abstract class Person extends GameObject {
 		this.firstName = firstName;
 		this.gender = gender;
 		this.lastName = lastName;
+		relationPoint = 0; // caracterise the relation with the player
+	}
+
+    public void move(Point p) {
+        this.setPos(this.getPos().add(p));
+    }
 		this.birthDate = birthDate; // if PNJ birthDate is automaticately generated in Main class
 		this.money = money; // player can decide to start game with some money
 		this.inventoryHouse = inventoryHouse; // also depends of the players start choice
 
+    public void rotate(Point p) {
+        if(p.getX() == 0 && p.getY() == -1)
+            direction = NORTH;
+        else if(p.getX() == 0 && p.getY() == 1)
+            direction = SOUTH;
+        else if(p.getX() == 1 && p.getY() == 0)
+            direction = EAST;
+        else if(p.getX() == -1 && p.getY() == 0)
+            direction = WEST;
+    }
+	
+	public int getDirection() {
+	    return direction;
 		friendList.put(father, 20);
 		friendList.put(mother, 20); // considered as the higher level of relation but CAN't propose to marry, etc
 
 		this.mother = mother;
 	}
 
-	public void move() {
-		// function that allows the personnage to move
+	public boolean isObstacle() {
+		return true;
 	}
+	
 
 	protected int getRelationship(Person friend) {
 		// function who return the level of friendship by reading the hachmap with all

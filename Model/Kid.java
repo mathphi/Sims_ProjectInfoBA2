@@ -49,8 +49,4 @@ public class Kid extends Person {
 	}
 	
 	//TODO function that make evolve properties during the game
-
-	public boolean isObstacle() {
-		return true;
-	}
 }

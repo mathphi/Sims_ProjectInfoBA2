@@ -21,6 +21,14 @@ public class Rect {
 		return size;
 	}
 	
+	public void setPos(Point p) {
+		point = p;
+	}
+	
+	public void setSize(Size sz) {
+		size = sz;
+	}
+	
 	/**
 	 * Return true if the given point is in the Rect
 	 * 
