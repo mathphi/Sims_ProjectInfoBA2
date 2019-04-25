@@ -5,7 +5,7 @@ import Tools.Point;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Adult extends Teenager{
+public class Adult extends Person {
 
 	public Adult(Point pos, String firstName, String lastName, String gender) {
 		super(pos, firstName, lastName, gender);
@@ -62,7 +62,7 @@ public class Adult extends Teenager{
 			}
 			if (energy >= 4) {
 				//invite(people);
-				goToDrink(people);
+				//goToDrink(people);
 				// TODO augmenter le mood
 				energy -= 3;
 			}
@@ -74,7 +74,7 @@ public class Adult extends Teenager{
 			if (energy >= 1) {
 				//discuss(people);
 				// TODO augmenter le mood
-				embrass(people); 
+				//embrass(people); 
 				marry(people);
 				energy -= 1;// on peut faire ainsi ou il faut faire par un setter?
 			}
@@ -86,7 +86,7 @@ public class Adult extends Teenager{
 			}
 			if (energy >= 4) {
 				//invite(people);
-				goToDrink(people);
+				//goToDrink(people);
 				// TODO augmenter le mood
 				energy -= 3;
 			}

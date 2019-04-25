@@ -51,7 +51,7 @@ public class AStar {
            }
         grid[posEnd.getX()][posEnd.getY()].finalCost = 0;
 
-		open.add(grid[posEnd.getX()][posEnd.getY()]);
+		open.add(grid[posStart.getX()][posStart.getY()]);
 		for(GameObject o: objects) {
 			if (o.isObstacle()) {
 				setBlocked(o.getPos());
@@ -145,23 +145,25 @@ public class AStar {
 			if(!inOpen)open.add(t);
 		}
 	}
-	
+
 	public int getNextStep() {
 		int direction = -1;
-		if(closed[posEnd.getX()][posEnd.getY()]){
+		if (closed[posEnd.getX()][posEnd.getY()]) {
 			int deltai = 0;
 			int deltaj = 0;
-		   //Trace back the path 
+			// Trace back the path
 			Cell current = grid[posEnd.getX()][posEnd.getY()];
-			while(current.parent!=null){
+			while (current.parent != null) {
 				if (current.parent.i == posStart.getX() && current.parent.j == posStart.getY()) {
 					deltai = current.i - posStart.getX();
 					deltaj = current.j - posStart.getY();
-					direction = 1 - deltai + deltaj*(deltaj + 1);
+					direction = 1 - deltai + deltaj * (deltaj + 1);
 				}
 				current = current.parent;
-			} 
-	   }else System.out.println("No possible path");
+			}
+		} else
+			System.out.println("No possible path");
+
 		return direction;
 	}
 }

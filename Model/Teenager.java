@@ -144,8 +144,4 @@ public class Teenager extends Person {
 		return (int) energyNeed; // return of the gain of energy
 
 	}
-
-	public boolean isObstacle() {
-		return true;
-	}
 }

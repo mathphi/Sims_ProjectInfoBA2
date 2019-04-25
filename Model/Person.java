@@ -6,9 +6,11 @@ import Tools.Size;
 import java.util.ArrayList;
 import java.util.Date;
 
-public abstract class Person extends GameObject {
+public abstract class Person extends GameObject implements Directable {
 	private static Size SIZE = new Size(1,1);
 
+    private int direction = EAST; 
+    
 	// general information, name already given in object
 	protected String firstName;
 	protected String lastName;
@@ -38,17 +40,31 @@ public abstract class Person extends GameObject {
 		this.gender = gender;
 		this.lastName = lastName;
 		relationPoint = 0; // caracterise the relation with the player
-
-		this.money = money; // player can decide to start game with some money
-		this.inventoryHouse = inventoryHouse; // also depends of the players start choice
-
 	}
 
+    public void move(Point p) {
+        this.setPos(this.getPos().add(p));
+    }
+
+    public void rotate(Point p) {
+        if(p.getX() == 0 && p.getY() == -1)
+            direction = NORTH;
+        else if(p.getX() == 0 && p.getY() == 1)
+            direction = SOUTH;
+        else if(p.getX() == 1 && p.getY() == 0)
+            direction = EAST;
+        else if(p.getX() == -1 && p.getY() == 0)
+            direction = WEST;
+    }
 	
-	
-	public void move() {
-		// function that allows the personnage to move
+	public int getDirection() {
+	    return direction;
 	}
+
+	public boolean isObstacle() {
+		return true;
+	}
+	
 
 	protected int getRelationship() {
 		// getter of relationPoint, only purpose in multijoueur -> if more than 2

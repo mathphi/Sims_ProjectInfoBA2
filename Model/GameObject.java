@@ -31,6 +31,14 @@ public abstract class GameObject {
 		return color;
 	}
 
+	public void setPos(Point p) {
+		rect.setPos(p);
+	}
+
+	public void setSize(Size sz) {
+		rect.setSize(sz);
+	}
+	
 	public boolean isAtPosition(Point p) {
 		return this.rect.getPos().getX() == p.getX() &&
 				this.rect.getPos().getY() == p.getY();
