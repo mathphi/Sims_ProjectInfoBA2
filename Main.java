@@ -19,8 +19,9 @@ import java.sql.Date;
 import java.text.DateFormat;
 
 public class Main {
-	public static int year=0;
+	public static int year;
 	public static Person player;
+	public static ArrayList<Person> personList; //list of all the people in the game
 	public static void main(String[] args) {
 		Window window = new Window("Game");
 		Game game = new Game(window);
@@ -36,21 +37,30 @@ public class Main {
 	public static void newPart() {
 		//creation of the player character
 		Date date = new Date(23 / 07 / 1999);
-		Person player = new Kid(new Point(0, 0), "Dardenne", "Corentin", "m");
+		year = date.getYear()+10; //make the game start when the player is 10 YO
+		Kid player = new Kid(new Point(0, 0), "Dardenne", "Corentin", "m", date, 10, null, null, null);
+		// TODO basic inentory and parents to add
+		//TODO generated all the other peope 
+	
 	}
 	
 	public static void endOfDay() {
 		// function that restore all the caracteristic like energy,...
 		// nextPlayer() -> in multi mode will allow other players to play
-		player.setCaracteristic(); // modification of energy CE SRA UN UPDATE TODO
+		player.modifyProperties(); // modification of energy CE SRA UN UPDATE TODO
 		
 		//TODO: NOOO! Check the age of each person... Not years from start of game
 		year += 1; // 1 turns = 1year
+		/*
+		for(Person people : personList) {
+			int age = year - people.getBirthDate().getYear();
 		
 		switch (year) {
 		//check if the type of the player change
 		case 14: {
-			player = (Teenager) player;
+			//TODO (in progress!)
+		}
+			//personList.add(new Teenager(newPeople));
 			break;
 		}
 		case 20: {
@@ -59,7 +69,7 @@ public class Main {
 		}
 		default:
 			break;
-		}
+		} */
 
 
 	}

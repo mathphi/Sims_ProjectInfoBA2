@@ -1,4 +1,4 @@
-package Model;
+//package Model;
 
 import Tools.Point;
 import Tools.Random;
@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import Model.Adult;
+import Model.EatableObject;
+import Model.GameObject;
 
 public abstract class Person extends GameObject {
 	private static Size SIZE = new Size(1, 1);
@@ -25,8 +29,8 @@ public abstract class Person extends GameObject {
 	protected int mood;
 	protected int health;
 	
-	protected Adult mother;
-	protected Adult father;
+	protected Person mother;
+	protected Person father;
 
 	// relation
 	protected Map<Person, Integer> friendList = new HashMap<>();
@@ -37,7 +41,7 @@ public abstract class Person extends GameObject {
 	// (cloths,...)
 
 	public Person(Point pos, String firstName, String lastName, String gender, Date birthDate, int money,
-			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father) {
+			ArrayList<GameObject> inventoryHouse, Person mother, Person father) {
 
 		super(pos, SIZE);
 
@@ -57,6 +61,7 @@ public abstract class Person extends GameObject {
 		friendList.put(mother, 20); // considered as the higher level of relation but CAN't propose to marry, etc
 
 		this.mother = mother;
+		this.father = father;
 	}
 
 	public void move() {
@@ -238,12 +243,12 @@ public abstract class Person extends GameObject {
 		return inventoryHouse;
 	}
 
-	public Adult getMother() {
+	public Person getMother() {
 	
 		return mother;
 	}
 
-	public Adult getFather() {
+	public Person getFather() {
 
 		return father;
 	}
@@ -251,10 +256,6 @@ public abstract class Person extends GameObject {
 	public int getMoney() {
 		
 		return money;
-	}
-
-	public void modifyCaracteristic() {
-		// TODO will be overwrite after, change the mood, hunger,...
 	}
 
 
