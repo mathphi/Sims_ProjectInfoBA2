@@ -257,6 +257,11 @@ public abstract class Person extends GameObject {
 		// TODO will be overwrite after, change the mood, hunger,...
 	}
 
+	public int getEnergy() {
+
+		return energy;
+	}
+
 
 
 }

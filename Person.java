@@ -257,6 +257,9 @@ public abstract class Person extends GameObject {
 		
 		return money;
 	}
+	public int getEnergy() {
+		return energy;
+	}
 
 
 
