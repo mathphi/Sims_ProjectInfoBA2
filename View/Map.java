@@ -19,7 +19,7 @@ import Controller.Mouse;
 public class Map extends JPanel {
     private ArrayList<GameObject> objects = null;
     public final Size MAP_SIZE = new Size(80, 80);
-    private int BLOC_SIZE = 20;
+    public final int BLOC_SIZE = 20;
     private Mouse mouseController = null;
 
     public Map() {
@@ -55,22 +55,8 @@ public class Map extends JPanel {
 
         for (GameObject object : this.objects) {
             Point pos = object.getPos();
-            int color = object.getColor();
-
-            if (color == 0) {
-                g.setColor(Color.DARK_GRAY);
-            } else if (color == 1) {
-                g.setColor(Color.GRAY);
-            } else if (color == 2) {
-                g.setColor(Color.BLUE);
-            } else if (color == 3) {
-                g.setColor(Color.GREEN);
-            } else if (color == 4) {
-                g.setColor(Color.RED);
-            } else if (color == 5) {
-                g.setColor(Color.ORANGE);
-            }
-
+            Color color = object.getColor();
+            g.setColor(color);
             g.fillRect(pos.getX() * BLOC_SIZE, pos.getY() * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
             g.setColor(Color.BLACK);
             g.drawRect(pos.getX() * BLOC_SIZE, pos.getY() * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);

@@ -1,5 +1,7 @@
 package Model;
 
+import java.awt.Color;
+
 import Tools.Point;
 import Tools.Size;
 
@@ -8,7 +10,7 @@ public abstract class TakableObject extends GameObject {
 	int price;
 
 	public TakableObject(Point pos, Size sz, String name, int price) {
-		super(pos, sz);
+		super(pos, sz, Color.YELLOW);
 		this.price = price;
 
 	}

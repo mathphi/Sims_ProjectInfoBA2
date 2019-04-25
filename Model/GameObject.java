@@ -4,14 +4,16 @@ import Tools.Point;
 import Tools.Size;
 import Tools.Rect;
 
+import java.awt.Color;
+
 public abstract class GameObject {
 	private Rect rect;
-	private int color;
+	private Color color;
 
 
-	public GameObject(Point pos, Size size) {
+	public GameObject(Point pos, Size size, Color color) {
 		this.rect = new Rect(pos, size);
-		this.color = 0;
+		this.color = color;
 	}
 
 	public Point getPos() {
@@ -27,7 +29,7 @@ public abstract class GameObject {
 	}
 	
 	//TODO: remove this...
-	public int getColor() {
+	public Color getColor() {
 		return color;
 	}
 

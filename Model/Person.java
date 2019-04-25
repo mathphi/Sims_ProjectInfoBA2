@@ -4,6 +4,7 @@ import Tools.Point;
 import Tools.Random;
 import Tools.Size;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public abstract class Person extends GameObject implements Directable {
 	public Person(Point pos, String firstName, String lastName, String gender, Date birthDate, int money,
 			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father) {
 
-		super(pos, SIZE);
+		super(pos, SIZE, Color.BLUE);
 		energy = 100;
 		mood = 100;
 		hunger = 100;

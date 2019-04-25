@@ -6,10 +6,13 @@ import Tools.Point;
 import Tools.Size;
 import Tools.Rect;
 
+import java.awt.Rectangle;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 public class Game implements DeletableObserver {
+	private final int ARTIFICIAL_SCROLL_RADIUS = 500;
+	
     private ArrayList<GameObject> objects = new ArrayList<GameObject>();
     private ArrayList<Person> population = new ArrayList<Person>();
     private Person active_player = null;
@@ -28,22 +31,41 @@ public class Game implements DeletableObserver {
         active_player = p;
 
         // Map building
-        /*
-        for (int i = 0; i < size; i++) {
-            objects.add(new BlockUnbreakable(i, 0));
-            objects.add(new BlockUnbreakable(0, i));
-            objects.add(new BlockUnbreakable(i, size - 1));
-            objects.add(new BlockUnbreakable(size - 1, i));
+        
+        // A sample of room
+        for (int i = 0; i < 20; i++) {
+            objects.add(new WallBlock(i, 0));
+            objects.add(new WallBlock(0, i));
+            
+            // Make a door in the wall
+            if (i != 10 && i != 11) {
+            	objects.add(new WallBlock(20 - 1, i));
+            	objects.add(new WallBlock(i, 20 - 1));
+            }
         }
-        Random rand = new Random();
-        for (int i = 0; i < numberOfBreakableBlocks; i++) {
-            int x = rand.nextInt(size-4) + 2;
-            int y = rand.nextInt(size-4) + 2;
-            int lifepoints = rand.nextInt(5) + 1;
-            BlockBreakable block = new BlockBreakable(x, y, lifepoints);
-            block.attachDeletable(this);
-            objects.add(block);
-        }*/
+
+        // A second sample of room
+        for (int i = 0; i < 15; i++) {
+            objects.add(new WallBlock(20 + i, 0));
+            
+            // Make a door in the wall
+            if (i != 10 && i != 11) {
+            	objects.add(new WallBlock(20 + i, 15 - 1));
+            }
+        }
+
+        // A third sample of room
+        for (int i = 0; i < 25; i++) {
+            objects.add(new WallBlock(35 + i, 0));
+        	objects.add(new WallBlock(35 - 1, i));
+            objects.add(new WallBlock(35 + i, 25 - 1));
+            
+            // Make a door in the wall
+            if (i != 15 && i != 16) {
+            	objects.add(new WallBlock(35 + 25 - 1, i));
+            }
+        }
+
 
         window.setGameObjects(this.getGameObjects());
         notifyView();
@@ -80,6 +102,14 @@ public class Game implements DeletableObserver {
         }
         
         notifyView();
+        
+        // Scroll the map view to the player (scoll after notifyView for fluidity)
+        // The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and the map's borders
+        window.getMap().scrollRectToVisible(new Rectangle(
+        		active_player.getPos().getX() * window.getBlocSize().getWidth() - ARTIFICIAL_SCROLL_RADIUS,
+        		active_player.getPos().getY() * window.getBlocSize().getHeight() - ARTIFICIAL_SCROLL_RADIUS,
+        		window.getBlocSize().getWidth() + 2*ARTIFICIAL_SCROLL_RADIUS,
+        		window.getBlocSize().getHeight() + 2*ARTIFICIAL_SCROLL_RADIUS));
     }
 
     public void action() {
