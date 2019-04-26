@@ -8,29 +8,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
 import Controller.Mouse;
 
 public class Window extends JFrame {
-	private JPanel groupPanel = new JPanel(new BorderLayout());
     private Map map = new Map();
     private Status status = new Status();
 
     public Window(String title) {
     	super(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1250, 900);
+        this.setSize(1250, 800);
         setBackground(Color.gray);
         
         // Configure the map's scrolling
@@ -88,19 +82,11 @@ public class Window extends JFrame {
         this.map.addMouse(m);
     }
 
-	public Size getMapSize() {
-		return map.MAP_SIZE;
-	}
-	
-	public Size getBlocSize() {
-		return new Size(map.BLOC_SIZE, map.BLOC_SIZE);
-	}
-	
 	public Map getMap() {
 		return map;
 	}
 	
-	public void setPlayer(Person p) {
-		status.setPlayer(p);
+	public Status getStatus() {
+		return status;
 	}
 }

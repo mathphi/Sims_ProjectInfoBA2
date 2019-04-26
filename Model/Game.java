@@ -1,6 +1,8 @@
 package Model;
 
 import View.Window;
+import View.Map;
+import View.Status;
 
 import Tools.Point;
 import Tools.Size;
@@ -15,14 +17,24 @@ public class Game implements DeletableObserver {
 
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
-	private Person active_player = null;
-	public int year;
+	private Person activePerson = null;
 	private Window window;
+	private Map map;
+	private Status status;
+	
 	private Size mapSize;
+	
+	private GameTime gameTime;
 
 	public Game(Window window) {
 		this.window = window;
-		mapSize = window.getMapSize();
+		map = window.getMap();
+		status = window.getStatus();
+		mapSize = map.getMapSize();
+		
+		gameTime = new GameTime(this);
+		
+		// TODO: replace this list by a class
 		// Creating one Player at position (1,1)
 		ArrayList<Double> psychologicFactor = new ArrayList<Double>(); // list that will give more importance in some
 																			// caracteristic for automatic answering,
@@ -37,11 +49,9 @@ public class Game implements DeletableObserver {
 																									// the game
 		objects.add(p);
 		population.add(p);
-		window.setPlayer(p);
-		active_player = p;
+		setActivePerson(p);
 
 		// Map building
-
 		// A sample of room
 		for (int i = 0; i < 20; i++) {
 			objects.add(new WallBlock(i, 0));
@@ -89,7 +99,7 @@ public class Game implements DeletableObserver {
 	}
 
 	public void movePlayer(Point p) {
-		Point nextPos = active_player.getPos().add(p);
+		Point nextPos = activePerson.getPos().add(p);
 		boolean unreachable = false;
 
 		// Check if the nextPos is in the map
@@ -103,10 +113,10 @@ public class Game implements DeletableObserver {
 			}
 		}
 
-		active_player.rotate(p);
+		activePerson.rotate(p);
 
 		if (!unreachable) {
-			active_player.move(p);
+			activePerson.move(p);
 		}
 
 		notifyView();
@@ -114,18 +124,17 @@ public class Game implements DeletableObserver {
 		// Scroll the map view to the player (scoll after notifyView for fluidity)
 		// The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
 		// the map's borders
-		window.getMap()
-				.scrollRectToVisible(new Rectangle(
-						active_player.getPos().getX() * window.getBlocSize().getWidth() - ARTIFICIAL_SCROLL_RADIUS,
-						active_player.getPos().getY() * window.getBlocSize().getHeight() - ARTIFICIAL_SCROLL_RADIUS,
-						window.getBlocSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
-						window.getBlocSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
+		map.scrollRectToVisible(new Rectangle(
+				activePerson.getPos().getX() * map.getBlockSize().getWidth() - ARTIFICIAL_SCROLL_RADIUS,
+				activePerson.getPos().getY() * map.getBlockSize().getHeight() - ARTIFICIAL_SCROLL_RADIUS,
+				map.getBlockSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
+				map.getBlockSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
 	}
 
 	public void action() {
 		/*
 		 * Activable aimedObject = null; for(GameObject object : objects){
-		 * if(object.isAtPosition(active_player.getFrontX(),active_player.getFrontY())){
+		 * if(object.isAtPosition(activePerson.getFrontX(),activePerson.getFrontY())){
 		 * if(object instanceof Activable){ aimedObject = (Activable) object; } } } if
 		 * (aimedObject != null) { aimedObject.activate(); notifyView(); }
 		 */
@@ -150,7 +159,7 @@ public class Game implements DeletableObserver {
 	}
 
 	public void playerPos() {
-		System.out.println(active_player.getPos().getX() + ":" + active_player.getPos().getY());
+		System.out.println(activePerson.getPos().getX() + ":" + activePerson.getPos().getY());
 
 	}
 
@@ -159,13 +168,44 @@ public class Game implements DeletableObserver {
 	}
 
 	public void sendPlayer(Point p) {
-		Thread t = new Thread(new AStarThread(this, active_player, p));
+		Thread t = new Thread(new AStarThread(this, activePerson, p));
 		t.start();
+	}
+	
+	private void updateAllPopulation() {
+		//TODO: Necessary ?
+	}
+	
+	private void updateActivePerson() {
+		activePerson.updateNeeds();
+	}
+	
+	public void updateGame() {
+		// Update the time string in the status area
+		status.setGameTimeStr(gameTime.getCurrentTimeString());
+		
+		long t = gameTime.getVirtualTime();
+
+		// New year
+		if (t % gameTime.YEAR_LEN == 0) {
+			
+		}
+		// New month (approx 30 days...)
+		if (t % (gameTime.DAY_LEN*30) == 0) {
+			updateActivePerson();
+		}
+		
+		notifyView();
+	}
+	
+	public void setActivePerson(Person p) {
+		activePerson = p;
+		status.setActivePerson(p);
 	}
 
 	public void startGame() {
 		// TODO
-		year = 0;
+		gameTime.start();
 
 	}
 

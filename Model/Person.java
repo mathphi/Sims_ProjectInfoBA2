@@ -20,23 +20,24 @@ public abstract class Person extends GameObject implements Directable {
 	protected String lastName;
 	protected int age;
 	protected String gender;
+	
 	protected int money;
-	protected int energy;
 
 	// visible properties, if = 100 no need
+	protected int energy;
 	protected float hunger;
 	protected int mood;
-	protected int health;
+	protected int hygiene;
 	protected int bladder;
 
 	// automatic answer parameters
 	protected int generalKnowledge; // caracterise the knwoledge of the player -> increase by going to school or
 									// thing like that
-	protected int otherVision; // caracterise the vision of other, if often go out, is in good health,... ->
+	protected int otherVision; // caracterise the vision of other, if often go out, is in good hygiene,... ->
 								// higher
 
 	protected ArrayList<Double> psychologicFactor;
-	// list of 4 int from 0 to 25 to caracterise the importance of mood, health
+	// list of 4 int from 0 to 25 to caracterise the importance of mood, hygiene
 	// generalKnwoledge and ohtervision (in that order) for the automatic answer
 	// will be randomly generated for PNJ
 
@@ -56,10 +57,11 @@ public abstract class Person extends GameObject implements Directable {
 			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
 
 		super(pos, SIZE, Color.BLUE);
+		
 		energy = 100;
 		mood = 100;
 		hunger = 100;
-		health = 100;
+		hygiene = 100;
 		bladder = 100;
 
 		// maximum is 100
@@ -104,12 +106,18 @@ public abstract class Person extends GameObject implements Directable {
 		return true;
 	}
 
-	protected int getRelationship(Person friend) {
-		// function who return the level of friendship by reading the hachmap with all
+	public void updateNeeds() {
+		decreaseBladder((int)Random.range(10, 16)); // Random decrease
+		modifyHunger((int)Random.range(-12, -20)); // Random decrease
+		modifyEnergy(hygiene >= 20 ? -4 : -12); // Decrease more energy if hygiene is low
+	}
+	
+	public int getRelationship(Person friend) {
+		// function who return the level of friendship by reading the hashmap with all
 		// the people known
 		int relationship = 0;
 		if (friendList.containsKey(friend)) {
-			// if the people si not in the friendList he is unknown
+			// if the people is not in the friendList he is unknown
 			int relationPoint = friendList.get(friend);
 
 			if (relationPoint > 20) {
@@ -123,7 +131,7 @@ public abstract class Person extends GameObject implements Directable {
 		return relationship;
 	}
 
-	protected void modifyRelationship(Person friend, int point) {
+	public void modifyRelationship(Person friend, int point) {
 		// function that wil modify the relation ship
 		// take the old value and add the new amount of point
 		// if new friend, ony all "point"
@@ -139,17 +147,17 @@ public abstract class Person extends GameObject implements Directable {
 		}
 	}
 
-	protected double automaticAnswer(Person people) {
+	public double automaticAnswer(Person people) {
 		// function that return a number beetween 0 and 1
 		// if 1 the 2 characters are realy complementary
 		// if 0 they haven't the same will
 		// take the caracterisic of the player that sent the request mutliply by the
 		// factor from the recever
 		double relationFactor = mood * people.getPsychologicFactor().get(0)
-				+ health * people.getPsychologicFactor().get(1)
+				+ hygiene * people.getPsychologicFactor().get(1)
 				+ generalKnowledge * people.getPsychologicFactor().get(2)
 				+ otherVision * people.getPsychologicFactor().get(3);
-		relationFactor /= 100000;
+		relationFactor /= 100000.0;
 		if (relationFactor > 0.7) {
 			// will multipy by 2 the gain of mood and point relation because realy
 			// complementary
@@ -165,7 +173,7 @@ public abstract class Person extends GameObject implements Directable {
 		return relationFactor;
 	}
 
-	protected void eat(EatableObject nourriture) {
+	public void eat(EatableObject nourriture) {
 		float hungerGain = nourriture.getNutritionalValue();
 		hunger += (int) (hungerGain);
 		if (hunger > 100) {
@@ -174,19 +182,19 @@ public abstract class Person extends GameObject implements Directable {
 		}
 	}
 
-	protected void discuss(Person people) {
+	public void discuss(Person people) {
 		modifyRelationship(people, 1);
 		modifyMood(automaticAnswer(people) * 15);
 		energy -= 10;
 	}
 
-	protected void playWith(Person people) {
+	public void playWith(Person people) {
 		modifyRelationship(people, 2);
 		modifyMood(automaticAnswer(people) * 20);
 		energy -= 20;
 	}
 
-	protected void invite(Person people) {
+	public void invite(Person people) {
 
 		modifyRelationship(people, 3);
 		modifyMood(automaticAnswer(people) * 30);
@@ -204,7 +212,7 @@ public abstract class Person extends GameObject implements Directable {
 		switch (getRelationship(people)) {
 		case (0): {
 			// can only discuss
-			// TODO interface graphique: les diff�rentes possibilit�s!
+			// TODO interface graphique: les différentes possibilités!
 			if (energy >= 10) {
 				discuss(people);
 
@@ -249,29 +257,77 @@ public abstract class Person extends GameObject implements Directable {
 
 	}
 
-	// TODO function that make evolvle the hunger of the player during the game
-	protected void goToBed() {
+	// TODO function that make evolve the hunger of the player during the game
+	public void goToBed() {
 		// TODO make the player go to bed
 		age += 1;
 
 	}
-
-	protected void modifyMoney(int amount) {
-		// if need to pay -> amount <0
-		// if it's a gain -> amount >0
-		money += amount;
+	
+	/**
+	 * Decrease the bladder of the factor and check if the bladder full
+	 * If the bladder is full, call emptyBladder()
+	 * @param factor
+	 */
+	public void decreaseBladder(int factor) {
+		bladder -= factor;
+		bladder = Math.max(0, Math.min(bladder, 100));
+		
+		if (bladder <= 0) {
+			emptyBladder();
+		}
+	}
+	
+	/**
+	 * In short, he piss...
+	 * We just have to check if the person piss in a toilet or just... on himself
+	 * The player will lose hygiene,... in the second case
+	 */
+	public void emptyBladder() {
+		bladder = 100;
+		
+		//TODO: consequences...
+		modifyHygiene(-50);
+		modifyMood(-25);
+	}
+	
+	/**
+	 * Modify the hygiene of a factor
+	 * If the hygiene is too low... (?) TODO
+	 * @param factor
+	 */
+	public void modifyHygiene(int factor) {
+		hygiene += factor;
+		hygiene = Math.max(0, Math.min(hygiene, 100));
+		
+		//TODO: consequence if hygiene <= 0
+	}
+	
+	public void modifyHunger(int factor) {
+		hunger += factor;
+		hunger = Math.max(0, Math.min(hunger, 100));
+		
+		//TODO: conditional consequences
+		if (hunger <= 0) {
+			modifyHygiene(-10);
+			modifyMood(-10);
+		}
+	}
+	public void modifyEnergy(int factor) {
+		energy += factor;
+		energy = Math.max(0, Math.min(energy, 100));
 	}
 
-	protected void modifyEnergy() {
-		// function that take in turns the health, mood and a random factor in the
+	public void restoreEnergy() {
+		// function that take in turns the hygiene, mood and a random factor in the
 		// calcul of energy
 		// will be run when player go to bed
 
-		double moodHealthFactor = Math.pow(Math.E, health * Math.log(2) * mood / 10000) - 1; // always beetween 0 and 1
+		double moodHygieneFactor = Math.pow(Math.E, hygiene * Math.log(2) * mood / 10000.0) - 1; // always beetween 0 and 1
 		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
+		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
 
-		double energyAdd = 100 * moodHealthFactor * randomFactor;
+		double energyAdd = 100 * moodHygieneFactor * randomFactor;
 		if (energyAdd < 20) {
 			// minimum of energy
 			energyAdd = 20;
@@ -280,7 +336,13 @@ public abstract class Person extends GameObject implements Directable {
 		energy = (int) (energyAdd);
 	}
 
-	protected void modifyMood(double value) {
+	public void modifyMoney(int amount) {
+		// if need to pay -> amount <0
+		// if it's a gain -> amount >0
+		money += amount;
+	}
+	
+	public void modifyMood(double value) {
 
 		// fonction that increase the mood after the activity like going out,...
 		double maxMood = 100 - mood; // number of max point
@@ -289,9 +351,9 @@ public abstract class Person extends GameObject implements Directable {
 				// check that the gain of mood is < max
 				value = maxMood;
 			}
-			double moodFactor = Math.pow(Math.E, -mood / 100);
+			double moodFactor = Math.pow(Math.E, -mood / 100.0);
 			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
+			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
 			value = randomFactor * value * moodFactor;
 		} else if (-value > mood) {
 			// check the reduction isn't bigger of the amount of mood available
@@ -301,7 +363,7 @@ public abstract class Person extends GameObject implements Directable {
 		mood += value;
 	}
 
-	protected void modifyOtherVision(double value) {
+	public void modifyOtherVision(double value) {
 
 		// function that modify the vision of the character
 		double maxVision = 100 - otherVision; // number of max point
@@ -312,7 +374,7 @@ public abstract class Person extends GameObject implements Directable {
 			}
 
 			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
+			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
 			value = randomFactor * value;
 		} else if (-value > otherVision) {
 			// check the reduction isn't bigger of the amount of mood available
@@ -331,64 +393,65 @@ public abstract class Person extends GameObject implements Directable {
 		for (double factor : psychologicFactor) {
 			sum += factor;
 		}
-		for (double factor : psychologicFactor) {
-			newPsychoFactor.add(factor * 100 / sum);
+		if (sum > 0) {
+			for (double factor : psychologicFactor) {
+				newPsychoFactor.add(factor * 100 / sum);
+			}
 		}
 		psychologicFactor = newPsychoFactor;
 
 	}
 
-	public String getfirstName() {
-
+	public String getFirstName() {
 		return firstName;
 	}
 
-	public String getlastName() {
-
+	public String getLastName() {
 		return lastName;
 	}
 
 	public String getGender() {
-
 		return gender;
 	}
 
 	public int getAge() {
-
 		return age;
 	}
 
 	public ArrayList<GameObject> getinventoryHouse() {
-
 		return inventoryHouse;
 	}
 
 	public Adult getMother() {
-
 		return mother;
 	}
 
 	public Adult getFather() {
-
 		return father;
 	}
 
 	public int getMoney() {
-
 		return money;
 	}
 
-	public int getEnergy() {
-
-		return energy / 100;
+	public double getEnergy() {
+		return energy / 100.0;
 	}
 
-	public int getMood() {
-		return mood / 100;
+	public double getMood() {
+		return mood / 100.0;
 	}
 
-	public int getHealth() {
-		return health / 100;
+	public double getHygiene() {
+		return hygiene / 100.0;
+	}
+
+	public double getBladder() {
+		return bladder / 100.0;
+	}
+
+	public double getHunger() {
+		return hunger / 100.0;
 	}
 
 	public ArrayList<Double> getPsychologicFactor() {

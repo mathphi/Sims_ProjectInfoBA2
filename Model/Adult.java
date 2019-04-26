@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public class Adult extends Person {
 
-	public Adult(Person player) {
-		// constructor if the player need to evolve from teenager to kid
-		super(player.getPos(), player.getfirstName(), player.getlastName(), player.getGender(), player.getAge(),
-				player.getMoney(), player.getinventoryHouse(), player.getMother(), player.getFather(),
-				player.getPsychologicFactor());
+	public Adult(Person person) {
+		// constructor if the person need to evolve from teenager to kid
+		super(person.getPos(), person.getFirstName(), person.getLastName(), person.getGender(), person.getAge(),
+				person.getMoney(), person.getinventoryHouse(), person.getMother(), person.getFather(),
+				person.getPsychologicFactor());
 	}
 
 	public Adult(Point pos, String firstName, String lastName, String gender, int age, int money,

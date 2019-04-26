@@ -5,12 +5,12 @@ import Tools.Point;
 
 public class Teenager extends Person {
 
-	public Teenager(Person player) {
+	public Teenager(Person person) {
 
-		// constructor if the player need to evolve from kid to teenager
-		super(player.getPos(), player.getfirstName(), player.getlastName(), player.getGender(), player.getAge(),
-				player.getMoney(), player.getinventoryHouse(), player.getMother(), player.getFather(),
-				player.getPsychologicFactor());
+		// constructor if the person need to evolve from kid to teenager
+		super(person.getPos(), person.getFirstName(), person.getLastName(), person.getGender(), person.getAge(),
+				person.getMoney(), person.getinventoryHouse(), person.getMother(), person.getFather(),
+				person.getPsychologicFactor());
 	}
 
 	public Teenager(Point pos, String firstName, String lastName, String gender, int age, int money,
