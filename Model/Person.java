@@ -18,7 +18,7 @@ public abstract class Person extends GameObject implements Directable {
 	// general information
 	protected String firstName;
 	protected String lastName;
-	protected Date birthDate;
+	protected int age;
 	protected String gender;
 	protected int money;
 	protected static int energy;
@@ -27,38 +27,58 @@ public abstract class Person extends GameObject implements Directable {
 	protected float hunger;
 	protected static int mood;
 	protected static int health;
+	protected static int bladder;
 
-	protected Adult mother;
-	protected Adult father;
+	// automatic answer parameters
+	protected static int generalKnowledge; // caracterise the knwoledge of the player -> increase by going to school or
+									// thing like that
+	protected static int otherVision; // caracterise the vision of other, if often go out, is in good health,... ->
+								// higher
+
+	protected static ArrayList<Double> psychologicFactor;
+	// list of 4 int from 0 to 25 to caracterise the importance of mood, health
+	// generalKnwoledge and ohtervision (in that order) for the automatic answer
+	// will be randomly generated for PNJ
+
+	protected static double relationFactor;
 
 	// relation
 	protected Map<Person, Integer> friendList = new HashMap<>();
+	protected Adult mother;
+	protected Adult father;
 
 	// object
 	protected ArrayList<GameObject> inventoryHouse = new ArrayList<GameObject>();
 	// list that contains all the object, even PNJ got one with their object
 	// (cloths,...)
 
-	public Person(Point pos, String firstName, String lastName, String gender, Date birthDate, int money,
-			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father) {
+	public Person(Point pos, String firstName, String lastName, String gender, int age, int money,
+			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
 
 		super(pos, SIZE, Color.BLUE);
 		energy = 100;
 		mood = 100;
 		hunger = 100;
 		health = 100;
+		bladder = 100;
 
-		// specific spec for character (player or not) implemented here
+		// maximum is 100
+		generalKnowledge = 50;
+		otherVision = 50;
 		this.firstName = firstName;
 		this.gender = gender;
 		this.lastName = lastName;
-		this.birthDate = birthDate; // if PNJ birthDate is automaticately generated in Main class
+		this.age = age; // = 10 if player character
 		this.money = money; // player can decide to start game with some money
 		this.inventoryHouse = inventoryHouse; // also depends of the players start choice
+
+		this.psychologicFactor = psychologicFactor;
+
 		friendList.put(father, 20);
 		friendList.put(mother, 20); // considered as the higher level of relation but CAN't propose to marry, etc
 
 		this.mother = mother;
+		this.father = father;
 	}
 
 	public void move(Point p) {
@@ -107,26 +127,63 @@ public abstract class Person extends GameObject implements Directable {
 		// function that wil modify the relation ship
 		// take the old value and add the new amount of point
 		// if new friend, ony all "point"
-		friendList.put(friend, point + friendList.get(friend));
+		// automaticAnswer is a multiplicatory factor, is ~2 if the character are really
+		// complementary
+		// or is <0.5 if the character are realy not the same
+		friendList.put(friend, (int) (point * automaticAnswer(friend) + friendList.get(friend)));
+	}
+
+	protected static double automaticAnswer(Person people) {
+		// function that return a number beetween 0 and 1
+		// if 1 the 2 characters are realy complementary
+		// if 0 they haven't the same will
+		//take the caracterisic of the player that sent the request mutliply by the factor from the recever
+		double relationFactor = mood * people.getPsychologicFactor().get(0) + health *people.getPsychologicFactor().get(1)
+				+ generalKnowledge *people.getPsychologicFactor().get(2) + otherVision * people.getPsychologicFactor().get(3);
+		if (relationFactor > 0.7) {
+			// will multipy by 2 the gain of mood and point relation because realy
+			// complementary
+			relationFactor /= 5000;
+		} else {
+			relationFactor /= 10000;
+		}
+		
+		//TODO indicate in function of the value if the people like a lot, a little or realy not 
+		return relationFactor;
 	}
 
 	protected void eat(EatableObject nourriture) {
-		hunger += modifyHunger(nourriture);
+		float hungerGain = nourriture.getNutritionalValue();
+		hunger += (int) (hungerGain);
+		if (hunger > 100) {
+			// too much point
+			hunger = 100;
+		}
 	}
 
 	protected void discuss(Person people) {
 		modifyRelationship(people, 1);
-		energy -= 1;
+		modifyMood(automaticAnswer(people)*15);
+		energy -= 10;
+		// TODO answer of the PNJ, in fonction of the spec answer is different and ->
+		// change in modifyRelatio
+		// relation point also
 	}
 
 	protected void playWith(Person people) {
+		// TODO answer of the PNJ, in fonction of the spec answer is different and
+		// relation point also
 		modifyRelationship(people, 2);
-		energy -= 2;
+		modifyMood(automaticAnswer(people)*20);
+		energy -= 20;
 	}
 
 	protected void invite(Person people) {
+		// TODO answer of the PNJ, in fonction of the spec answer is different and
+		// relation point also
 		modifyRelationship(people, 3);
-		energy -= 3;
+		modifyMood(automaticAnswer(people)*30);
+		energy -= 25;
 		// TODO bringing the people at house!
 
 	}
@@ -141,45 +198,39 @@ public abstract class Person extends GameObject implements Directable {
 		case (0): {
 			// can only discuss
 			// TODO interface graphique: les diff�rentes possibilit�s!
-			if (energy >= 1) {
+			if (energy >= 10) {
 				discuss(people);
 
-				// TODO augmenter le mood
 			}
 
 			break;
 		}
 		case (1): {
-			if (energy >= 1) {
+			if (energy >= 10) {
 				discuss(people);
-				// TODO augmenter le mood
-				energy -= 1; // on peut faire ainsi ou il faut faire par un setter?
+
 			}
 
-			if (energy >= 2) {
+			if (energy >= 20) {
 				playWith(people);
-				// TODO augmenter le mood
-				energy -= 2;
+
 			}
 
 			break;
 		}
 		case (2): {
-			if (energy >= 1) {
+			if (energy >= 10) {
 				discuss(people);
-				// TODO augmenter le mood
-				energy -= 1;// on peut faire ainsi ou il faut faire par un setter?
+
 			}
 
-			if (energy >= 2) {
+			if (energy >= 20) {
 				playWith(people);
-				// TODO augmenter le mood
-				energy -= 2;
+
 			}
-			if (energy >= 4) {
+			if (energy >= 25) {
 				invite(people);
-				// TODO augmenter le mood
-				energy -= 3;
+
 			}
 
 			break;
@@ -191,23 +242,12 @@ public abstract class Person extends GameObject implements Directable {
 
 	}
 
-	// SETTER
-
-
-
-	protected float modifyHunger(EatableObject nourriture) {
-		// TODO eatable will be a interface -> need to be modify
-		// Methode that will return the gain of nourriture
-		float hungerGain = nourriture.getNutritionalValue();
-		return hungerGain;
-	}
-
 	// TODO function that make evolvle the hunger of the player during the game
 
 	protected static void modifyEnergy() {
 		// function that take in turns the health, mood and a random factor in the
 		// calcul of energy
-		//will be run when player go to bed
+		// will be run when player go to bed
 
 		double moodHealthFactor = Math.pow(Math.E, health * Math.log(2) * mood / 10000) - 1; // always beetween 0 and 1
 		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
@@ -223,7 +263,7 @@ public abstract class Person extends GameObject implements Directable {
 	}
 
 	protected static void modifyMood(double augmentation) {
-		
+
 		// fonction that increase the mood after the activity like going out,...
 		double maxMood = 100 - mood; // number of max point
 		if (maxMood < augmentation) {
@@ -234,8 +274,27 @@ public abstract class Person extends GameObject implements Directable {
 		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
 		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
 		augmentation = randomFactor * augmentation * moodFactor;
+		// TODO check if modifyMood is <0
+		// automaticAnswer is a multiplicatory factor, is ~2 if the character are really
+		// complementary
+		// or is <0.5 if the character are realy not the same
+		mood += (int) ( augmentation);
+	}
 
-		mood += (int) (augmentation);
+	public static void parametrizePsychoFactor() {
+		// need to be sure that the sums of the 4 factors (beetween 0 and 25 each) is =
+		// 100
+		double sum = 0;
+		ArrayList<Double> newPsychoFactor = new ArrayList<Double>();
+
+		for (double factor : psychologicFactor) {
+			sum += factor;
+		}
+		for (double factor : psychologicFactor) {
+			newPsychoFactor.add(factor * 100 / sum);
+		}
+		psychologicFactor = newPsychoFactor;
+
 	}
 
 	public String getfirstName() {
@@ -253,9 +312,9 @@ public abstract class Person extends GameObject implements Directable {
 		return gender;
 	}
 
-	public Date getBirthDate() {
+	public int getAge() {
 
-		return birthDate;
+		return age;
 	}
 
 	public ArrayList<GameObject> getinventoryHouse() {
@@ -295,4 +354,7 @@ public abstract class Person extends GameObject implements Directable {
 		return health / 100;
 	}
 
+	public ArrayList<Double> getPsychologicFactor() {
+		return psychologicFactor;
+	}
 }

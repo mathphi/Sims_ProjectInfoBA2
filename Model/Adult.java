@@ -9,14 +9,14 @@ public class Adult extends Person {
 
 	public Adult(Person player) {
 		// constructor if the player need to evolve from teenager to kid
-		super(player.getPos(), player.getfirstName(), player.getlastName(), player.getGender(), player.getBirthDate(),
-				player.getMoney(), player.getinventoryHouse(), player.getMother(), player.getFather());
+		super(player.getPos(), player.getfirstName(), player.getlastName(), player.getGender(), player.getAge(),
+				player.getMoney(), player.getinventoryHouse(), player.getMother(), player.getFather(), player.getPsychologicFactor());
 	}
 
-	public Adult(Point pos, String firstName, String lastName, String gender, Date birthDate, int money,
-			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father) {
+	public Adult(Point pos, String firstName, String lastName, String gender, int age, int money,
+			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father,ArrayList<Double> psychologicFactor  ) {
 		// constructor if it's a new character
-		super(pos, firstName, lastName, gender, birthDate, money, inventoryHouse, mother, father);
+		super(pos, firstName, lastName, gender, age, money, inventoryHouse, mother, father, psychologicFactor);
 
 	}
 
@@ -24,6 +24,28 @@ public class Adult extends Person {
 		// bien jou� morray
 		// TODO big todo to do including to do what's suppose to be done because it
 		// should already have be done as it was to be done
+	}
+
+	protected void goToDrink(Person people) {
+		// move to bar pay
+		modifyRelationship(people, 3);
+		modifyMood(automaticAnswer(people)*25);
+
+		energy -= 30;
+
+	}
+
+	protected void embrass(Person people) {
+		if (automaticAnswer(people) >= 1.6) {
+			modifyRelationship(people, 5);
+			modifyMood(automaticAnswer(people) * 40);
+		} else {
+			// the other don't want
+			people.modifyRelationship(people, -10); // value to be adapted
+			modifyMood(automaticAnswer(people) * -40);
+		}
+		energy -= 15;
+
 	}
 
 	public void characterInteraction(Person people) {
@@ -34,67 +56,60 @@ public class Adult extends Person {
 		case (0): {
 			// can only discuss
 			// TODO interface graphique: les diff�rentes possibilit�s!
-			if (energy >= 1) {
-				// discuss(people);
-				// TODO augmenter le mood
+			if (energy >= 10) {
+				discuss(people);
+
 			}
 		}
 		case (1): {
-			if (energy >= 1) {
-				// discuss(people);
-				// TODO augmenter le mood
-				energy -= 1; // on peut faire ainsi ou il faut faire par un setter?
+			if (energy >= 10) {
+				discuss(people);
+
 			}
 
-			if (energy >= 2) {
-				// playWith(people);
-				// TODO augmenter le mood
-				energy -= 2;
+			if (energy >= 20) {
+				playWith(people);
+
 			}
 
 			break;
 		}
 		case (2): {
-			if (energy >= 1) {
-				// discuss(people);
-				// TODO augmenter le mood
-				energy -= 1;// on peut faire ainsi ou il faut faire par un setter?
+			if (energy >= 10) {
+				discuss(people);
+
 			}
 
-			if (energy >= 2) {
-				// playWith(people);
-				// TODO augmenter le mood
-				energy -= 2;
+			if (energy >= 20) {
+				playWith(people);
+
 			}
-			if (energy >= 4) {
-				// invite(people);
-				// goToDrink(people);
-				// TODO augmenter le mood
-				energy -= 3;
+			if (energy >= 40) {
+				invite(people);
+				goToDrink(people);
+
 			}
 
 			break;
 
 		}
 		case (3): {
-			if (energy >= 1) {
-				// discuss(people);
-				// TODO augmenter le mood
-				// embrass(people);
+			if (energy >= 10) {
+				discuss(people);
+
+				embrass(people);
 				marry(people);
-				energy -= 1;// on peut faire ainsi ou il faut faire par un setter?
+
 			}
 
-			if (energy >= 2) {
-				// playWith(people);
-				// TODO augmenter le mood
-				energy -= 2;
+			if (energy >= 20) {
+				playWith(people);
+
 			}
-			if (energy >= 4) {
-				// invite(people);
-				// goToDrink(people);
-				// TODO augmenter le mood
-				energy -= 3;
+			if (energy >= 40) {
+				invite(people);
+				goToDrink(people);
+
 			}
 
 			break;
