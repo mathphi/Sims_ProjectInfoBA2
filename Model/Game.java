@@ -16,7 +16,7 @@ public class Game implements DeletableObserver {
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
 	private Person active_player = null;
-
+	public int year;
 	private Window window;
 	private Size mapSize;
 
@@ -165,6 +165,7 @@ public class Game implements DeletableObserver {
 
 	public void startGame() {
 		// TODO
+		year = 0;
 
 	}
 

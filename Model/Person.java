@@ -6,7 +6,7 @@ import Tools.Size;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,26 +21,26 @@ public abstract class Person extends GameObject implements Directable {
 	protected int age;
 	protected String gender;
 	protected int money;
-	protected static int energy;
+	protected int energy;
 
 	// visible properties, if = 100 no need
 	protected float hunger;
-	protected static int mood;
-	protected static int health;
-	protected static int bladder;
+	protected int mood;
+	protected int health;
+	protected int bladder;
 
 	// automatic answer parameters
-	protected static int generalKnowledge; // caracterise the knwoledge of the player -> increase by going to school or
+	protected int generalKnowledge; // caracterise the knwoledge of the player -> increase by going to school or
 									// thing like that
-	protected static int otherVision; // caracterise the vision of other, if often go out, is in good health,... ->
+	protected int otherVision; // caracterise the vision of other, if often go out, is in good health,... ->
 								// higher
 
-	protected static ArrayList<Double> psychologicFactor;
+	protected ArrayList<Double> psychologicFactor;
 	// list of 4 int from 0 to 25 to caracterise the importance of mood, health
 	// generalKnwoledge and ohtervision (in that order) for the automatic answer
 	// will be randomly generated for PNJ
 
-	protected static double relationFactor;
+	protected double relationFactor;
 
 	// relation
 	protected Map<Person, Integer> friendList = new HashMap<>();
@@ -130,25 +130,38 @@ public abstract class Person extends GameObject implements Directable {
 		// automaticAnswer is a multiplicatory factor, is ~2 if the character are really
 		// complementary
 		// or is <0.5 if the character are realy not the same
-		friendList.put(friend, (int) (point * automaticAnswer(friend) + friendList.get(friend)));
+		if (point < 0 & friendList.get(friend) < -point) {
+			// there is not enough point
+			// they became unknown people again
+			friendList.remove(friend);
+		} else {
+			friendList.put(friend, (int) (point * automaticAnswer(friend) + friendList.get(friend)));
+		}
 	}
 
-	protected static double automaticAnswer(Person people) {
+	protected double automaticAnswer(Person people) {
 		// function that return a number beetween 0 and 1
 		// if 1 the 2 characters are realy complementary
 		// if 0 they haven't the same will
-		//take the caracterisic of the player that sent the request mutliply by the factor from the recever
-		double relationFactor = mood * people.getPsychologicFactor().get(0) + health *people.getPsychologicFactor().get(1)
-				+ generalKnowledge *people.getPsychologicFactor().get(2) + otherVision * people.getPsychologicFactor().get(3);
+		// take the caracterisic of the player that sent the request mutliply by the
+		// factor from the recever
+		double relationFactor = mood * people.getPsychologicFactor().get(0)
+				+ health * people.getPsychologicFactor().get(1)
+				+ generalKnowledge * people.getPsychologicFactor().get(2)
+				+ otherVision * people.getPsychologicFactor().get(3);
+		relationFactor /= 100000;
 		if (relationFactor > 0.7) {
 			// will multipy by 2 the gain of mood and point relation because realy
 			// complementary
-			relationFactor /= 5000;
-		} else {
-			relationFactor /= 10000;
+			relationFactor *= 2;
+		} else if (relationFactor < 0.3) {
+			// the person are realy not the same -> mood and point of relation need to be
+			// reduce
+			relationFactor *= -1;
 		}
-		
-		//TODO indicate in function of the value if the people like a lot, a little or realy not 
+
+		// TODO indicate in function of the value if the people like a lot, a little or
+		// realy not
 		return relationFactor;
 	}
 
@@ -163,26 +176,20 @@ public abstract class Person extends GameObject implements Directable {
 
 	protected void discuss(Person people) {
 		modifyRelationship(people, 1);
-		modifyMood(automaticAnswer(people)*15);
+		modifyMood(automaticAnswer(people) * 15);
 		energy -= 10;
-		// TODO answer of the PNJ, in fonction of the spec answer is different and ->
-		// change in modifyRelatio
-		// relation point also
 	}
 
 	protected void playWith(Person people) {
-		// TODO answer of the PNJ, in fonction of the spec answer is different and
-		// relation point also
 		modifyRelationship(people, 2);
-		modifyMood(automaticAnswer(people)*20);
+		modifyMood(automaticAnswer(people) * 20);
 		energy -= 20;
 	}
 
 	protected void invite(Person people) {
-		// TODO answer of the PNJ, in fonction of the spec answer is different and
-		// relation point also
+
 		modifyRelationship(people, 3);
-		modifyMood(automaticAnswer(people)*30);
+		modifyMood(automaticAnswer(people) * 30);
 		energy -= 25;
 		// TODO bringing the people at house!
 
@@ -243,8 +250,19 @@ public abstract class Person extends GameObject implements Directable {
 	}
 
 	// TODO function that make evolvle the hunger of the player during the game
+	protected void goToBed() {
+		// TODO make the player go to bed
+		age += 1;
 
-	protected static void modifyEnergy() {
+	}
+
+	protected void modifyMoney(int amount) {
+		// if need to pay -> amount <0
+		// if it's a gain -> amount >0
+		money += amount;
+	}
+
+	protected void modifyEnergy() {
 		// function that take in turns the health, mood and a random factor in the
 		// calcul of energy
 		// will be run when player go to bed
@@ -262,26 +280,49 @@ public abstract class Person extends GameObject implements Directable {
 		energy = (int) (energyAdd);
 	}
 
-	protected static void modifyMood(double augmentation) {
+	protected void modifyMood(double value) {
 
 		// fonction that increase the mood after the activity like going out,...
 		double maxMood = 100 - mood; // number of max point
-		if (maxMood < augmentation) {
-			// check that the gain of mood is < max
-			augmentation = maxMood;
+		if (value > 0) {
+			if (maxMood < value) {
+				// check that the gain of mood is < max
+				value = maxMood;
+			}
+			double moodFactor = Math.pow(Math.E, -mood / 100);
+			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
+			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
+			value = randomFactor * value * moodFactor;
+		} else if (-value > mood) {
+			// check the reduction isn't bigger of the amount of mood available
+			value = -mood;
 		}
-		double moodFactor = Math.pow(Math.E, -mood / 100);
-		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
-		augmentation = randomFactor * augmentation * moodFactor;
-		// TODO check if modifyMood is <0
-		// automaticAnswer is a multiplicatory factor, is ~2 if the character are really
-		// complementary
-		// or is <0.5 if the character are realy not the same
-		mood += (int) ( augmentation);
+
+		mood += value;
 	}
 
-	public static void parametrizePsychoFactor() {
+	protected void modifyOtherVision(double value) {
+
+		// function that modify the vision of the character
+		double maxVision = 100 - otherVision; // number of max point
+		if (value > 0) {
+			if (maxVision < value) {
+				// check that the gain of mood is < max
+				value = maxVision;
+			}
+
+			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
+			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80);
+			value = randomFactor * value;
+		} else if (-value > otherVision) {
+			// check the reduction isn't bigger of the amount of mood available
+			value = -otherVision;
+		}
+		otherVision += value;
+
+	}
+
+	public void parametrizePsychoFactor() {
 		// need to be sure that the sums of the 4 factors (beetween 0 and 25 each) is =
 		// 100
 		double sum = 0;
@@ -335,10 +376,6 @@ public abstract class Person extends GameObject implements Directable {
 	public int getMoney() {
 
 		return money;
-	}
-
-	public void modifyCaracteristic() {
-		// TODO will be overwrite after, change the mood, hunger,...
 	}
 
 	public int getEnergy() {

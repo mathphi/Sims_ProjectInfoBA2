@@ -1,9 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
-import java.util.Date;
 
-import Tools.Random;
 import Tools.Point;
 
 public class Kid extends Person {
@@ -19,6 +17,7 @@ public class Kid extends Person {
 	}
 
 	// ACTION
+	
 
 	// TODO function that make evolve properties during the game
 }

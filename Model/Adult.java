@@ -3,21 +3,128 @@ package Model;
 import Tools.Point;
 
 import java.util.ArrayList;
-import java.util.Date;
+
 
 public class Adult extends Person {
 
 	public Adult(Person player) {
 		// constructor if the player need to evolve from teenager to kid
 		super(player.getPos(), player.getfirstName(), player.getlastName(), player.getGender(), player.getAge(),
-				player.getMoney(), player.getinventoryHouse(), player.getMother(), player.getFather(), player.getPsychologicFactor());
+				player.getMoney(), player.getinventoryHouse(), player.getMother(), player.getFather(),
+				player.getPsychologicFactor());
 	}
 
 	public Adult(Point pos, String firstName, String lastName, String gender, int age, int money,
-			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father,ArrayList<Double> psychologicFactor  ) {
+			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
 		// constructor if it's a new character
 		super(pos, firstName, lastName, gender, age, money, inventoryHouse, mother, father, psychologicFactor);
 
+	}
+
+	public void work() {
+		// work depends of the level of study
+		// TODO need to make the choice!
+		int levelWork = 3;
+
+		if (generalKnowledge > 80) {
+			levelWork = 3;
+		} else if (generalKnowledge > 50) {
+			levelWork = 2;
+		} else if (generalKnowledge > 20) {
+			levelWork = 1;
+
+		}
+		switch (levelWork) {
+		case (0): {
+			// only 1 job availlable
+			energy -= 20;
+			modifyMoney(10);
+			modifyMood(-15);
+			modifyOtherVision(5);
+
+		}
+		case (1): {
+			int job = 1; // TODO ask the payer wich job he wants (0,1)
+			switch (job) {
+			case (0): {
+				// basic job
+				energy -= 20;
+				modifyMoney(10);
+				modifyMood(-15);
+				modifyOtherVision(5);
+			}
+			case (1): {
+				energy -= 25;
+				modifyMoney(20);
+				modifyMood(-15);
+				modifyOtherVision(8);
+
+			}
+			}
+		}
+		case (2): {
+			int job = 1; // TODO ask the payer wich job he wants (0,1,2)
+			switch (job) {
+			case (0): {
+				// basic job
+				energy -= 20;
+				modifyMoney(10);
+				modifyMood(-15);
+				modifyOtherVision(5);
+			}
+			case (1): {
+				energy -= 25;
+				modifyMoney(20);
+				modifyMood(-15);
+				modifyOtherVision(8);
+
+			}
+			case (2): {
+				energy -= 30;
+				modifyMoney(30);
+				modifyMood(-12);
+				modifyOtherVision(10);
+
+			}
+			}
+		}
+
+		case (3): {
+			int job = 1; // TODO ask the payer wich job he wants (0,1,2)
+			switch (job) {
+			case (0): {
+				// basic job
+				energy -= 20;
+				modifyMoney(10);
+				modifyMood(-15);
+				modifyOtherVision(5);
+			}
+			case (1): {
+				energy -= 25;
+				modifyMoney(20);
+				modifyMood(-15);
+				modifyOtherVision(8);
+
+			}
+			case (2): {
+				energy -= 30;
+				modifyMoney(30);
+				modifyMood(-12);
+				modifyOtherVision(10);
+
+			}
+
+			case (3): {
+				energy -= 35;
+				modifyMoney(50);
+				modifyMood(-10);
+				modifyOtherVision(15);
+
+			}
+			}
+
+		}
+		}
 	}
 
 	private void marry(Person partner) {
@@ -29,7 +136,7 @@ public class Adult extends Person {
 	protected void goToDrink(Person people) {
 		// move to bar pay
 		modifyRelationship(people, 3);
-		modifyMood(automaticAnswer(people)*25);
+		modifyMood(automaticAnswer(people) * 25);
 
 		energy -= 30;
 

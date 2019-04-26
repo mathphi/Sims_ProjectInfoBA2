@@ -1,9 +1,6 @@
 package Model;
 
 import java.util.ArrayList;
-import java.util.Date;
-
-import Tools.Random;
 import Tools.Point;
 
 public class Teenager extends Person {
@@ -48,6 +45,15 @@ public class Teenager extends Person {
 			modifyMood(automaticAnswer(people) * -40);
 		}
 		energy -= 15;
+
+	}
+
+	public void work() {
+		// as a teenager only "little job" available
+		energy -= 20;
+		modifyMoney(10);
+		modifyMood(-8);
+		modifyOtherVision(8);
 
 	}
 
