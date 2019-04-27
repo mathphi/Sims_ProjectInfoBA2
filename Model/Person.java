@@ -11,15 +11,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Person extends GameObject implements Directable {
+	public enum Gender {
+		Male,
+		Female
+	}
+	
 	private static Size SIZE = new Size(1, 1);
 
 	private int direction = EAST;
+	
+	protected boolean isActivePerson;
 
 	// general information
 	protected String firstName;
 	protected String lastName;
 	protected int age;
-	protected String gender;
+	protected Gender gender;
 	
 	protected int money;
 
@@ -48,13 +55,8 @@ public abstract class Person extends GameObject implements Directable {
 	protected Adult mother;
 	protected Adult father;
 
-	// object
-	protected ArrayList<GameObject> inventoryHouse = new ArrayList<GameObject>();
-	// list that contains all the object, even PNJ got one with their object
-	// (cloths,...)
-
-	public Person(Point pos, String firstName, String lastName, String gender, int age, int money,
-			ArrayList<GameObject> inventoryHouse, Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
+	public Person(Point pos, String firstName, String lastName, Gender gender, int age, int money,
+			Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
 
 		super(pos, SIZE, Color.BLUE);
 		
@@ -72,7 +74,6 @@ public abstract class Person extends GameObject implements Directable {
 		this.lastName = lastName;
 		this.age = age; // = 10 if player character
 		this.money = money; // player can decide to start game with some money
-		this.inventoryHouse = inventoryHouse; // also depends of the players start choice
 
 		this.psychologicFactor = psychologicFactor;
 
@@ -81,6 +82,18 @@ public abstract class Person extends GameObject implements Directable {
 
 		this.mother = mother;
 		this.father = father;
+	}
+	
+	public void clickedEvent() {
+		//TODO
+	}
+
+	public void setActivePerson(boolean is_active) {
+		isActivePerson = is_active;
+	}
+	
+	public boolean isActivePerson() {
+		return isActivePerson;
 	}
 
 	public void move(Point p) {
@@ -108,7 +121,7 @@ public abstract class Person extends GameObject implements Directable {
 
 	public void updateNeeds() {
 		decreaseBladder((int)Random.range(10, 16)); // Random decrease
-		modifyHunger((int)Random.range(-12, -20)); // Random decrease
+		modifyHunger((int)Random.range(-5, -10)); // Random decrease
 		modifyEnergy(hygiene >= 20 ? -4 : -12); // Decrease more energy if hygiene is low
 	}
 	
@@ -410,16 +423,12 @@ public abstract class Person extends GameObject implements Directable {
 		return lastName;
 	}
 
-	public String getGender() {
+	public Gender getGender() {
 		return gender;
 	}
 
 	public int getAge() {
 		return age;
-	}
-
-	public ArrayList<GameObject> getinventoryHouse() {
-		return inventoryHouse;
 	}
 
 	public Adult getMother() {

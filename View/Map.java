@@ -2,6 +2,7 @@ package View;
 
 import Model.Directable;
 import Model.GameObject;
+import Model.Person;
 import Tools.Point;
 import Tools.Size;
 
@@ -30,7 +31,15 @@ public class Map extends JPanel {
 			public void mousePressed(MouseEvent e) {
 				int x = e.getX()/BLOC_SIZE;
 				int y = e.getY()/BLOC_SIZE;
-				mouseController.mapEvent(x, y);
+				
+				// Left clicked
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					mouseController.mapLeftClick(x, y);
+				}
+				// Right click
+				else if (e.getButton() == MouseEvent.BUTTON3) {
+					mouseController.mapRightClick(x, y);
+				}
 			}
 			public void mouseClicked(MouseEvent arg0) {}
 			public void mouseEntered(MouseEvent arg0) {}
@@ -58,7 +67,14 @@ public class Map extends JPanel {
             Color color = object.getColor();
             g.setColor(color);
             g.fillRect(pos.getX() * BLOC_SIZE, pos.getY() * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
-            g.setColor(Color.BLACK);
+            
+            //TODO: the yellow border is temporary
+            if (object instanceof Person && ((Person)(object)).isActivePerson()) {
+            	g.setColor(Color.YELLOW);
+            }
+            else {
+            	g.setColor(Color.BLACK);
+            }
             g.drawRect(pos.getX() * BLOC_SIZE, pos.getY() * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
             
             // Decouper en fontions

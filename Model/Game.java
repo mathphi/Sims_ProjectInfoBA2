@@ -45,11 +45,15 @@ public class Game implements DeletableObserver {
 		psychologicFactor.add(23.0); // generalKnwoledge
 		psychologicFactor.add(20.0); // otherVision
 
-		Person p = new Kid(new Point(10, 10), "Test", "Person", "m", 10, 0, objects, null, null, psychologicFactor); // modifi to launch
-																									// the game
-		objects.add(p);
-		population.add(p);
-		setActivePerson(p);
+		Person p1 = new Kid(new Point(10, 10), "Test", "Person", Person.Gender.Male, 10, 0, null, null, psychologicFactor);
+		Person p2 = new Kid(new Point(17, 13), "Second", "Player", Person.Gender.Female, 10, 0, null, null, psychologicFactor);
+		
+		objects.add(p1);
+		objects.add(p2);
+		population.add(p1);
+		population.add(p2);
+		setActivePerson(p1);
+
 
 		// Map building
 		// A sample of room
@@ -89,17 +93,58 @@ public class Game implements DeletableObserver {
 		window.setGameObjects(this.getGameObjects());
 		notifyView();
 	}
+	
+	public void mouseLeftClickEvent(Point pos) {
+		GameObject object = getObjectAtPosition(pos);
+		
+		if (object != null && object.isObstacle()) {
+			object.clickedEvent();
+		}
+		else {
+			sendPlayer(pos);
+		}
+	}
+	
+	public void mouseRightClickEvent(Point pos) {
+		GameObject object = getObjectAtPosition(pos);
+		
+		if (object != null && object instanceof Person) {
+			Person selectedPerson = (Person)(object);
+			setActivePerson(selectedPerson);
+		}
+	}
+	
+	public GameObject getObjectAtPosition(Point pos) {
+		GameObject obj = null;
+		
+		for (GameObject o : objects) {
+			if (o.isAtPosition(pos)) {
+				obj = o;
+				break;
+			}
+		}
+		
+		return obj;
+	}
 
 	public Size getMapSize() {
 		return mapSize;
 	}
-
-	public void movePlayer(int x, int y) {
-		movePlayer(new Point(x, y));
+	
+	public void moveActivePlayer(int x, int y) {
+		movePlayer(activePerson, x, y);
 	}
 
-	public void movePlayer(Point p) {
-		Point nextPos = activePerson.getPos().add(p);
+	public void moveActivePlayer(Point pos) {
+		movePlayer(activePerson, pos);
+	}
+
+	public void movePlayer(Person pers, int x, int y) {
+		movePlayer(pers, new Point(x, y));
+	}
+	
+	public void movePlayer(Person pers, Point pos) {
+		Point nextPos = pers.getPos().add(pos);
 		boolean unreachable = false;
 
 		// Check if the nextPos is in the map
@@ -113,15 +158,15 @@ public class Game implements DeletableObserver {
 			}
 		}
 
-		activePerson.rotate(p);
+		pers.rotate(pos);
 
 		if (!unreachable) {
-			activePerson.move(p);
+			pers.move(pos);
 		}
 
 		notifyView();
 
-		// Scroll the map view to the player (scoll after notifyView for fluidity)
+		// Scroll the map view to the active person (scoll after notifyView for fluidity)
 		// The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
 		// the map's borders
 		map.scrollRectToVisible(new Rectangle(
@@ -201,6 +246,10 @@ public class Game implements DeletableObserver {
 	public void setActivePerson(Person p) {
 		activePerson = p;
 		status.setActivePerson(p);
+		
+		for (Person people : population) {
+			people.setActivePerson(people == p);
+		}
 	}
 
 	public void startGame() {

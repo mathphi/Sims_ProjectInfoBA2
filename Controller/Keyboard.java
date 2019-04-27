@@ -18,16 +18,16 @@ public class Keyboard implements KeyListener {
 
 		switch (key) {
 		case KeyEvent.VK_RIGHT:
-			game.movePlayer(1, 0);
+			game.moveActivePlayer(1, 0);
 			break;
 		case KeyEvent.VK_LEFT:
-			game.movePlayer(-1, 0);
+			game.moveActivePlayer(-1, 0);
 			break;
 		case KeyEvent.VK_DOWN:
-			game.movePlayer(0, 1);
+			game.moveActivePlayer(0, 1);
 			break;
 		case KeyEvent.VK_UP:
-			game.movePlayer(0, -1);
+			game.moveActivePlayer(0, -1);
 			break;
 		case KeyEvent.VK_SPACE:
 			game.action();

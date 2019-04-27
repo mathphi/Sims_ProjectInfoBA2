@@ -18,4 +18,8 @@ public class WallBlock extends GameObject {
 	public boolean isObstacle() {
 		return true;
 	}
+	
+	public void clickedEvent() {
+		// A wall does nothing when clicked
+	}
 }

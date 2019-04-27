@@ -26,16 +26,22 @@ public class Status extends JPanel {
     
 	public void paint(Graphics g) {
 		super.paintComponent(g);
-		// draw avatar
-        g.setColor(Color.BLUE);
-        g.fillRect(150, 25, AVATAR_SIZE, AVATAR_SIZE);
         
-
-        // Game time
+        // Draw game time
         g.setColor(Color.BLACK);
         g.drawString(gameTimeStr, 10, 20);
+        
+		// Draw avatar
+        g.setColor(Color.BLUE);
+        g.fillRect(10, 40, AVATAR_SIZE, AVATAR_SIZE);
+        
+		// Draw person infos
+        g.setColor(Color.BLACK);
+        g.drawString(p.getFirstName(), 120, 60);
+        g.drawString(p.getLastName(), 120, 80);
+        g.drawString((p.getGender() == Person.Gender.Male) ? "Homme" : "Femme", 120, 110);
 
-		// bars
+		// Draw bars
         paintLevelBar(g, 10, 200, BAR_LENGTH, BAR_HEIGHT, "Énergie", p.getEnergy());
         paintLevelBar(g, 10, 240, BAR_LENGTH, BAR_HEIGHT, "Humeur",  p.getMood());
         paintLevelBar(g, 10, 280, BAR_LENGTH, BAR_HEIGHT, "Faim", 	 p.getHunger());

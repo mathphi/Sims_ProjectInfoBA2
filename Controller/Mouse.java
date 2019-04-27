@@ -11,9 +11,15 @@ public class Mouse {
         this.game = game;
     }
 
-	public void mapEvent(int x, int y) {
+	public void mapLeftClick(int x, int y) {
 		synchronized(game) {
-			game.sendPlayer(new Point(x, y));
+			game.mouseLeftClickEvent(new Point(x, y));
+		}
+	}
+
+	public void mapRightClick(int x, int y) {
+		synchronized(game) {
+			game.mouseRightClickEvent(new Point(x, y));
 		}
 	}
 }

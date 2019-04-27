@@ -47,4 +47,6 @@ public abstract class GameObject {
 	}
 
 	public abstract boolean isObstacle();
+	
+	public abstract void clickedEvent();
 }
