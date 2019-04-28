@@ -11,19 +11,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Product.Nourriture;
+import Product.Product;
+import Product.Wearable;
+import Product.Jeux;
+import Product.Book;
 
 public abstract class Person extends GameObject implements Directable {
 	private static final long serialVersionUID = 8476495059211784395L;
 
 	public enum Gender {
-		Male,
-		Female
+		Male, Female
 	}
-	
+
 	private static Size SIZE = new Size(1, 1);
 
 	private int direction = EAST;
-	
+
 	protected boolean isActivePerson;
 
 	// general information
@@ -31,7 +34,7 @@ public abstract class Person extends GameObject implements Directable {
 	protected String lastName;
 	protected int age;
 	protected Gender gender;
-	
+
 	protected int money;
 
 	// visible properties, if = 100 no need
@@ -53,21 +56,21 @@ public abstract class Person extends GameObject implements Directable {
 	// will be randomly generated for PNJ
 
 	protected double relationFactor;
-
+	protected ArrayList<Product> inventory;
 	// relation
 	protected Map<Person, Integer> friendList = new HashMap<>();
 	protected Adult mother;
 	protected Adult father;
-	
+
 	// Game messages history
 	protected ArrayList<String> messagesHistory = new ArrayList<String>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
 
-	public Person(Point pos, String firstName, String lastName, Gender gender, int age, int money,
-			Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
+	public Person(Point pos, String firstName, String lastName, Gender gender, int age, int money, Adult mother,
+			Adult father, ArrayList<Double> psychologicFactor) {
 
 		super(pos, SIZE, Color.BLUE);
-		
+
 		energy = 100;
 		mood = 100;
 		hunger = 100;
@@ -90,16 +93,18 @@ public abstract class Person extends GameObject implements Directable {
 
 		this.mother = mother;
 		this.father = father;
+
+		inventory = new ArrayList<Product>();
 	}
-	
+
 	public void clickedEvent() {
-		//TODO
+		// TODO
 	}
 
 	public void setActivePerson(boolean is_active) {
 		isActivePerson = is_active;
 	}
-	
+
 	public boolean isActivePerson() {
 		return isActivePerson;
 	}
@@ -128,11 +133,11 @@ public abstract class Person extends GameObject implements Directable {
 	}
 
 	public void updateNeeds() {
-		decreaseBladder((int)Random.range(10, 16)); // Random decrease
-		modifyHunger((int)Random.range(-5, -10)); // Random decrease
+		decreaseBladder((int) Random.range(10, 16)); // Random decrease
+		modifyHunger((int) Random.range(-5, -10)); // Random decrease
 		modifyEnergy(hygiene >= 20 ? -4 : -12); // Decrease more energy if hygiene is low
 	}
-	
+
 	public int getRelationship(Person friend) {
 		// function who return the level of friendship by reading the hashmap with all
 		// the people known
@@ -285,56 +290,57 @@ public abstract class Person extends GameObject implements Directable {
 		age += 1;
 
 	}
-	
+
 	/**
-	 * Decrease the bladder of the factor and check if the bladder full
-	 * If the bladder is full, call emptyBladder()
+	 * Decrease the bladder of the factor and check if the bladder full If the
+	 * bladder is full, call emptyBladder()
+	 * 
 	 * @param factor
 	 */
 	public void decreaseBladder(int factor) {
 		bladder -= factor;
 		bladder = Math.max(0, Math.min(bladder, 100));
-		
+
 		if (bladder <= 0) {
 			emptyBladder();
 		}
 	}
-	
+
 	/**
-	 * In short, he piss...
-	 * We just have to check if the person piss in a toilet or just... on himself
-	 * The player will lose hygiene,... in the second case
+	 * In short, he piss... We just have to check if the person piss in a toilet or
+	 * just... on himself The player will lose hygiene,... in the second case
 	 */
 	public void emptyBladder() {
 		bladder = 100;
-		
-		addMessage("Too late..."); //TODO: I have no idea for this text...
+
+		addMessage("Too late..."); // TODO: I have no idea for this text... well personnaly ye
 		modifyHygiene(-50);
 		modifyMood(-25);
 	}
-	
+
 	/**
-	 * Modify the hygiene of a factor
-	 * If the hygiene is too low... (?) TODO
+	 * Modify the hygiene of a factor If the hygiene is too low... (?) TODO
+	 * 
 	 * @param factor
 	 */
 	public void modifyHygiene(int factor) {
 		hygiene += factor;
 		hygiene = Math.max(0, Math.min(hygiene, 100));
-		
-		//TODO: consequence if hygiene <= 0
+
+		// TODO: consequence if hygiene <= 0
 	}
-	
+
 	public void modifyHunger(int factor) {
 		hunger += factor;
 		hunger = Math.max(0, Math.min(hunger, 100));
-		
-		//TODO: conditional consequences
+
+		// TODO: conditional consequences
 		if (hunger <= 0) {
 			modifyHygiene(-10);
 			modifyMood(-10);
 		}
 	}
+
 	public void modifyEnergy(int factor) {
 		energy += factor;
 		energy = Math.max(0, Math.min(energy, 100));
@@ -345,7 +351,8 @@ public abstract class Person extends GameObject implements Directable {
 		// calcul of energy
 		// will be run when player go to bed
 
-		double moodHygieneFactor = Math.pow(Math.E, hygiene * Math.log(2) * mood / 10000.0) - 1; // always beetween 0 and 1
+		double moodHygieneFactor = Math.pow(Math.E, hygiene * Math.log(2) * mood / 10000.0) - 1; // always beetween 0
+																									// and 1
 		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
 		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
 
@@ -363,7 +370,7 @@ public abstract class Person extends GameObject implements Directable {
 		// if it's a gain -> amount >0
 		money += amount;
 	}
-	
+
 	public void modifyMood(double value) {
 
 		// fonction that increase the mood after the activity like going out,...
@@ -475,25 +482,76 @@ public abstract class Person extends GameObject implements Directable {
 	public ArrayList<Double> getPsychologicFactor() {
 		return psychologicFactor;
 	}
-	
+
 	public ArrayList<String> getMessagesHistory() {
 		return messagesHistory;
 	}
-	
+
 	public void addMessageEventListener(MessageEventListener mel) {
 		// msgListeners is null when Person is restored from the save file
 		if (msgListeners == null) {
 			msgListeners = new ArrayList<MessageEventListener>();
 		}
-		
+
 		msgListeners.add(mel);
 	}
-	
+
 	public void addMessage(String msg) {
 		messagesHistory.add(msg);
-		
+
 		for (MessageEventListener mel : msgListeners) {
 			mel.messageEvent(msg);
+		}
+	}
+
+	public void addInventory(Product newProduct) {
+		inventory.add(newProduct);
+		if (newProduct instanceof Wearable) {
+			// need to modify otherVision immediatly for the time the player wear it
+			modifyOtherVision(((Wearable) newProduct).getOtherVisionGain());
+
+		}
+	}
+
+	public void useInventory(Product product) {
+		if (product instanceof Wearable) {
+			// TODO ask the player if he wants to delette it
+			boolean choice = true;
+			if (choice) {
+				if (((Wearable) product).getOtherVisionGain() > otherVision) {
+					addMessage(
+							"Vous ne pouvez pas retirer ce vêtement, la vision que les autres personnes a de vous est déjà trop basse!");
+				}
+
+				else {
+					inventory.remove(product);
+				}
+			}
+
+		} else {
+			// TODO ask a confirmation the player want to use
+			boolean choice = true;
+			if (choice) {
+				String type = product.getType();
+				switch (type) {
+				case ("Jeux"): {
+					modifyMood(((Jeux) product).getMoodAdd());
+					modifyEnergy(-((Jeux) product).getEnergyNeed());
+				}
+				case ("Nourriture"): {
+					modifyHunger(((Nourriture) product).getNutritionalValue());
+					modifyEnergy(-((Nourriture) product).getEnergyNeed());
+					
+				}
+				case ("Livre"): {
+					// modifyGeneralKnowledge(((Book) product).getKnwoledgeAdd()); //TODO faire la
+					// function
+					modifyEnergy(-((Book) product).getEnergyNeed());
+
+				}
+				}
+				inventory.remove(product); 
+			}
 		}
 	}
 }
