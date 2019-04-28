@@ -68,7 +68,11 @@ public class Map extends JPanel {
             Point pos = object.getPos();
             Color color = object.getColor();
             g.setColor(color);
-            g.fillRect(pos.getX() * BLOC_SIZE, pos.getY() * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
+            g.fillRect(
+            		pos.getX() * BLOC_SIZE,
+            		pos.getY() * BLOC_SIZE,
+            		(BLOC_SIZE * object.getSize().getWidth()) - 2,
+            		(BLOC_SIZE * object.getSize().getHeight()) - 2);
             
             //TODO: the yellow border is temporary
             if (object instanceof Person && ((Person)(object)).isActivePerson()) {
@@ -77,7 +81,11 @@ public class Map extends JPanel {
             else {
             	g.setColor(Color.BLACK);
             }
-            g.drawRect(pos.getX() * BLOC_SIZE, pos.getY() * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
+            g.drawRect(
+            		pos.getX() * BLOC_SIZE,
+            		pos.getY() * BLOC_SIZE,
+            		(BLOC_SIZE * object.getSize().getWidth()) - 2,
+            		(BLOC_SIZE * object.getSize().getHeight()) - 2);
             
             // Decouper en fontions
             if(object instanceof Directable) {

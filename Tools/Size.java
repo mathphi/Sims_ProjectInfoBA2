@@ -20,4 +20,16 @@ public class Size implements Serializable {
 	public int getHeight() {
 		return height;
 	}
+	
+	public Size add(Size s) {
+		return new Size(width + s.getWidth(), height + s.getHeight());
+	}
+	
+	public Size add(int w, int h) {
+		return add(new Size(w, h));
+	}
+	
+	public String toString() {
+		return String.format("Size(%d, %d)", width, height);
+	}
 }

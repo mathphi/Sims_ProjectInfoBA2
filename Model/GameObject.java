@@ -7,13 +7,14 @@ import Tools.Rect;
 import java.awt.Color;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public abstract class GameObject implements Serializable {
 	private static final long serialVersionUID = 5238309657819264811L;
 	
 	private Rect rect;
 	private Color color;
-
+	private ArrayList<GameObject> allMapObjects = new ArrayList<GameObject>();
 
 	public GameObject(Point pos, Size size, Color color) {
 		this.rect = new Rect(pos, size);
@@ -49,6 +50,29 @@ public abstract class GameObject implements Serializable {
 		return rect.contains(p);
 	}
 
+	public ArrayList<GameObject> getObjectsAround() {
+		// Create a rectangle a bit larger than the object
+		Rect test_rect = new Rect(rect.getPos().add(-1,-1), rect.getSize().add(2,2));
+		
+		ArrayList<GameObject> lst = new ArrayList<GameObject>();
+		
+		// Test all objects and keep these that overlaps the test_rect
+		for (GameObject o : allMapObjects) {
+			if (o == this)
+				continue;
+			
+			if (o.getRect().overlaps(test_rect)) {
+				lst.add(o);
+			}
+		}
+
+		return lst;
+	}
+
+	public void setMapObjectsList(ArrayList<GameObject> objects) {
+		allMapObjects = objects;
+	}
+	
 	public abstract boolean isObstacle();
 	
 	public abstract void clickedEvent();

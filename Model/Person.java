@@ -296,7 +296,7 @@ public abstract class Person extends GameObject implements Directable {
 		bladder = Math.max(0, Math.min(bladder, 100));
 		
 		if (bladder <= 0) {
-			emptyBladder();
+			emptyBladder(false);
 		}
 	}
 	
@@ -305,12 +305,14 @@ public abstract class Person extends GameObject implements Directable {
 	 * We just have to check if the person piss in a toilet or just... on himself
 	 * The player will lose hygiene,... in the second case
 	 */
-	public void emptyBladder() {
+	public void emptyBladder(boolean isOnToilet) {
 		bladder = 100;
 		
-		addMessage("Too late..."); //TODO: I have no idea for this text...
-		modifyHygiene(-50);
-		modifyMood(-25);
+		if (!isOnToilet) {
+			addMessage("Too late..."); //TODO: I have no idea for this text...
+			modifyHygiene(-50);
+			modifyMood(-25);
+		}
 	}
 	
 	/**

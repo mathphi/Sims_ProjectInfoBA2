@@ -33,12 +33,18 @@ public class Keyboard implements KeyListener {
 			game.openGameMenu();
 			break;
 		case KeyEvent.VK_S:
-			if (event.isControlDown())
+			if (event.isControlDown()) {
+				game.pauseGame();
 				game.saveGame();
+				game.resumeGame();
+			}
 			break;
 		case KeyEvent.VK_R:
-			if (event.isControlDown())
+			if (event.isControlDown()) {
+				game.pauseGame();
 				game.restoreGame();
+				game.resumeGame();
+			}
 			break;
 		default:
 			break;
