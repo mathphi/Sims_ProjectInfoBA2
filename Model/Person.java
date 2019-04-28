@@ -58,6 +58,10 @@ public abstract class Person extends GameObject implements Directable {
 	protected Map<Person, Integer> friendList = new HashMap<>();
 	protected Adult mother;
 	protected Adult father;
+	
+	// Game messages history
+	protected ArrayList<String> messagesHistory = new ArrayList<String>();
+	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
 
 	public Person(Point pos, String firstName, String lastName, Gender gender, int age, int money,
 			Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
@@ -304,7 +308,7 @@ public abstract class Person extends GameObject implements Directable {
 	public void emptyBladder() {
 		bladder = 100;
 		
-		//TODO: consequences...
+		addMessage("Too late..."); //TODO: I have no idea for this text...
 		modifyHygiene(-50);
 		modifyMood(-25);
 	}
@@ -470,5 +474,26 @@ public abstract class Person extends GameObject implements Directable {
 
 	public ArrayList<Double> getPsychologicFactor() {
 		return psychologicFactor;
+	}
+	
+	public ArrayList<String> getMessagesHistory() {
+		return messagesHistory;
+	}
+	
+	public void addMessageEventListener(MessageEventListener mel) {
+		// msgListeners is null when Person is restored from the save file
+		if (msgListeners == null) {
+			msgListeners = new ArrayList<MessageEventListener>();
+		}
+		
+		msgListeners.add(mel);
+	}
+	
+	public void addMessage(String msg) {
+		messagesHistory.add(msg);
+		
+		for (MessageEventListener mel : msgListeners) {
+			mel.messageEvent(msg);
+		}
 	}
 }

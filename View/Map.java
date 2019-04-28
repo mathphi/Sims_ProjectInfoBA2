@@ -20,7 +20,7 @@ import Controller.Mouse;
 public class Map extends JPanel {
 	private static final long serialVersionUID = 1282569928891942835L;
 	
-	private ArrayList<GameObject> objects = null;
+	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
     private final Size MAP_SIZE = new Size(80, 80);
     private final int BLOC_SIZE = 20;
     private Mouse mouseController = null;

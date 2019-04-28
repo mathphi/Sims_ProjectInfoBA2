@@ -1,14 +1,11 @@
 package View;
 
-import Model.GameObject;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -16,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EmptyBorder;
 
 import Controller.Mouse;
 
@@ -24,10 +22,12 @@ public class Window extends JFrame {
 	
 	private Map map = new Map();
     private Status status = new Status();
+    private MessagesZone msgZone = new MessagesZone();
     
     JButton menuButton;
 
-    public Window(String title) {
+    @SuppressWarnings("serial")
+	public Window(String title) {
     	super(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1250, 800);
@@ -65,6 +65,7 @@ public class Window extends JFrame {
 		menuButton = new JButton("Menu");
 		
 		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		buttonPanel.setPreferredSize(new Dimension(300, 50));
 		buttonPanel.add(menuButton);
 		
@@ -72,7 +73,7 @@ public class Window extends JFrame {
 		borderPanel.setPreferredSize(new Dimension(300, 600));
 		borderPanel.setLayout(new BorderLayout());
 		borderPanel.add(status, BorderLayout.NORTH);
-		//TODO: add messages panel here
+		borderPanel.add(msgZone, BorderLayout.CENTER);
 		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 		// Layouts
@@ -103,8 +104,12 @@ public class Window extends JFrame {
 	public Map getMap() {
 		return map;
 	}
-	
+
 	public Status getStatus() {
 		return status;
 	}
+
+	public MessagesZone getMsgZone() {
+		return msgZone;
+	}	
 }

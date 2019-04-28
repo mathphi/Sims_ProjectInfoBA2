@@ -3,6 +3,7 @@ package Model;
 import View.Window;
 import View.Map;
 import View.MenuDialog;
+import View.MessagesZone;
 import View.Status;
 import Tools.ObjectRestorer;
 import Tools.ObjectSaver;
@@ -16,7 +17,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -30,6 +30,7 @@ public class Game implements DeletableObserver {
 	private Window window;
 	private Map map;
 	private Status status;
+	private MessagesZone msgZone;
 	private MenuDialog mainMenu;
 	
 	private Size mapSize;
@@ -42,6 +43,7 @@ public class Game implements DeletableObserver {
 		this.window = window;
 		map = window.getMap();
 		status = window.getStatus();
+		msgZone = window.getMsgZone();
 		mapSize = map.getMapSize();
 		
 		gameTime = new GameTime(this, 0);
@@ -68,13 +70,10 @@ public class Game implements DeletableObserver {
 		Person p1 = new Kid(new Point(10, 10), "Test", "Person", Person.Gender.Male, 10, 0, null, null, psychologicFactor);
 		Person p2 = new Kid(new Point(17, 13), "Second", "Player", Person.Gender.Female, 10, 0, null, null, psychologicFactor);
 		Person p3 = new Adult(new Point(10, 17), "Third", "People", Person.Gender.Female, 10, 0, null, null, psychologicFactor);
-		
-		objects.add(p1);
-		objects.add(p2);
-		objects.add(p3);
-		population.add(p1);
-		population.add(p2);
-		population.add(p3);
+
+		attachPersonToGame(p1);
+		attachPersonToGame(p2);
+		attachPersonToGame(p3);
 		setActivePerson(p1);
 
 
@@ -150,6 +149,10 @@ public class Game implements DeletableObserver {
 		return obj;
 	}
 
+	public Person getActivePerson() {
+		return activePerson;
+	}
+	
 	public Size getMapSize() {
 		return mapSize;
 	}
@@ -259,9 +262,13 @@ public class Game implements DeletableObserver {
 		notifyView();
 	}
 	
-	public void setActivePerson(Person p) {
+	public void setActivePerson(Person p) {		
 		activePerson = p;
 		status.setActivePerson(p);
+
+		if (p != null) {
+			msgZone.setMessagesList(p.getMessagesHistory());
+		}
 		
 		for (Person people : population) {
 			people.setActivePerson(people == p);
@@ -323,6 +330,7 @@ public class Game implements DeletableObserver {
 		saver.writeSaveToFile();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void restoreGame() {		
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -353,9 +361,46 @@ public class Game implements DeletableObserver {
 		
 		restorer.closeSaveFile();
 		
+		// Replace objects on the map
 		map.setObjects(objects);
+		
+		// Re-attach message listener (transient property)
+		for (Person p : population) {
+			attachMessageListener(p);
+		}
 		
 		mainMenu.closeMenu();
 		startGame();
+	}
+	
+	private void attachPersonToGame(Person p) {
+		if (p == null)
+			return;
+		
+		objects.add(p);
+		population.add(p);
+		attachMessageListener(p);
+	}
+	
+	private void attachMessageListener(Person p) {
+		Game that = this;
+		p.addMessageEventListener(new MessageEventListener() {
+			private static final long serialVersionUID = 2371305630711900167L;
+			public void messageEvent(String msg) {
+				if (p == that.getActivePerson()) {
+					msgZone.appendMessage(msg);
+				}
+			}
+		});
+	}
+	
+	public void sendMessageTo(Person p, String msg) {
+		p.addMessage(msg);
+	}
+	
+	public void sendMessageToAll(String msg) {
+		for (Person p : population) {
+			sendMessageTo(p, msg);
+		}
 	}
 }

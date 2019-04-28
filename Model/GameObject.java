@@ -46,8 +46,7 @@ public abstract class GameObject implements Serializable {
 	}
 	
 	public boolean isAtPosition(Point p) {
-		return this.rect.getPos().getX() == p.getX() &&
-				this.rect.getPos().getY() == p.getY();
+		return rect.contains(p);
 	}
 
 	public abstract boolean isObstacle();
