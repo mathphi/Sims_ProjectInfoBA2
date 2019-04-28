@@ -32,6 +32,19 @@ public class Rect implements Serializable {
 	public void setSize(Size sz) {
 		size = sz;
 	}
+
+	public Point topLeft() {
+		return point;
+	}
+	public Point topRight() {
+		return point.add(size.getWidth(), 0);
+	}
+	public Point bottomLeft() {
+		return point.add(0, size.getHeight());
+	}
+	public Point bottomRight() {
+		return point.add(size.getWidth(), size.getHeight());
+	}
 	
 	/**
 	 * Return true if the given point is in the Rect
@@ -41,8 +54,8 @@ public class Rect implements Serializable {
 	 * @return
 	 */
 	public boolean contains(Point p) {
-		return (p.getX() >= point.getX() && p.getX() < point.getX() + size.getWidth() &&
-				p.getY() >= point.getY() && p.getY() < point.getY() + size.getHeight());
+		return (p.getX() >= topLeft().getX() && p.getX() < bottomRight().getX() &&
+				p.getY() >= topLeft().getY() && p.getY() < bottomRight().getY());
 	}
 
 	/**
@@ -53,9 +66,28 @@ public class Rect implements Serializable {
 	 * @return
 	 */
 	public boolean contains(Rect r) {
-		return (r.getPos().getX() >= point.getX() &&
-				r.getPos().getX() + r.getSize().getWidth() < point.getX() + size.getWidth() &&
-				r.getPos().getY() >= point.getY() &&
-				r.getPos().getY() + r.getSize().getHeight() < point.getY() + size.getHeight());
+		return (r.topLeft().getX()     >= topLeft().getX()     &&
+				r.bottomRight().getX() <  bottomRight().getX() &&
+				r.topLeft().getY() 	   >= topLeft().getY()     &&
+				r.bottomRight().getY() <  bottomRight().getY());
+	}
+	
+	/**
+	 * Return true if the given Rect overlaps this Rect
+	 * 
+	 * @param r
+	 * The rect to check the overlapping
+	 * @return
+	 */
+	public boolean overlaps(Rect r) {
+		return !(topRight().getX()   <= r.bottomLeft().getX() ||
+				 bottomLeft().getX() >= r.topRight().getX() 	 ||
+				 topRight().getY()   >= r.bottomLeft().getY() ||
+				 bottomLeft().getY() <= r.topRight().getY());
+	}
+
+	public String toString() {
+		return String.format("Rect(%d, %d, %dx%d)",
+				point.getX(), point.getY(), size.getWidth(), size.getHeight());
 	}
 }

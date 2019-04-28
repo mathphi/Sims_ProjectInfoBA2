@@ -21,7 +21,15 @@ public class Point implements Serializable {
 		return y;
 	}
 
+	public Point add(int x, int y) {
+		return add(new Point(x, y));
+	}
+
 	public Point add(Point p) {
 		return new Point(x + p.getX(), y + p.getY());
+	}
+	
+	public String toString() {
+		return String.format("Point(%d, %d)", x, y);
 	}
 }

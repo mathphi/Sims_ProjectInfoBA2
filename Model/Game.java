@@ -80,37 +80,50 @@ public class Game implements DeletableObserver {
 		// Map building
 		// A sample of room
 		for (int i = 0; i < 20; i++) {
-			objects.add(new WallBlock(i, 0));
-			objects.add(new WallBlock(0, i));
+			attachObjectToGame(new WallBlock(i, 0));
+			attachObjectToGame(new WallBlock(0, i));
 
 			// Make a door in the wall
 			if (i != 10 && i != 11) {
-				objects.add(new WallBlock(20 - 1, i));
-				objects.add(new WallBlock(i, 20 - 1));
+				attachObjectToGame(new WallBlock(20 - 1, i));
+				attachObjectToGame(new WallBlock(i, 20 - 1));
 			}
 		}
 
 		// A second sample of room
 		for (int i = 0; i < 15; i++) {
-			objects.add(new WallBlock(20 + i, 0));
+			attachObjectToGame(new WallBlock(20 + i, 0));
 
 			// Make a door in the wall
 			if (i != 10 && i != 11) {
-				objects.add(new WallBlock(20 + i, 15 - 1));
+				attachObjectToGame(new WallBlock(20 + i, 15 - 1));
 			}
 		}
 
 		// A third sample of room
 		for (int i = 0; i < 25; i++) {
-			objects.add(new WallBlock(35 + i, 0));
-			objects.add(new WallBlock(35 - 1, i));
-			objects.add(new WallBlock(35 + i, 25 - 1));
+			attachObjectToGame(new WallBlock(35 + i, 0));
+			attachObjectToGame(new WallBlock(35 - 1, i));
+			attachObjectToGame(new WallBlock(35 + i, 25 - 1));
 
 			// Make a door in the wall
 			if (i != 15 && i != 16) {
-				objects.add(new WallBlock(35 + 25 - 1, i));
+				attachObjectToGame(new WallBlock(35 + 25 - 1, i));
 			}
 		}
+
+		// A sample of toilet room
+		for (int i = 0; i < 7; i++) {
+			attachObjectToGame(new WallBlock(i, 20 + 7 - 1));
+			attachObjectToGame(new WallBlock(0, 20 + i - 1));
+
+			// Make a door in the wall
+			if (i != 2 && i != 3) {
+				attachObjectToGame(new WallBlock(7, 20 + i));
+			}
+		}
+		WaterClosed wc = new WaterClosed(new Point(1, 22));
+		attachObjectToGame(wc);
 
 		map.setObjects(this.getGameObjects());
 		notifyView();
@@ -217,7 +230,7 @@ public class Game implements DeletableObserver {
 	synchronized public void delete(Deletable ps, ArrayList<GameObject> loot) {
 		objects.remove((GameObject)ps);
 		if (loot != null) {
-			objects.addAll(loot);
+			attachObjectsToGame(loot);
 		}
 		notifyView();
 	}
@@ -373,12 +386,23 @@ public class Game implements DeletableObserver {
 		startGame();
 	}
 	
+	private void attachObjectsToGame(ArrayList<GameObject> lst) {
+		for (GameObject o : lst) {
+			attachObjectToGame(o);
+		}
+	}
+	
+	private void attachObjectToGame(GameObject o) {
+		objects.add(o);
+		o.setMapObjectsList(objects);
+	}
+	
 	private void attachPersonToGame(Person p) {
 		if (p == null)
 			return;
 		
-		objects.add(p);
 		population.add(p);
+		attachObjectToGame(p);
 		attachMessageListener(p);
 	}
 	
