@@ -1,6 +1,6 @@
 package Product;
 
-public class Nourriture extends Product{
+public class Nourriture extends Product implements Usable{
 	private int nutritionalValue;
 	private int energyNeed; //cost of energy to use
 	
@@ -17,6 +17,7 @@ public class Nourriture extends Product{
 	public int getEnergyNeed() {
 		
 		return energyNeed;
+	
 	}
 	
 	
