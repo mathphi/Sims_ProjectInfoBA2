@@ -39,27 +39,49 @@ public class MessagesZone extends JPanel {
 		add(scrollView, BorderLayout.CENTER);
 	}
 	
-	public void setMessagesList(ArrayList<String> msgList) {
+	public void setMessagesList(ArrayList<Message> msgList) {
 		mainPanel.removeAll();
 		
-		for (String msg : msgList) {
+		for (Message msg : msgList) {
 			addMessage(msg);
 		}
 
 		refreshList();
 	}
 	
-	public void appendMessage(String msg) {
+	public void appendMessage(Message msg) {
 		addMessage(msg);
 		refreshList();
 	}
 	
-	private void addMessage(String msg) {
-		JLabel l = new JLabel(msg);
+	private void addMessage(Message msg) {
+		// Use the html + css to word-wrap
+		JLabel l = new JLabel(String.format(
+				"<html>"
+				+ "<body style='width: 200px; text-align: justify;'>%s</body>"
+				+ "</html>", msg.getMessage()));
+		
 		l.setOpaque(true);
-		l.setBackground(Color.CYAN);
 		l.setBorder(new EmptyBorder(10, 10, 10, 10));
 		l.setMinimumSize(new Dimension(10, 25));
+		
+		Color msgColor = Color.CYAN;
+		
+		switch (msg.getType()) {
+		case Info:
+			msgColor = Color.CYAN;
+			break;
+		case Warning:
+			msgColor = Color.ORANGE;
+			break;
+		case Problem:
+			msgColor = Color.RED;
+			break;
+		default:
+			break;
+		}
+		
+		l.setBackground(msgColor);
 
 		mainPanel.add(l);
 		mainPanel.add(new Box.Filler(

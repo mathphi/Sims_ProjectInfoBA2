@@ -1,9 +1,9 @@
-package Product;
+package Products;
 
-public class Jeux extends Product implements Usable{
+public class Toy extends Product implements Usable{
 	private int moodAdd;
 	private int energyNeed; //cost of energy to use
-	public Jeux(){
+	public Toy(){
 		super(15, "Jeux", 2);		
 		moodAdd = 10;
 		energyNeed = 10;

@@ -3,6 +3,8 @@ package Model;
 import View.Window;
 import View.Map;
 import View.MenuDialog;
+import View.Message;
+import View.Message.MsgType;
 import View.MessagesZone;
 import View.Status;
 import Tools.ObjectRestorer;
@@ -56,20 +58,11 @@ public class Game implements DeletableObserver {
 		
 		mainMenu = new MenuDialog(window, this);
 		
-		// TODO: replace this list by a class
-		// Creating one Player at position (1,1)
-		ArrayList<Double> psychologicFactor = new ArrayList<Double>(); // list that will give more importance in some
-																			// caracteristic for automatic answering,
-																			// randmoly generated for pnj, encoded for
-																			// player
-		psychologicFactor.add(20.0); // mood
-		psychologicFactor.add(12.0); // health
-		psychologicFactor.add(23.0); // generalKnwoledge
-		psychologicFactor.add(20.0); // otherVision
+		PsychologicalFactors psychologicalFactors = new PsychologicalFactors(20, 12, 23, 20);
 
-		Person p1 = new Kid(new Point(10, 10), "Test", "Person", Person.Gender.Male, 10, 0, null, null, psychologicFactor);
-		Person p2 = new Kid(new Point(17, 13), "Second", "Player", Person.Gender.Female, 10, 0, null, null, psychologicFactor);
-		Person p3 = new Adult(new Point(10, 17), "Third", "People", Person.Gender.Female, 10, 0, null, null, psychologicFactor);
+		Person p1 = new Kid(new Point(10, 10), "Test", "Person", Person.Gender.Male, null, null, psychologicalFactors);
+		Person p2 = new Kid(new Point(17, 13), "Second", "Player", Person.Gender.Female, null, null, psychologicalFactors);
+		Person p3 = new Adult(new Point(10, 17), "Third", "People", Person.Gender.Female, null, null, psychologicalFactors);
 
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
@@ -134,8 +127,7 @@ public class Game implements DeletableObserver {
 		
 		if (object != null && object.isObstacle()) {
 			object.clickedEvent();
-		}
-		else {
+		} else {
 			sendPlayer(pos);
 		}
 	}
@@ -410,7 +402,7 @@ public class Game implements DeletableObserver {
 		Game that = this;
 		p.addMessageEventListener(new MessageEventListener() {
 			private static final long serialVersionUID = 2371305630711900167L;
-			public void messageEvent(String msg) {
+			public void messageEvent(Message msg) {
 				if (p == that.getActivePerson()) {
 					msgZone.appendMessage(msg);
 				}
@@ -418,11 +410,11 @@ public class Game implements DeletableObserver {
 		});
 	}
 	
-	public void sendMessageTo(Person p, String msg) {
+	public void sendMessageTo(Person p, Message msg) {
 		p.addMessage(msg);
 	}
 	
-	public void sendMessageToAll(String msg) {
+	public void sendMessageToAll(Message msg) {
 		for (Person p : population) {
 			sendMessageTo(p, msg);
 		}

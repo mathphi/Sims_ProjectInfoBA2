@@ -1,4 +1,4 @@
-package Product;
+package Products;
 import Model.GameObject;;
 
 public class Product {

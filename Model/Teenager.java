@@ -1,28 +1,33 @@
 package Model;
 
-import java.util.ArrayList;
 import Tools.Point;
 
 public class Teenager extends Person {
 	private static final long serialVersionUID = 1012022981926904899L;
 
 	public Teenager(Person person) {
-
 		// constructor if the person need to evolve from kid to teenager
-		super(person.getPos(), person.getFirstName(), person.getLastName(), person.getGender(), person.getAge(),
-				person.getMoney(), person.getMother(), person.getFather(),
-				person.getPsychologicFactor());
+		super(person.getPos(),
+			  person.getFirstName(),
+			  person.getLastName(),
+			  person.getGender(),
+			  person.getMother(),
+			  person.getFather(),
+			  person.getPsychologicalFactor());
+		
+		age    = person.getAge();
+		money  = person.getMoney();
 	}
 
-	public Teenager(Point pos, String firstName, String lastName, Gender gender, int age, int money,
-			Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
+	public Teenager(Point pos, String firstName, String lastName, Gender gender,
+					Adult mother, Adult father, PsychologicalFactors psychologicalFactors)
+	{
 		// constructor if it's a new character (pnj)
-		super(pos, firstName, lastName, gender, age, money, mother, father, psychologicFactor);
-
+		super(pos, firstName, lastName, gender, mother, father, psychologicalFactors);
 	}
 
 	public void buy(TakableObject achat) {/*
-		if (setMoney(-achat.getPrice())) { inventory.add(achat); }
+											 * if (setMoney(-achat.getPrice())) { inventory.add(achat); }
 											 */
 
 	}
@@ -54,7 +59,7 @@ public class Teenager extends Person {
 		energy -= 20;
 		modifyMoney(10);
 		modifyMood(-8);
-		modifyOtherVision(8);
+		modifyOthersImpression(8);
 
 	}
 

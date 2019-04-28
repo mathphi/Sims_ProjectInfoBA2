@@ -2,22 +2,27 @@ package Model;
 
 import Tools.Point;
 
-import java.util.ArrayList;
-
-
 public class Adult extends Person {
 	private static final long serialVersionUID = 532161543919171452L;
 
 	public Adult(Person person) {
 		// constructor if the person need to evolve from teenager to kid
-		super(person.getPos(), person.getFirstName(), person.getLastName(), person.getGender(), person.getAge(),
-				person.getMoney(), person.getMother(), person.getFather(), person.getPsychologicFactor());
+		super(person.getPos(),
+			  person.getFirstName(),
+			  person.getLastName(),
+			  person.getGender(),
+			  person.getMother(),
+			  person.getFather(),
+			  person.getPsychologicalFactor());
+		
+		age = person.getAge();
+		money = person.getMoney();
 	}
 
-	public Adult(Point pos, String firstName, String lastName, Gender gender, int age, int money,
-			Adult mother, Adult father, ArrayList<Double> psychologicFactor) {
+	public Adult(Point pos, String firstName, String lastName, Gender gender, 
+			     Adult mother, Adult father, PsychologicalFactors psychologicalFactors) {
 		// constructor if it's a new character
-		super(pos, firstName, lastName, gender, age, money, mother, father, psychologicFactor);
+		super(pos, firstName, lastName, gender, mother, father, psychologicalFactors);
 
 	}
 
@@ -40,7 +45,7 @@ public class Adult extends Person {
 			energy -= 20;
 			modifyMoney(10);
 			modifyMood(-15);
-			modifyOtherVision(5);
+			modifyOthersImpression(5);
 
 		}
 		case (1): {
@@ -51,13 +56,13 @@ public class Adult extends Person {
 				energy -= 20;
 				modifyMoney(10);
 				modifyMood(-15);
-				modifyOtherVision(5);
+				modifyOthersImpression(5);
 			}
 			case (1): {
 				energy -= 25;
 				modifyMoney(20);
 				modifyMood(-15);
-				modifyOtherVision(8);
+				modifyOthersImpression(8);
 
 			}
 			}
@@ -70,20 +75,20 @@ public class Adult extends Person {
 				energy -= 20;
 				modifyMoney(10);
 				modifyMood(-15);
-				modifyOtherVision(5);
+				modifyOthersImpression(5);
 			}
 			case (1): {
 				energy -= 25;
 				modifyMoney(20);
 				modifyMood(-15);
-				modifyOtherVision(8);
+				modifyOthersImpression(8);
 
 			}
 			case (2): {
 				energy -= 30;
 				modifyMoney(30);
 				modifyMood(-12);
-				modifyOtherVision(10);
+				modifyOthersImpression(10);
 
 			}
 			}
@@ -97,20 +102,20 @@ public class Adult extends Person {
 				energy -= 20;
 				modifyMoney(10);
 				modifyMood(-15);
-				modifyOtherVision(5);
+				modifyOthersImpression(5);
 			}
 			case (1): {
 				energy -= 25;
 				modifyMoney(20);
 				modifyMood(-15);
-				modifyOtherVision(8);
+				modifyOthersImpression(8);
 
 			}
 			case (2): {
 				energy -= 30;
 				modifyMoney(30);
 				modifyMood(-12);
-				modifyOtherVision(10);
+				modifyOthersImpression(10);
 
 			}
 
@@ -118,7 +123,7 @@ public class Adult extends Person {
 				energy -= 35;
 				modifyMoney(50);
 				modifyMood(-10);
-				modifyOtherVision(15);
+				modifyOthersImpression(15);
 
 			}
 			}

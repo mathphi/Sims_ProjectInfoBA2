@@ -1,4 +1,4 @@
-package Product;
+package Products;
 
 public interface Usable {
 	//can only be used once

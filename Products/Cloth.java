@@ -1,8 +1,8 @@
-package Product;
+package Products;
 
-public class Clothe extends Product implements Wearable {
+public class Cloth extends Product implements Wearable {
 	private int otherVisionGain;
-	public Clothe() {
+	public Cloth() {
 		super(2, "Vêtement", 10); //weight, name, price
 		otherVisionGain = 10;	
 		

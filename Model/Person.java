@@ -3,6 +3,8 @@ package Model;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
+import View.Message;
+import View.Message.MsgType;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -10,17 +12,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import Product.Nourriture;
-import Product.Product;
-import Product.Wearable;
-import Product.Jeux;
-import Product.Book;
+import Products.Book;
+import Products.Nourriture;
+import Products.Product;
+import Products.Toy;
+import Products.Wearable;
 
 public abstract class Person extends GameObject implements Directable {
 	private static final long serialVersionUID = 8476495059211784395L;
 
 	public enum Gender {
-		Male, Female
+		Male,
+		Female
 	}
 
 	private static Size SIZE = new Size(1, 1);
@@ -44,16 +47,16 @@ public abstract class Person extends GameObject implements Directable {
 	protected int hygiene;
 	protected int bladder;
 
-	// automatic answer parameters
-	protected int generalKnowledge; // caracterise the knwoledge of the player -> increase by going to school or
-									// thing like that
-	protected int otherVision; // caracterise the vision of other, if often go out, is in good hygiene,... ->
-								// higher
+	// Automatic answer attributes
+	// Represents the knowledge of the player -> increase by going to school or thing like that
+	protected int generalKnowledge;
+	
+	// Represents the impression of other, if often go out, is in good hygiene,... -> higher
+	protected int othersImpression; 
 
-	protected ArrayList<Double> psychologicFactor;
-	// list of 4 int from 0 to 25 to caracterise the importance of mood, hygiene
-	// generalKnwoledge and ohtervision (in that order) for the automatic answer
-	// will be randomly generated for PNJ
+	// Represents the importance of mood, hygiene, generalKnwoledge and ohtersImpression
+	// for the automatic answers. Will be randomly generated for PNJ
+	protected PsychologicalFactors psychologicalFactors;
 
 	protected double relationFactor;
 	protected ArrayList<Product> inventory;
@@ -63,30 +66,29 @@ public abstract class Person extends GameObject implements Directable {
 	protected Adult father;
 
 	// Game messages history
-	protected ArrayList<String> messagesHistory = new ArrayList<String>();
+	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
 
-	public Person(Point pos, String firstName, String lastName, Gender gender, int age, int money, Adult mother,
-			Adult father, ArrayList<Double> psychologicFactor) {
-
+	public Person(Point pos, String firstName, String lastName, Gender gender,
+			      Adult mother, Adult father, PsychologicalFactors psychologicalFactors)
+	{
 		super(pos, SIZE, Color.BLUE);
 
+		// Initial Person properties (maximum is 100)
 		energy = 100;
 		mood = 100;
 		hunger = 100;
 		hygiene = 100;
 		bladder = 100;
-
-		// maximum is 100
+		
 		generalKnowledge = 50;
-		otherVision = 50;
+		othersImpression = 50;
+		
 		this.firstName = firstName;
 		this.gender = gender;
 		this.lastName = lastName;
-		this.age = age; // = 10 if player character
-		this.money = money; // player can decide to start game with some money
 
-		this.psychologicFactor = psychologicFactor;
+		this.psychologicalFactors = psychologicalFactors;
 
 		friendList.put(father, 20);
 		friendList.put(mother, 20); // considered as the higher level of relation but CAN't propose to marry, etc
@@ -179,11 +181,14 @@ public abstract class Person extends GameObject implements Directable {
 		// if 0 they haven't the same will
 		// take the caracterisic of the player that sent the request mutliply by the
 		// factor from the recever
-		double relationFactor = mood * people.getPsychologicFactor().get(0)
-				+ hygiene * people.getPsychologicFactor().get(1)
-				+ generalKnowledge * people.getPsychologicFactor().get(2)
-				+ otherVision * people.getPsychologicFactor().get(3);
-		relationFactor /= 100000.0;
+		double relationFactor = 
+				mood * people.getPsychologicalFactor().getMood()
+				+ hygiene * people.getPsychologicalFactor().getHygiene()
+				+ generalKnowledge * people.getPsychologicalFactor().getGeneralKnowledge()
+				+ othersImpression * people.getPsychologicalFactor().getOthersImpression();
+	
+		relationFactor /= 100.0;
+		
 		if (relationFactor > 0.7) {
 			// will multipy by 2 the gain of mood and point relation because realy
 			// complementary
@@ -314,7 +319,7 @@ public abstract class Person extends GameObject implements Directable {
 		bladder = 100;
 		
 		if (!isOnToilet) {
-			addMessage("Too late..."); //TODO: I have no idea for this text...
+			addMessage(new Message("Too late...", MsgType.Problem)); //TODO: I have no idea for this text...
 			modifyHygiene(-50);
 			modifyMood(-25);
 		}
@@ -394,10 +399,10 @@ public abstract class Person extends GameObject implements Directable {
 		mood += value;
 	}
 
-	public void modifyOtherVision(double value) {
+	public void modifyOthersImpression(double value) {
 
 		// function that modify the vision of the character
-		double maxVision = 100 - otherVision; // number of max point
+		double maxVision = 100 - othersImpression; // number of max point
 		if (value > 0) {
 			if (maxVision < value) {
 				// check that the gain of mood is < max
@@ -407,29 +412,11 @@ public abstract class Person extends GameObject implements Directable {
 			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
 			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
 			value = randomFactor * value;
-		} else if (-value > otherVision) {
+		} else if (-value > othersImpression) {
 			// check the reduction isn't bigger of the amount of mood available
-			value = -otherVision;
+			value = -othersImpression;
 		}
-		otherVision += value;
-
-	}
-
-	public void parametrizePsychoFactor() {
-		// need to be sure that the sums of the 4 factors (beetween 0 and 25 each) is =
-		// 100
-		double sum = 0;
-		ArrayList<Double> newPsychoFactor = new ArrayList<Double>();
-
-		for (double factor : psychologicFactor) {
-			sum += factor;
-		}
-		if (sum > 0) {
-			for (double factor : psychologicFactor) {
-				newPsychoFactor.add(factor * 100 / sum);
-			}
-		}
-		psychologicFactor = newPsychoFactor;
+		othersImpression += value;
 
 	}
 
@@ -481,11 +468,11 @@ public abstract class Person extends GameObject implements Directable {
 		return hunger / 100.0;
 	}
 
-	public ArrayList<Double> getPsychologicFactor() {
-		return psychologicFactor;
+	public PsychologicalFactors getPsychologicalFactor() {
+		return psychologicalFactors;
 	}
 
-	public ArrayList<String> getMessagesHistory() {
+	public ArrayList<Message> getMessagesHistory() {
 		return messagesHistory;
 	}
 
@@ -498,7 +485,7 @@ public abstract class Person extends GameObject implements Directable {
 		msgListeners.add(mel);
 	}
 
-	public void addMessage(String msg) {
+	public void addMessage(Message msg) {
 		messagesHistory.add(msg);
 
 		for (MessageEventListener mel : msgListeners) {
@@ -509,8 +496,8 @@ public abstract class Person extends GameObject implements Directable {
 	public void addInventory(Product newProduct) {
 		inventory.add(newProduct);
 		if (newProduct instanceof Wearable) {
-			// need to modify otherVision immediatly for the time the player wear it
-			modifyOtherVision(((Wearable) newProduct).getOtherVisionGain());
+			// need to modify othersImpression immediatly for the time the player wear it
+			modifyOthersImpression(((Wearable) newProduct).getOthersImpressionGain());
 
 		}
 	}
@@ -520,9 +507,11 @@ public abstract class Person extends GameObject implements Directable {
 			// TODO ask the player if he wants to delette it
 			boolean choice = true;
 			if (choice) {
-				if (((Wearable) product).getOtherVisionGain() > otherVision) {
-					addMessage(
-							"Vous ne pouvez pas retirer ce vêtement, la vision que les autres personnes a de vous est déjà trop basse!");
+				if (((Wearable) product).getOthersImpressionGain() > othersImpression) {
+					addMessage(new Message(
+							"Vous ne pouvez pas retirer ce vêtement. "
+									+ "La vision que les autres personnes ont de vous est déjà trop basse!",
+							MsgType.Problem));
 				}
 
 				else {
@@ -537,8 +526,8 @@ public abstract class Person extends GameObject implements Directable {
 				String type = product.getType();
 				switch (type) {
 				case ("Jeux"): {
-					modifyMood(((Jeux) product).getMoodAdd());
-					modifyEnergy(-((Jeux) product).getEnergyNeed());
+					modifyMood(((Toy) product).getMoodAdd());
+					modifyEnergy(-((Toy) product).getEnergyNeed());
 				}
 				case ("Nourriture"): {
 					modifyHunger(((Nourriture) product).getNutritionalValue());

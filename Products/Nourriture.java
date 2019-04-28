@@ -1,4 +1,4 @@
-package Product;
+package Products;
 
 public class Nourriture extends Product implements Usable{
 	private int nutritionalValue;
