@@ -22,7 +22,7 @@ public class Teenager extends Person {
 	}
 
 	public void buy(TakableObject achat) {/*
-											 * if (setMoney(-achat.getPrice())) { inventory.add(achat); }
+		if (setMoney(-achat.getPrice())) { inventory.add(achat); }
 											 */
 
 	}

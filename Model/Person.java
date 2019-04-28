@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import Product.Nourriture;
+
 public abstract class Person extends GameObject implements Directable {
 	private static final long serialVersionUID = 8476495059211784395L;
 
@@ -188,13 +190,14 @@ public abstract class Person extends GameObject implements Directable {
 		return relationFactor;
 	}
 
-	public void eat(EatableObject nourriture) {
+	public void eat(Nourriture nourriture) {
 		float hungerGain = nourriture.getNutritionalValue();
 		hunger += (int) (hungerGain);
 		if (hunger > 100) {
 			// too much point
 			hunger = 100;
 		}
+		modifyEnergy(-nourriture.getEnergyNeed());
 	}
 
 	public void discuss(Person people) {
