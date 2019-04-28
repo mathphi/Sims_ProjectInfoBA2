@@ -2,7 +2,7 @@ package Model;
 
 import Tools.Point;
 
-public class AStarThread implements Runnable{
+public class AStarThread implements Runnable {
 	private Game g;
 	private Person p;
 	private Point pos;
@@ -18,12 +18,14 @@ public class AStarThread implements Runnable{
 		int direction = 0;
 		synchronized(p) {
 		while(direction != -1) {
-			direction = (new AStar(g.getMapSize(), p.getPos(), pos, g.getGameObjects())).getNextStep();
-			switch (direction) {
-				case 0 : g.movePlayer(p,1,0); break;
-				case 1 : g.movePlayer(p,0,-1); break;
-				case 2 : g.movePlayer(p,-1,0); break;
-				case 3 : g.movePlayer(p,0,1); break;
+			if (!g.isPaused()) {
+				direction = (new AStar(g.getMapSize(), p.getPos(), pos, g.getGameObjects())).getNextStep();
+				switch (direction) {
+					case 0 : g.movePlayer(p,1,0); break;
+					case 1 : g.movePlayer(p,0,-1); break;
+					case 2 : g.movePlayer(p,-1,0); break;
+					case 3 : g.movePlayer(p,0,1); break;
+				}
 			}
 			try {
 				Thread.sleep(100);

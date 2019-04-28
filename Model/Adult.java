@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 public class Adult extends Person {
+	private static final long serialVersionUID = 532161543919171452L;
 
 	public Adult(Person person) {
 		// constructor if the person need to evolve from teenager to kid

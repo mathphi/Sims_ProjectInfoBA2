@@ -2,17 +2,26 @@ package Model;
 
 import View.Window;
 import View.Map;
+import View.MenuDialog;
 import View.Status;
-
+import Tools.ObjectRestorer;
+import Tools.ObjectSaver;
 import Tools.Point;
 import Tools.Size;
 import Tools.Rect;
 
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 public class Game implements DeletableObserver {
+	private final int SAVEFILE_VERSION_ID = 2;
 	private final int ARTIFICIAL_SCROLL_RADIUS = 500;
 
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
@@ -21,10 +30,13 @@ public class Game implements DeletableObserver {
 	private Window window;
 	private Map map;
 	private Status status;
+	private MenuDialog mainMenu;
 	
 	private Size mapSize;
 	
 	private GameTime gameTime;
+	
+	private boolean isPaused = false;
 
 	public Game(Window window) {
 		this.window = window;
@@ -32,7 +44,15 @@ public class Game implements DeletableObserver {
 		status = window.getStatus();
 		mapSize = map.getMapSize();
 		
-		gameTime = new GameTime(this);
+		gameTime = new GameTime(this, 0);
+		
+		window.addMenuButtonAction(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openGameMenu();
+			}
+		});
+		
+		mainMenu = new MenuDialog(window, this);
 		
 		// TODO: replace this list by a class
 		// Creating one Player at position (1,1)
@@ -47,11 +67,14 @@ public class Game implements DeletableObserver {
 
 		Person p1 = new Kid(new Point(10, 10), "Test", "Person", Person.Gender.Male, 10, 0, null, null, psychologicFactor);
 		Person p2 = new Kid(new Point(17, 13), "Second", "Player", Person.Gender.Female, 10, 0, null, null, psychologicFactor);
+		Person p3 = new Adult(new Point(10, 17), "Third", "People", Person.Gender.Female, 10, 0, null, null, psychologicFactor);
 		
 		objects.add(p1);
 		objects.add(p2);
+		objects.add(p3);
 		population.add(p1);
 		population.add(p2);
+		population.add(p3);
 		setActivePerson(p1);
 
 
@@ -90,7 +113,7 @@ public class Game implements DeletableObserver {
 			}
 		}
 
-		window.setGameObjects(this.getGameObjects());
+		map.setObjects(this.getGameObjects());
 		notifyView();
 	}
 	
@@ -165,7 +188,10 @@ public class Game implements DeletableObserver {
 		}
 
 		notifyView();
-
+		centerViewOnPlayer();
+	}
+	
+	public void centerViewOnPlayer() {
 		// Scroll the map view to the active person (scoll after notifyView for fluidity)
 		// The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
 		// the map's borders
@@ -174,16 +200,6 @@ public class Game implements DeletableObserver {
 				activePerson.getPos().getY() * map.getBlockSize().getHeight() - ARTIFICIAL_SCROLL_RADIUS,
 				map.getBlockSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
 				map.getBlockSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
-	}
-
-	public void action() {
-		/*
-		 * Activable aimedObject = null; for(GameObject object : objects){
-		 * if(object.isAtPosition(activePerson.getFrontX(),activePerson.getFrontY())){
-		 * if(object instanceof Activable){ aimedObject = (Activable) object; } } } if
-		 * (aimedObject != null) { aimedObject.activate(); notifyView(); }
-		 */
-
 	}
 
 	private void notifyView() {
@@ -196,7 +212,7 @@ public class Game implements DeletableObserver {
 
 	@Override
 	synchronized public void delete(Deletable ps, ArrayList<GameObject> loot) {
-		objects.remove(ps);
+		objects.remove((GameObject)ps);
 		if (loot != null) {
 			objects.addAll(loot);
 		}
@@ -216,10 +232,10 @@ public class Game implements DeletableObserver {
 		Thread t = new Thread(new AStarThread(this, activePerson, p));
 		t.start();
 	}
-	
+	/*
 	private void updateAllPopulation() {
 		//TODO: Necessary ?
-	}
+	}*/
 	
 	private void updateActivePerson() {
 		activePerson.updateNeeds();
@@ -232,11 +248,11 @@ public class Game implements DeletableObserver {
 		long t = gameTime.getVirtualTime();
 
 		// New year
-		if (t % gameTime.YEAR_LEN == 0) {
+		if (t % GameTime.YEAR_LEN == 0) {
 			
 		}
 		// New month (approx 30 days...)
-		if (t % (gameTime.DAY_LEN*30) == 0) {
+		if (t % (GameTime.DAY_LEN*30) == 0) {
 			updateActivePerson();
 		}
 		
@@ -250,12 +266,96 @@ public class Game implements DeletableObserver {
 		for (Person people : population) {
 			people.setActivePerson(people == p);
 		}
+		
+		notifyView();
+	}
+	
+	public boolean isPaused() {
+		return isPaused;
+	}
+	
+	public void pauseGame() {
+		isPaused = true;
+		gameTime.stop();
+		
+	}
+	
+	public void resumeGame() {
+		isPaused = false;
+		gameTime.start();
+		
 	}
 
 	public void startGame() {
 		// TODO
+		
 		gameTime.start();
-
+		
+		notifyView();
+		centerViewOnPlayer();
 	}
-
+	
+	public void openGameMenu() {
+		pauseGame();
+		mainMenu.showMenu();
+		resumeGame();
+	}
+	
+	public void saveGame() {
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"Fichier de sauvegarde", "sav");
+		chooser.setFileFilter(filter);
+		chooser.setDialogTitle("Destination du fichier de sauvegarde");
+		int returnVal = chooser.showSaveDialog(window);
+		
+	    if(returnVal != JFileChooser.APPROVE_OPTION) {
+	    	return;
+	    }
+		
+		ObjectSaver saver = new ObjectSaver(chooser.getSelectedFile().getPath(), SAVEFILE_VERSION_ID);
+		
+		// WARNING: The order is very important and must be the same as the restoring order !
+		saver.addObjectToSave(objects);
+		saver.addObjectToSave(population);
+		saver.addObjectToSave(activePerson);
+		saver.addObjectToSave(gameTime.getTimeFromStart());
+		saver.writeSaveToFile();
+	}
+	
+	public void restoreGame() {		
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"Fichier de sauvegarde", "sav");
+		chooser.setFileFilter(filter);
+		chooser.setDialogTitle("Ouvrir un fichier de sauvegarde");
+		int returnVal = chooser.showOpenDialog(window);
+		
+	    if(returnVal != JFileChooser.APPROVE_OPTION) {
+	    	return;
+	    }
+		
+		ObjectRestorer restorer = new ObjectRestorer(chooser.getSelectedFile().getPath());
+		
+		if (!restorer.versionMatches(SAVEFILE_VERSION_ID)) {
+			System.out.println("Save-file version mismatch");
+			return;
+		}
+		
+		gameTime.stop();
+		gameTime.cancel();
+		
+		// WARNING: The order is very important and must be the same as the saving order !
+		objects = (ArrayList<GameObject>)(restorer.readNextObjectFromSave());
+		population = (ArrayList<Person>)(restorer.readNextObjectFromSave());
+		setActivePerson((Person)(restorer.readNextObjectFromSave()));
+		gameTime = new GameTime(this, (long)(restorer.readNextObjectFromSave()));
+		
+		restorer.closeSaveFile();
+		
+		map.setObjects(objects);
+		
+		mainMenu.closeMenu();
+		startGame();
+	}
 }

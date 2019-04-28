@@ -1,6 +1,10 @@
 package Tools;
 
-public class Size {
+import java.io.Serializable;
+
+public class Size implements Serializable {
+	private static final long serialVersionUID = -3166065755771234670L;
+	
 	private int width;
 	private int height;
 	

@@ -6,13 +6,13 @@ import java.awt.event.KeyListener;
 import Model.Game;
 
 public class Keyboard implements KeyListener {
-    private Game game;
+	private Game game;
 
-    public Keyboard(Game game) {
-        this.game = game;
-    }
+	public Keyboard(Game game) {
+		this.game = game;
+	}
 
-    @Override
+	@Override
 	public void keyPressed(KeyEvent event) {
 		int key = event.getKeyCode();
 
@@ -29,25 +29,27 @@ public class Keyboard implements KeyListener {
 		case KeyEvent.VK_UP:
 			game.moveActivePlayer(0, -1);
 			break;
-		case KeyEvent.VK_SPACE:
-			game.action();
+		case KeyEvent.VK_ESCAPE:
+			game.openGameMenu();
 			break;
-		case KeyEvent.VK_Q:
-			game.stop();
+		case KeyEvent.VK_S:
+			if (event.isControlDown())
+				game.saveGame();
 			break;
-		case KeyEvent.VK_T:
-			// game.tirePlayer();
+		case KeyEvent.VK_R:
+			if (event.isControlDown())
+				game.restoreGame();
 			break;
-		case KeyEvent.VK_P:
-			game.playerPos();
+		default:
+			break;
 		}
 	}
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-    }
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
 }

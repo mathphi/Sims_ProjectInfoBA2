@@ -1,6 +1,10 @@
 package Tools;
 
-public class Rect {
+import java.io.Serializable;
+
+public class Rect implements Serializable {
+	private static final long serialVersionUID = -6049308199951080696L;
+	
 	private Point point;
 	private Size size;
 	

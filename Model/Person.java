@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Person extends GameObject implements Directable {
+	private static final long serialVersionUID = 8476495059211784395L;
+
 	public enum Gender {
 		Male,
 		Female

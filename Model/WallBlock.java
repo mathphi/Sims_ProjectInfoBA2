@@ -6,6 +6,7 @@ import Tools.Point;
 import Tools.Size;
 
 public class WallBlock extends GameObject {
+	private static final long serialVersionUID = -1900225227739246245L;
 
 	public WallBlock(int x, int y) {
 		this(new Point(x, y));

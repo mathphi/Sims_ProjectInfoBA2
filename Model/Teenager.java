@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import Tools.Point;
 
 public class Teenager extends Person {
+	private static final long serialVersionUID = 1012022981926904899L;
 
 	public Teenager(Person person) {
 

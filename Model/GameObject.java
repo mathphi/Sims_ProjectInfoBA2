@@ -6,7 +6,11 @@ import Tools.Rect;
 
 import java.awt.Color;
 
-public abstract class GameObject {
+import java.io.Serializable;
+
+public abstract class GameObject implements Serializable {
+	private static final long serialVersionUID = 5238309657819264811L;
+	
 	private Rect rect;
 	private Color color;
 

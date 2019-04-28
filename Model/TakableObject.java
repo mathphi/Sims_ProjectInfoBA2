@@ -6,6 +6,8 @@ import Tools.Point;
 import Tools.Size;
 
 public abstract class TakableObject extends GameObject {
+	private static final long serialVersionUID = -7682427739183023327L;
+	
 	int weight;
 	int price;
 
