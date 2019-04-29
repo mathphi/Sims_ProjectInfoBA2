@@ -1,10 +1,11 @@
 package Products;
-import Model.GameObject;;
 
-public class Product {
+public abstract class Product {
 	private int weight;
 	private int price;
 	private String name;
+	
+	protected int moodImpact = 0;
 
 	public Product(int weight, String name,int price){
 		this.weight = weight;
@@ -17,4 +18,7 @@ public class Product {
 		return name;
 	}
 
+	public int getMoodImpact() {
+		return moodImpact;
+	}
 }

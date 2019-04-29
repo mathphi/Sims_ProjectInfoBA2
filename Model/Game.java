@@ -57,12 +57,10 @@ public class Game implements DeletableObserver {
 		});
 		
 		mainMenu = new MenuDialog(window, this);
-		
-		PsychologicalFactors psychologicalFactors = new PsychologicalFactors(20, 12, 23, 20);
 
-		Person p1 = new Kid(new Point(10, 10), "Test", "Person", Person.Gender.Male, null, null, psychologicalFactors);
-		Person p2 = new Kid(new Point(17, 13), "Second", "Player", Person.Gender.Female, null, null, psychologicalFactors);
-		Person p3 = new Adult(new Point(10, 17), "Third", "People", Person.Gender.Female, null, null, psychologicalFactors);
+		Person p1 = new Kid(new Point(10, 10), "Test", "Person", Person.Gender.Male, null, null, PsychologicalFactors.RandomFactors());
+		Person p2 = new Kid(new Point(17, 13), "Second", "Player", Person.Gender.Female, null, null, PsychologicalFactors.RandomFactors());
+		Person p3 = new Adult(new Point(10, 17), "Third", "People", Person.Gender.Female, null, null, PsychologicalFactors.RandomFactors());
 
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
@@ -140,7 +138,7 @@ public class Game implements DeletableObserver {
 			setActivePerson(selectedPerson);
 		}
 	}
-	
+
 	public GameObject getObjectAtPosition(Point pos) {
 		GameObject obj = null;
 		
