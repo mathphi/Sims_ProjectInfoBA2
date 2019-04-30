@@ -64,6 +64,7 @@ public abstract class Person extends GameObject {
 	protected Adult mother;
 	protected Adult father;
 
+	// Random factors to differentiate the avolution of each person (one is hungry more often,...)
 	private double bladderRandomFactor = Random.range(0.6, 1.2);
 	private double hungerRandomFactor = Random.range(0.6, 1.2);
 	private double energyRandomFactor = Random.range(0.6, 1.2);
@@ -124,10 +125,29 @@ public abstract class Person extends GameObject {
 		return true;
 	}
 
-	public void update() {
+	public void update(long t) {
+		// New year
+		if (t % 365 == 0) {
+			evolves();
+		}
+		// New week (7 days...)
+		if (t % 7 == 0) {
+			increaseNeeds();
+		}
+	}
+	
+	public void increaseNeeds() {
 		decreaseBladder(Random.range(2.0, 3.0) * bladderRandomFactor); // Random decrease
 		modifyHunger(Random.range(-1.0, -2.0) * hungerRandomFactor); // Random decrease
-		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor); // Decrease more energy if hygiene is low
+		
+		// Decrease more energy if hygiene is low
+		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor);
+	}
+	
+	public void evolves() {
+		age++;
+		
+		//TODO: check if we have the age to evolve to next class
 	}
 
 	public int getRelationship(Person friend) {
@@ -282,7 +302,6 @@ public abstract class Person extends GameObject {
 	// TODO function that make evolve the hunger of the player during the game
 	public void goToBed() {
 		// TODO make the player go to bed
-		age += 1;
 
 	}
 

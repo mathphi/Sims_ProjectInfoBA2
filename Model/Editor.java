@@ -366,7 +366,10 @@ public class Editor {
 		return new GameMapPacket(objects, population, activePerson);
 	}
 
-	public void setActivePerson(Person p) {		
+	public void setActivePerson(Person p) {
+		if (p != null && !p.isPlayable())
+			return;
+		
 		activePerson = p;
 
 		for (Person people : population) {

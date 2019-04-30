@@ -272,16 +272,18 @@ public class Game implements DeletableObserver {
 		Thread t = new Thread(new AStarThread(this, activePerson, p));
 		t.start();
 	}
-	/*
-	private void updateAllPopulation() {
-		//TODO: Necessary ?
-	}*/
 	
-	private void updateActivePerson() {
-		if (activePerson == null)
+	private void updateAllPopulation() {
+		for (Person p : population) {
+			updatePerson(p);
+		}
+	}
+	
+	private void updatePerson(Person p) {
+		if (p == null)
 			return;
 		
-		activePerson.update();
+		p.update(gameTime.getVirtualTime());
 	}
 	
 	public void updateGame() {
@@ -291,18 +293,23 @@ public class Game implements DeletableObserver {
 		long t = gameTime.getVirtualTime();
 
 		// New year
-		if (t % GameTime.YEAR_LEN == 0) {
+		if (t % 365 == 0) {
 			
 		}
 		// New week (7 days...)
-		if (t % (GameTime.DAY_LEN*7) == 0) {
-			updateActivePerson();
+		if (t % 7 == 0) {
+			
 		}
+
+		updateAllPopulation();
 		
 		notifyView();
 	}
 	
-	public void setActivePerson(Person p) {		
+	public void setActivePerson(Person p) {
+		if (p != null && !p.isPlayable())
+			return;
+		
 		activePerson = p;
 		status.setActivePerson(p);
 
@@ -364,6 +371,16 @@ public class Game implements DeletableObserver {
 		
 		gameTime.start();
 		status.setGameTimeStr(gameTime.getCurrentTimeString());
+		
+		// Select the first person found in the game if none has been selected
+		if (activePerson == null) {
+			for (Person p : population) {
+				if (p.isPlayable) {
+					setActivePerson(p);
+					break;
+				}
+			}
+		}
 		
 		notifyView();
 		centerViewOnPlayer();

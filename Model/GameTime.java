@@ -5,7 +5,6 @@ import java.util.TimerTask;
 
 public class GameTime {	
 	public static final int DAY_LEN = 24*60*60; // in seconds
-	public static final int YEAR_LEN = 365*24*60*60; // in seconds
 	private final int TIMER_PERIOD = 1000; // in microseconds
 	
 	// The scale factor between real time and virtual time speed (ie: one day is 1 seconds)
@@ -56,23 +55,22 @@ public class GameTime {
 		return timeFromStart;
 	}
 	
-	//TODO: return a time in days ?
 	public long getVirtualTime() {
 		// Return the scaled time for the game
-		return (long)(timeFromStart * TIME_SCALE_FACTOR);
+		return (long)(timeFromStart * TIME_SCALE_FACTOR) / DAY_LEN;
 	}
 	
 	public int getDays() {
 		long t = getVirtualTime();
 	
 		// We start at day 1, not day 0, so +1
-		return (int)((t % YEAR_LEN) / DAY_LEN) + 1;
+		return (int)(t % 365) + 1;
 	}
 	
 	public int getYears() {
 		long t = getVirtualTime();
 	
-		return (int)(t / YEAR_LEN);
+		return (int)(t / 365);
 	}
 	
 	public String getCurrentTimeString() {
