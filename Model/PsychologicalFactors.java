@@ -22,7 +22,6 @@ public class PsychologicalFactors implements Serializable {
 	}
 	
 	public static PsychologicalFactors RandomFactors() {
-		//TODO: set good factors
 		return new PsychologicalFactors(
 				Random.range(10, 25),
 				Random.range(10, 25),

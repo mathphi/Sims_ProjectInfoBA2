@@ -147,7 +147,7 @@ public class Game implements DeletableObserver {
 			setActivePerson(selectedPerson);
 		}
 	}
-	
+
 	public GameObject getObjectAtPosition(Point pos) {
 		GameObject obj = null;
 		

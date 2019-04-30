@@ -9,6 +9,7 @@ public class Nourriture extends Product implements Usable{
 		nutritionalValue = 10;	
 		energyNeed = 5;
 		
+		moodImpact = 5;//TODO to chznge !
 	}
 
 	public int getNutritionalValue() {
