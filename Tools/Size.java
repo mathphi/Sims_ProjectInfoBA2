@@ -29,6 +29,10 @@ public class Size implements Serializable {
 		return add(new Size(w, h));
 	}
 	
+	public Size permuted() {
+		return new Size(height, width);
+	}
+	
 	public String toString() {
 		return String.format("Size(%d, %d)", width, height);
 	}

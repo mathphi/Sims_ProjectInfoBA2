@@ -16,7 +16,7 @@ public class GameKeyboard implements KeyListener {
 	public void keyPressed(KeyEvent event) {
 		if (!game.isRunning())
 			return;
-		
+
 		int key = event.getKeyCode();
 
 		switch (key) {

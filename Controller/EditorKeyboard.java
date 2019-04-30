@@ -37,13 +37,11 @@ public class EditorKeyboard implements KeyListener {
 			break;
 		case KeyEvent.VK_S:
 			if (event.isControlDown()) {
-
+				editor.saveMap();
 			}
 			break;
 		case KeyEvent.VK_R:
-			if (event.isControlDown()) {
-
-			}
+			editor.rotatePlacement();
 			break;
 		default:
 			break;

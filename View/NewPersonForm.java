@@ -3,6 +3,8 @@ package View;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -31,6 +34,7 @@ public class NewPersonForm extends JDialog {
 	private JComboBox<String> genderField;
 	private JComboBox<String> fatherField;
 	private JComboBox<String> motherField;
+	private JCheckBox unplayableField;
 
 	public NewPersonForm(Frame parent, ArrayList<Person> population) {
 		super(parent, "Nouveau personnage", true);
@@ -43,8 +47,7 @@ public class NewPersonForm extends JDialog {
 		JPanel mainPanel = new JPanel();
 		
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		mainPanel.setLayout(new GridLayout(0, 2, 0, 10));
-		
+		mainPanel.setLayout(new GridBagLayout());
 
 		JLabel nameLabel = new JLabel("Nom complet");
 		nameField = new JTextField();
@@ -58,15 +61,52 @@ public class NewPersonForm extends JDialog {
 		
 		JLabel motherLabel = new JLabel("Mère");
 		motherField = new JComboBox<String>(getAdultsNames(population, Gender.Female));
+		
+		unplayableField = new JCheckBox("Personnage non-joueur");
 
-		mainPanel.add(nameLabel);
-		mainPanel.add(nameField);
-		mainPanel.add(genderLabel);
-		mainPanel.add(genderField);
-		mainPanel.add(fatherLabel);
-		mainPanel.add(fatherField);
-		mainPanel.add(motherLabel);
-		mainPanel.add(motherField);
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		mainPanel.add(nameLabel, c);
+		
+		c.gridx = 1;
+		c.gridy = 0;
+		mainPanel.add(nameField, c);
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		mainPanel.add(genderLabel, c);
+
+		c.gridx = 1;
+		c.gridy = 1;
+		mainPanel.add(genderField, c);
+
+		c.gridx = 0;
+		c.gridy = 2;
+		mainPanel.add(fatherLabel, c);
+
+		c.gridx = 1;
+		c.gridy = 2;
+		mainPanel.add(fatherField, c);
+
+		c.gridx = 0;
+		c.gridy = 3;
+		mainPanel.add(motherLabel, c);
+
+		c.gridx = 1;
+		c.gridy = 3;
+		mainPanel.add(motherField, c);
+
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 2;
+		mainPanel.add(unplayableField, c);
+		c.gridwidth = 0;
 		
 		
 		JPanel buttonsContainer = new JPanel();
@@ -149,5 +189,9 @@ public class NewPersonForm extends JDialog {
 
 	public Adult getMother() {
 		return getAdultWithName((String)motherField.getSelectedItem(), Gender.Female);
+	}
+	
+	public boolean getPlayable() {
+		return !unplayableField.isSelected();
 	}
 }

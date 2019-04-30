@@ -32,6 +32,10 @@ public class Rect implements Serializable {
 	public void setSize(Size sz) {
 		size = sz;
 	}
+	
+	public Rect permuted() {
+		return new Rect(point, size.permuted());
+	}
 
 	public Point topLeft() {
 		return point;

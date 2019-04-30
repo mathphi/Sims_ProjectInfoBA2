@@ -1,3 +1,6 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import Controller.EditorKeyboard;
 import Controller.EditorMouse;
 import Controller.GameKeyboard;
@@ -25,11 +28,26 @@ public class Main {
 		EditorMouse editorMouse = new EditorMouse(editor);
 		window.addMapKeyListener(editorKeyboard);
 		window.addMapMouseListener(editorMouse);
+
+		game.setCreatorAction(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.stopGame();
+				game.closeGameMenu();
+				editor.start();
+			}
+		});
 		
-		window.switchEditorMode();
+		editor.setStartGameAction(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				editor.stop();
+				editor.closeEditorMenu();
+				game.loadGameMapPacket(editor.getGameMapPacket());
+				game.startGame();
+			}
+		});
 		
-		//game.startGame();
-		
-		editor.start();
+		game.startGame();
 	}
 }

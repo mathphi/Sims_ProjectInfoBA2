@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import Model.Directable.Direction;
+
 public class Game implements DeletableObserver {
 	private final int ARTIFICIAL_SCROLL_RADIUS = 500;
 
@@ -196,7 +198,20 @@ public class Game implements DeletableObserver {
 			}
 		}
 
-		pers.rotate(pos);
+		int x = pos.getX();
+		int y = pos.getY();
+		Direction direction = Direction.EAST;
+
+		if(x == 0 && y == -1)
+            direction = Direction.NORTH;
+        else if(x == 0 && y == 1)
+            direction = Direction.SOUTH;
+        else if(x == 1 && y == 0)
+            direction = Direction.EAST;
+        else if(x == -1 && y == 0)
+            direction = Direction.WEST;
+
+		pers.rotate(direction);
 
 		if (!unreachable) {
 			pers.move(pos);
@@ -209,6 +224,9 @@ public class Game implements DeletableObserver {
 	}
 	
 	public void centerViewOnPlayer() {
+		if (activePerson == null)
+			return;
+		
 		// Scroll the map view to the active person (scoll after notifyView for fluidity)
 		// The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
 		// the map's borders
@@ -268,8 +286,8 @@ public class Game implements DeletableObserver {
 		if (t % GameTime.YEAR_LEN == 0) {
 			
 		}
-		// New month (approx 30 days...)
-		if (t % (GameTime.DAY_LEN*30) == 0) {
+		// New week (7 days...)
+		if (t % (GameTime.DAY_LEN*7) == 0) {
 			updateActivePerson();
 		}
 		
@@ -291,6 +309,26 @@ public class Game implements DeletableObserver {
 		notifyView();
 	}
 	
+	public void loadGameMapPacket(GameMapPacket gmp) {
+		objects = gmp.getObjects();
+		population = gmp.getPopulation();
+		activePerson = gmp.getActivePerson();
+		gameTime = new GameTime(this, gmp.getTimeFromStart());
+
+		// Replace objects on the map
+		map.setObjects(objects);
+		
+		// Update activePerson status,...
+		setActivePerson(activePerson);
+		
+		// Re-attach message listener (transient property)
+		for (Person p : population) {
+			attachMessageListener(p);
+		}
+		
+		notifyView();
+	}
+	
 	public boolean isRunning() {
 		return isRunning;
 	}
@@ -298,7 +336,6 @@ public class Game implements DeletableObserver {
 	public void pauseGame() {
 		isRunning = false;
 		gameTime.stop();
-		
 	}
 	
 	public void resumeGame() {
@@ -306,21 +343,31 @@ public class Game implements DeletableObserver {
 		gameTime.start();
 		
 	}
+	
+	public void stopGame() {
+		isRunning = false;
+		gameTime.cancel();
+	}
 
 	public void startGame() {
+		window.switchGameMode();
 		isRunning = true;
 		map.setObjects(this.getGameObjects());
 		
 		gameTime.start();
+		status.setGameTimeStr(gameTime.getCurrentTimeString());
 		
 		notifyView();
 		centerViewOnPlayer();
 	}
-	
+
 	public void openGameMenu() {
 		pauseGame();
 		mainMenu.showMenu();
-		resumeGame();
+	}
+	
+	public void closeGameMenu() {
+		mainMenu.closeMenu();
 	}
 	
 	public void saveGame() {
@@ -345,14 +392,10 @@ public class Game implements DeletableObserver {
 		ObjectSaver saver = new ObjectSaver(path);
 		
 		// WARNING: The order is very important and must be the same as the restoring order !
-		saver.addObjectToSave(objects);
-		saver.addObjectToSave(population);
-		saver.addObjectToSave(activePerson);
-		saver.addObjectToSave(gameTime.getTimeFromStart());
+		saver.addObjectToSave(getGameMapPack());
 		saver.writeSaveToFile();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void restoreGame() {		
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -364,30 +407,25 @@ public class Game implements DeletableObserver {
 	    if(returnVal != JFileChooser.APPROVE_OPTION) {
 	    	return;
 	    }
-		
-		ObjectRestorer restorer = new ObjectRestorer(chooser.getSelectedFile().getPath());
-				
+	    
 		gameTime.stop();
 		gameTime.cancel();
 		
+		ObjectRestorer restorer = new ObjectRestorer(chooser.getSelectedFile().getPath());	
+		
 		// WARNING: The order is very important and must be the same as the saving order !
-		objects = (ArrayList<GameObject>)(restorer.readNextObjectFromSave());
-		population = (ArrayList<Person>)(restorer.readNextObjectFromSave());
-		setActivePerson((Person)(restorer.readNextObjectFromSave()));
-		gameTime = new GameTime(this, (long)(restorer.readNextObjectFromSave()));
+		GameMapPacket mapPacket = (GameMapPacket)(restorer.readNextObjectFromSave());
 		
 		restorer.closeSaveFile();
 		
-		// Replace objects on the map
-		map.setObjects(objects);
-		
-		// Re-attach message listener (transient property)
-		for (Person p : population) {
-			attachMessageListener(p);
-		}
+		loadGameMapPacket(mapPacket);
 		
 		mainMenu.closeMenu();
 		startGame();
+	}
+	
+	public GameMapPacket getGameMapPack() {
+		return new GameMapPacket(objects, population, activePerson, gameTime.getTimeFromStart());
 	}
 	
 	private void attachObjectsToGame(ArrayList<GameObject> lst) {
@@ -430,5 +468,9 @@ public class Game implements DeletableObserver {
 		for (Person p : population) {
 			sendMessageTo(p, msg);
 		}
+	}
+	
+	public void setCreatorAction(ActionListener a) {
+		mainMenu.setCreatorAction(a);
 	}
 }

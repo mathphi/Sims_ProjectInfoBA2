@@ -23,8 +23,7 @@ public class Window extends JFrame {
 	private Map map = new Map();
     private Status status = new Status();
     private MessagesZone msgZone = new MessagesZone();
-    
-    private EditorPanel editorPanel;
+    private EditorPanel editorPanel = new EditorPanel();
     
     private JPanel borderPanel;
     private JButton gameMenuButton;
@@ -65,8 +64,6 @@ public class Window extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		
-		editorPanel = new EditorPanel();
 
 		gameMenuButton = new JButton("Menu");
     	editorMenuButton = new JButton("Menu");
@@ -94,10 +91,10 @@ public class Window extends JFrame {
 		buttonPanel.add(gameMenuButton);
     	
 		borderPanel.removeAll();
-		borderPanel.revalidate();
 		borderPanel.add(status, BorderLayout.NORTH);
 		borderPanel.add(msgZone, BorderLayout.CENTER);
 		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
+		borderPanel.revalidate();
     }
     
     private void setupEditorBorderPanel() {		
@@ -107,9 +104,9 @@ public class Window extends JFrame {
 		buttonPanel.add(editorMenuButton);
     	
 		borderPanel.removeAll();
-		borderPanel.revalidate();
 		borderPanel.add(editorPanel, BorderLayout.CENTER);
 		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
+		borderPanel.revalidate();
     }
 
     public void switchEditorMode() {
@@ -118,6 +115,11 @@ public class Window extends JFrame {
     
     public void switchGameMode() {
     	setupGameBorderPanel();
+    }
+    
+    public void switchNeutralMode() {
+		borderPanel.removeAll();
+		borderPanel.revalidate();
     }
 
     public void addGameMenuButtonAction(ActionListener a) {
@@ -130,7 +132,12 @@ public class Window extends JFrame {
 
     public void update() {
         this.map.redraw();
-        this.status.redraw();
+        
+        if (this.status.isVisible())
+        	this.status.redraw();
+        
+        if (this.editorPanel.isVisible())
+        	this.editorPanel.repaint();
     }
 
     public void addMapKeyListener(KeyListener keyboard) {

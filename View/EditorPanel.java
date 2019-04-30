@@ -29,6 +29,7 @@ public class EditorPanel extends JPanel {
 		
 		JPanel mapCateg = createCategory(mainPanel, "Éléments de terrain");
 
+		// Event id 1 is for « add object to map » action
 		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
 		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
 		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
@@ -43,6 +44,7 @@ public class EditorPanel extends JPanel {
 
 		JPanel persCateg = createCategory(mainPanel, "Personnages");
 
+		// Event id 2 is for « add person to map » action
 		addButtonToCateg(persCateg, "Enfant", "Model.Kid", 2);
 		addButtonToCateg(persCateg, "Ado", "Model.Teenager", 2);
 		addButtonToCateg(persCateg, "Adulte", "Model.Adult", 2);
@@ -80,9 +82,6 @@ public class EditorPanel extends JPanel {
 		btn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Event id 1 is for « add object to map » action
-				// Event id 2 is for « add person to map » action
-				
 				ActionEvent event = new ActionEvent(that, id, className);
 				
 				for (ActionListener a : actionListeners) {

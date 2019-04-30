@@ -1,9 +1,6 @@
 package View;
 
-import Model.Directable;
 import Model.GameObject;
-import Model.Person;
-import Tools.Point;
 import Tools.Size;
 
 import java.awt.Color;
@@ -45,54 +42,7 @@ public class Map extends JPanel {
         }
 
         for (GameObject object : this.objects) {
-            Point pos = object.getPos();
-            Color color = object.getColor();
-            g.setColor(color);
-            g.fillRect(
-            		pos.getX() * BLOC_SIZE,
-            		pos.getY() * BLOC_SIZE,
-            		(BLOC_SIZE * object.getSize().getWidth()) - 2,
-            		(BLOC_SIZE * object.getSize().getHeight()) - 2);
-            
-            //TODO: the yellow border is temporary
-            if (object instanceof Person && ((Person)(object)).isActivePerson()) {
-            	g.setColor(Color.YELLOW);
-            }
-            else {
-            	g.setColor(Color.BLACK);
-            }
-            g.drawRect(
-            		pos.getX() * BLOC_SIZE,
-            		pos.getY() * BLOC_SIZE,
-            		(BLOC_SIZE * object.getSize().getWidth()) - 2,
-            		(BLOC_SIZE * object.getSize().getHeight()) - 2);
-            
-            // Decouper en fontions
-            if(object instanceof Directable) {
-                int direction = ((Directable) object).getDirection();
-                
-                int deltaX = 0;
-                int deltaY = 0;
-                
-                switch (direction) {
-                case Directable.EAST:
-                    deltaX = +(BLOC_SIZE-2)/2;
-                    break;
-                case Directable.NORTH:
-                    deltaY = -(BLOC_SIZE-2)/2;
-                    break;
-                case Directable.WEST:
-                    deltaX = -(BLOC_SIZE-2)/2;
-                    break;
-                case Directable.SOUTH:
-                    deltaY = (BLOC_SIZE-2)/2;
-                    break;
-                }
-
-                int xCenter = pos.getX() * BLOC_SIZE + (BLOC_SIZE-2)/2;
-                int yCenter = pos.getY() * BLOC_SIZE + (BLOC_SIZE-2)/2;
-                g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
-            }
+            object.paint(g, BLOC_SIZE);
         }
     }
 

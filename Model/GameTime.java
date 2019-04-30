@@ -48,6 +48,7 @@ public class GameTime {
 	}
 	
 	public void cancel() {
+		stop();
 		timer.cancel();
 	}
 	
@@ -64,7 +65,8 @@ public class GameTime {
 	public int getDays() {
 		long t = getVirtualTime();
 	
-		return (int)((t % YEAR_LEN) / DAY_LEN);
+		// We start at day 1, not day 0, so +1
+		return (int)((t % YEAR_LEN) / DAY_LEN) + 1;
 	}
 	
 	public int getYears() {

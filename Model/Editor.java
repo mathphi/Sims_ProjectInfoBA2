@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import Model.Directable.Direction;
 import Model.Person.Gender;
 import Tools.ObjectRestorer;
 import Tools.ObjectSaver;
@@ -34,6 +35,7 @@ public class Editor {
 	private boolean controlKeyPressed = false;
 	
 	private GameObject currentPlacing = null;
+	//TODO: make somthing to select the active person
 	private Person activePerson = null;
 	
 	public Editor(Window window) {
@@ -45,7 +47,7 @@ public class Editor {
 		
 		window.addEditorMenuButtonAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainMenu.showMenu();
+				openEditorMenu();
 			}
 		});
 		
@@ -56,9 +58,12 @@ public class Editor {
 					objects.remove(currentPlacing);
 				}
 				try {
+					// Event id 1 is for « add object to map » action
+					// Event id 2 is for « add person to map » action
 					if (e.getID() == 1) {
+						// Place the new object outside the map to be invisible (he will be moved to the mouse later)
 						currentPlacing = (GameObject) Class.forName(e.getActionCommand())
-								.getDeclaredConstructor(Point.class).newInstance(new Point(0,0));
+								.getDeclaredConstructor(Point.class).newInstance(new Point(-100,-100));
 					}
 					else if (e.getID() == 2) {
 						// Place a Person object
@@ -70,16 +75,20 @@ public class Editor {
 						if (!ans)
 							return;
 
+						//TODO: add PNJ boolean
 						currentPlacing = (GameObject) Class.forName(e.getActionCommand())
 								.getDeclaredConstructor(Point.class, String.class, Gender.class, Adult.class, Adult.class)
 								.newInstance(
-										new Point(0,0),
+										new Point(-100,-100),
 										form.getName(),
 										form.getGender(),
 										form.getFather(),
 										form.getMother());
 						
-						population.add((Person) currentPlacing);
+						Person p = (Person) currentPlacing;
+						p.setPlayable(form.getPlayable());
+						
+						population.add(p);
 					}
 					addObject(currentPlacing);
 				} catch (Exception ex) {
@@ -99,9 +108,32 @@ public class Editor {
 		return isActive;
 	}
 
+	public void closeEditorMenu() {
+		mainMenu.closeMenu();
+	}
+
+	public void openEditorMenu() {
+		mainMenu.showMenu();
+	}
+	
+	public void resetEditor() {
+		objects = new ArrayList<GameObject>();
+		population = new ArrayList<Person>();
+		activePerson = null;
+		
+		map.setObjects(objects);
+		
+		map.scrollRectToVisible(new Rectangle(0,0,1,1));
+	}
+	
 	public void start() {
 		this.isActive = true;
-		map.setObjects(objects);
+		
+		resetEditor();
+		
+		window.switchEditorMode();
+		
+		notifyView();
 	}
 	
 	public void stop() {
@@ -118,11 +150,12 @@ public class Editor {
 				// Don't place the object if it is far the mouse pointer
 				return;
 			}
-			if (controlKeyPressed) {
+			if (controlKeyPressed && !(currentPlacing instanceof Person)) {
 				// Place another object of same type if Ctrl is pressed
+				// Don't add twice the same Person !
 				try {
 					currentPlacing = currentPlacing.getClass()
-						.getDeclaredConstructor(Point.class).newInstance(new Point(0,0));
+						.getDeclaredConstructor(Point.class).newInstance(new Point(-100,-100));
 					addObject(currentPlacing);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -133,6 +166,18 @@ public class Editor {
 			}
 			notifyView();
 			return;
+		}
+		
+		// If we are not placing an object and the clicked object is a Person instance
+		GameObject clickedObject = getObjectAtPosition(pos);
+		
+		if (clickedObject instanceof Person) {
+			// If clickedObject is null, we just select nobody as activePerson
+			Person p = (Person) clickedObject;
+			setActivePerson(p);
+		}
+		else {
+			setActivePerson(null);
 		}
 	}
 	
@@ -179,15 +224,12 @@ public class Editor {
 		map.scrollRectToVisible(r);
 	}
 	
-	public void openEditorMenu() {
-		
-	}
-	
 	public void addObject(GameObject o) {
 		if (o == null)
 			return;
 		
 		objects.add(o);
+		o.setMapObjectsList(objects);
 	}
 	
 	public GameObject getObjectAtPosition(Point pos) {
@@ -233,7 +275,7 @@ public class Editor {
 	    
 	    String path = chooser.getSelectedFile().getPath();
 	    
-	    // Add .sav if not added automatically
+	    // Add .map if not added automatically
 	    if (!path.endsWith(".map")) {
 	    	path += ".map";
 	    }
@@ -241,14 +283,10 @@ public class Editor {
 		ObjectSaver saver = new ObjectSaver(path);
 		
 		// WARNING: The order is very important and must be the same as the restoring order !
-		saver.addObjectToSave(objects);
-		saver.addObjectToSave(population);
-		saver.addObjectToSave(activePerson);
-		saver.addObjectToSave((long) 0);
+		saver.addObjectToSave(getGameMapPacket());
 		saver.writeSaveToFile();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void loadMap() {
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -264,11 +302,13 @@ public class Editor {
 		ObjectRestorer restorer = new ObjectRestorer(chooser.getSelectedFile().getPath());
 		
 		// WARNING: The order is very important and must be the same as the saving order !
-		objects = (ArrayList<GameObject>)(restorer.readNextObjectFromSave());
-		population = (ArrayList<Person>)(restorer.readNextObjectFromSave());
-		activePerson = ((Person)(restorer.readNextObjectFromSave()));
+		GameMapPacket mapPacket = (GameMapPacket)(restorer.readNextObjectFromSave());
 		
 		restorer.closeSaveFile();
+		
+		objects = mapPacket.getObjects();
+		population = mapPacket.getPopulation();
+		activePerson = mapPacket.getActivePerson();
 		
 		// Replace objects on the map
 		map.setObjects(objects);
@@ -276,5 +316,47 @@ public class Editor {
 		mainMenu.closeMenu();
 		
 		notifyView();
+	}
+	
+	public void setStartGameAction(ActionListener a) {
+		mainMenu.setStartGameAction(a);
+	}
+	
+	public GameMapPacket getGameMapPacket() {
+		return new GameMapPacket(objects, population, activePerson);
+	}
+
+	public void setActivePerson(Person p) {		
+		activePerson = p;
+
+		for (Person people : population) {
+			people.setActivePerson(people == p);
+		}
+		
+		notifyView();
+	}
+	
+	public void rotatePlacement() {
+		if (currentPlacing != null) {
+			Direction d = Direction.EAST;
+			
+			switch (currentPlacing.getDirection()) {
+			case NORTH:
+				d = Direction.EAST;
+				break;
+			case EAST:
+				d = Direction.SOUTH;
+				break;
+			case SOUTH:
+				d = Direction.WEST;
+				break;
+			case WEST:
+				d = Direction.NORTH;
+				break;
+			}
+			
+			currentPlacing.rotate(d);
+			notifyView();
+		}
 	}
 }

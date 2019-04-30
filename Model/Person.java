@@ -7,6 +7,7 @@ import View.Message;
 import View.Message.MsgType;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import Products.Product;
 import Products.Toy;
 import Products.Wearable;
 
-public abstract class Person extends GameObject implements Directable {
+public abstract class Person extends GameObject {
 	private static final long serialVersionUID = 8476495059211784395L;
 
 	public enum Gender {
@@ -28,23 +29,22 @@ public abstract class Person extends GameObject implements Directable {
 
 	private static Size SIZE = new Size(1, 1);
 
-	private int direction = EAST;
-
 	protected boolean isActivePerson;
 
 	// general information
 	protected String name;
 	protected int age;
 	protected Gender gender;
+	protected boolean isPlayable = true;
 
 	protected int money;
 
 	// visible properties, if = 100 no need
-	protected int energy;
+	protected double energy;
 	protected float hunger;
-	protected int mood;
-	protected int hygiene;
-	protected int bladder;
+	protected double mood;
+	protected double hygiene;
+	protected double bladder;
 
 	// Automatic answer attributes
 	// Represents the knowledge of the player -> increase by going to school or thing like that
@@ -116,29 +116,14 @@ public abstract class Person extends GameObject implements Directable {
 		this.setPos(this.getPos().add(p));
 	}
 
-	public void rotate(Point p) {
-		if (p.getX() == 0 && p.getY() == -1)
-			direction = NORTH;
-		else if (p.getX() == 0 && p.getY() == 1)
-			direction = SOUTH;
-		else if (p.getX() == 1 && p.getY() == 0)
-			direction = EAST;
-		else if (p.getX() == -1 && p.getY() == 0)
-			direction = WEST;
-	}
-
-	public int getDirection() {
-		return direction;
-	}
-
 	public boolean isObstacle() {
 		return true;
 	}
 
 	public void update() {
-		decreaseBladder((int) Random.range(10, 16)); // Random decrease
-		modifyHunger((int) Random.range(-5, -10)); // Random decrease
-		modifyEnergy(hygiene >= 20 ? -4 : -12); // Decrease more energy if hygiene is low
+		decreaseBladder(Random.range(2.5, 4)); // Random decrease
+		modifyHunger(Random.range(-1.25, -2.5)); // Random decrease
+		modifyEnergy(hygiene >= 20 ? -1 : -3); // Decrease more energy if hygiene is low
 	}
 
 	public int getRelationship(Person friend) {
@@ -303,7 +288,7 @@ public abstract class Person extends GameObject implements Directable {
 	 * 
 	 * @param factor
 	 */
-	public void decreaseBladder(int factor) {
+	public void decreaseBladder(double factor) {
 		bladder -= factor;
 		bladder = Math.max(0, Math.min(bladder, 100));
 
@@ -339,14 +324,14 @@ public abstract class Person extends GameObject implements Directable {
 	 * 
 	 * @param factor
 	 */
-	public void modifyHygiene(int factor) {
+	public void modifyHygiene(double factor) {
 		hygiene += factor;
 		hygiene = Math.max(0, Math.min(hygiene, 100));
 
 		// TODO: consequence if hygiene <= 0
 	}
 
-	public void modifyHunger(int factor) {
+	public void modifyHunger(double factor) {
 		hunger += factor;
 		hunger = Math.max(0, Math.min(hunger, 100));
 
@@ -357,7 +342,7 @@ public abstract class Person extends GameObject implements Directable {
 		}
 	}
 
-	public void modifyEnergy(int factor) {
+	public void modifyEnergy(double factor) {
 		energy += factor;
 		energy = Math.max(0, Math.min(energy, 100));
 	}
@@ -472,6 +457,14 @@ public abstract class Person extends GameObject implements Directable {
 	public double getHunger() {
 		return hunger / 100.0;
 	}
+	
+	public void setPlayable(boolean playable) {
+		isPlayable = playable;
+	}
+	
+	public boolean isPlayable() {
+		return isPlayable;
+	}
 
 	public PsychologicalFactors getPsychologicalFactor() {
 		return psychologicalFactors;
@@ -549,5 +542,42 @@ public abstract class Person extends GameObject implements Directable {
 				inventory.remove(product); 
 			}
 		}
+	}
+	
+	public void paint(Graphics g, int BLOC_SIZE) {
+		super.paint(g, BLOC_SIZE);
+		
+		//TODO: the yellow border is temporary
+        if (isActivePerson()) {
+        	g.setColor(Color.YELLOW);
+            g.drawRect(
+            		getPos().getX() * BLOC_SIZE,
+            		getPos().getY() * BLOC_SIZE,
+            		(BLOC_SIZE * getSize().getWidth()) - 2,
+            		(BLOC_SIZE * getSize().getHeight()) - 2);
+        }
+
+		int deltaX = 0;
+		int deltaY = 0;
+
+		switch (getDirection()) {
+		case EAST:
+			deltaX = +(BLOC_SIZE - 2) / 2;
+			break;
+		case NORTH:
+			deltaY = -(BLOC_SIZE - 2) / 2;
+			break;
+		case WEST:
+			deltaX = -(BLOC_SIZE - 2) / 2;
+			break;
+		case SOUTH:
+			deltaY = (BLOC_SIZE - 2) / 2;
+			break;
+		}
+
+		int xCenter = getPos().getX() * BLOC_SIZE + (BLOC_SIZE - 2) / 2;
+		int yCenter = getPos().getY() * BLOC_SIZE + (BLOC_SIZE - 2) / 2;
+		g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
+
 	}
 }

@@ -16,11 +16,17 @@ import javax.swing.border.EmptyBorder;
 
 public class EditorMenu extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
+
+	private JButton continueButton;
+	private JButton startGameButton;
+	private JButton saveButton;
+	private JButton loadButton;
+	private JButton exitButton;
 	
 	public EditorMenu(Frame parent, Editor editor) {
 		super(parent, "Menu principal", true);
 		
-		setPreferredSize(new Dimension(300, 300));
+		setPreferredSize(new Dimension(300, 320));
 		
 		JPanel mainPanel = new JPanel();
 		
@@ -28,13 +34,15 @@ public class EditorMenu extends JDialog {
 		mainPanel.setLayout(new GridLayout(0, 1, 0, 10));
 		
 		JLabel titleLabel = new JLabel("Menu éditeur", JLabel.CENTER);
-		JButton continueButton = new JButton("Continuer");
-		JButton saveButton = new JButton("Enregistrer la carte");
-		JButton loadButton = new JButton("Charger une carte");
-		JButton exitButton = new JButton("Quitter");
+		continueButton = new JButton("Continuer l'édition");
+		startGameButton = new JButton("Démarrer le jeu");
+		saveButton = new JButton("Enregistrer la carte");
+		loadButton = new JButton("Charger une carte");
+		exitButton = new JButton("Quitter");
 
 		mainPanel.add(titleLabel);
 		mainPanel.add(continueButton);
+		mainPanel.add(startGameButton);
 		mainPanel.add(saveButton);
 		mainPanel.add(loadButton);
 		mainPanel.add(exitButton);
@@ -63,6 +71,10 @@ public class EditorMenu extends JDialog {
 				editor.quit();
 			}
 		});
+	}
+	
+	public void setStartGameAction(ActionListener a) {
+		startGameButton.addActionListener(a);
 	}
 	
 	public void showMenu() {
