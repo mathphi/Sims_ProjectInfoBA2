@@ -149,14 +149,15 @@ public class Game implements DeletableObserver {
 			setActivePerson(selectedPerson);
 		}
 	}
-
+	
 	public GameObject getObjectAtPosition(Point pos) {
 		GameObject obj = null;
 		
 		for (GameObject o : objects) {
 			if (o.isAtPosition(pos)) {
-				obj = o;
-				break;
+				if (obj == null || (obj instanceof GroundObject)) {
+					obj = o;
+				}
 			}
 		}
 		
@@ -192,9 +193,13 @@ public class Game implements DeletableObserver {
 		unreachable = !mapRect.contains(nextPos);
 
 		for (GameObject object : objects) {
-			if (object.isAtPosition(nextPos)) {
-				unreachable = object.isObstacle();
-				break;
+			if (object != (GameObject)pers) {
+				Rect nextRect = new Rect(nextPos, pers.getSize());
+				
+				if (object.getRect().overlaps(nextRect)) {
+					unreachable = object.isObstacle();
+					break;
+				}
 			}
 		}
 
@@ -273,6 +278,9 @@ public class Game implements DeletableObserver {
 	}*/
 	
 	private void updateActivePerson() {
+		if (activePerson == null)
+			return;
+		
 		activePerson.update();
 	}
 	

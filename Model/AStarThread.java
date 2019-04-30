@@ -19,7 +19,7 @@ public class AStarThread implements Runnable {
 		synchronized(p) {
 		while(direction != -1) {
 			if (g.isRunning()) {
-				direction = (new AStar(g.getMapSize(), p.getPos(), pos, g.getGameObjects())).getNextStep();
+				direction = (new AStar(g.getMapSize(), p.getPos(), pos, p, g.getGameObjects())).getNextStep();
 				switch (direction) {
 					case 0 : g.movePlayer(p,1,0); break;
 					case 1 : g.movePlayer(p,0,-1); break;
@@ -28,7 +28,7 @@ public class AStarThread implements Runnable {
 				}
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

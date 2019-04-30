@@ -21,135 +21,136 @@ public class AStar {
 	private boolean closed[][];
 	private Point posStart;
 	private Point posEnd;
-	private Cell [][] grid; 
+	private Size objSize;
+	private Cell[][] grid;
 	private PriorityQueue<Cell> open;
 	private int V_H_COST = 1;
 	private int DIAGONAL_COST = 100000;
 
-	public AStar(Size map_size, Point pos_start, Point pos_end, ArrayList<GameObject> objects) {
+	public AStar(Size map_size, Point pos_start, Point pos_end, GameObject movedObj, ArrayList<GameObject> objects) {
 		posStart = pos_start;
 		posEnd = pos_end;
 		mapSize = map_size;
-		
+		objSize = movedObj.getSize();
+
 		grid = new Cell[mapSize.getWidth()][mapSize.getHeight()];
 
+		closed = new boolean[mapSize.getWidth()][mapSize.getHeight()];
+		open = new PriorityQueue<>((Object o1, Object o2) -> {
+			Cell c1 = (Cell) o1;
+			Cell c2 = (Cell) o2;
 
-        closed = new boolean[mapSize.getWidth()][mapSize.getHeight()];
-        open = new PriorityQueue<>((Object o1, Object o2) -> {
-                Cell c1 = (Cell)o1;
-                Cell c2 = (Cell)o2;
+			return c1.finalCost < c2.finalCost ? -1 : c1.finalCost > c2.finalCost ? 1 : 0;
+		});
 
-                return c1.finalCost<c2.finalCost?-1:
-                        c1.finalCost>c2.finalCost?1:0;
-
-        	});
-
-        for(int i = 0 ; i<mapSize.getWidth() ; i++) {
-              for(int j = 0 ; j < mapSize.getHeight() ; j++) {
-                  grid[i][j] = new Cell(i, j);
-                  grid[i][j].heuristicCost = Math.abs(i-posEnd.getX())+Math.abs(j-posEnd.getY());
+		for (int i = 0; i < mapSize.getWidth(); i++) {
+			for (int j = 0; j < mapSize.getHeight(); j++) {
+				grid[i][j] = new Cell(i, j);
+				grid[i][j].heuristicCost = Math.abs(i - posEnd.getX()) + Math.abs(j - posEnd.getY());
 //                  System.out.print(grid[i][j].heuristicCost+" ");
-              }
+			}
 //              System.out.println();
-           }
-        grid[posEnd.getX()][posEnd.getY()].finalCost = 0;
+		}
+		grid[posEnd.getX()][posEnd.getY()].finalCost = 0;
 
 		open.add(grid[posStart.getX()][posStart.getY()]);
-		for(GameObject o: objects) {
-			if (o.isObstacle()) {
-				for (int i = 0 ; i < o.getSize().getWidth() ; i++) {
-					for (int j = 0 ; j < o.getSize().getHeight() ; j++) {
-						setBlocked(o.getPos().add(i, j));
-					}
-				}
+		for (GameObject o : objects) {
+			if (o.isObstacle() && o != movedObj) {
+				setBlocked(o.getPos());
 			}
 		}
 
 		Cell current;
 
-		while(true){ 
+		while (true) {
 			current = open.poll();
-			if(current==null)break;
-			closed[current.i][current.j]=true; 
+			if (current == null)
+				break;
+			closed[current.i][current.j] = true;
 
-			if(current.equals(grid[posEnd.getX()][posEnd.getY()])){
-				return; 
-			} 
-
-			Cell t;  
-			if(current.i-1>=0){
-				t = grid[current.i-1][current.j];
-				checkAndUpdateCost(current, t, current.finalCost+V_H_COST); 
-
-				if(current.j-1>=0){                      
-					t = grid[current.i-1][current.j-1];
-					checkAndUpdateCost(current, t, current.finalCost+DIAGONAL_COST); 
-				}
-
-				if(current.j+1<grid[0].length){
-					t = grid[current.i-1][current.j+1];
-					checkAndUpdateCost(current, t, current.finalCost+DIAGONAL_COST); 
-				}
-			} 
-
-			if(current.j-1>=0){
-				t = grid[current.i][current.j-1];
-				checkAndUpdateCost(current, t, current.finalCost+V_H_COST); 
+			if (current.equals(grid[posEnd.getX()][posEnd.getY()])) {
+				return;
 			}
 
-			if(current.j+1<grid[0].length){
-				t = grid[current.i][current.j+1];
-				checkAndUpdateCost(current, t, current.finalCost+V_H_COST); 
-			}
+			Cell t;
+			if (current.i - 1 >= 0) {
+				t = grid[current.i - 1][current.j];
+				checkAndUpdateCost(current, t, current.finalCost + V_H_COST);
 
-			if(current.i+1<grid.length){
-				t = grid[current.i+1][current.j];
-				checkAndUpdateCost(current, t, current.finalCost+V_H_COST); 
-
-				if(current.j-1>=0){
-					t = grid[current.i+1][current.j-1];
-					checkAndUpdateCost(current, t, current.finalCost+DIAGONAL_COST); 
+				if (current.j - 1 >= 0) {
+					t = grid[current.i - 1][current.j - 1];
+					checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
 				}
 
-				if(current.j+1<grid[0].length){
-					t = grid[current.i+1][current.j+1];
-					checkAndUpdateCost(current, t, current.finalCost+DIAGONAL_COST); 
-				}  
+				if (current.j + 1 < grid[0].length) {
+					t = grid[current.i - 1][current.j + 1];
+					checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
+				}
 			}
-		} 
+
+			if (current.j - 1 >= 0) {
+				t = grid[current.i][current.j - 1];
+				checkAndUpdateCost(current, t, current.finalCost + V_H_COST);
+			}
+
+			if (current.j + 1 < grid[0].length) {
+				t = grid[current.i][current.j + 1];
+				checkAndUpdateCost(current, t, current.finalCost + V_H_COST);
+			}
+
+			if (current.i + 1 < grid.length) {
+				t = grid[current.i + 1][current.j];
+				checkAndUpdateCost(current, t, current.finalCost + V_H_COST);
+
+				if (current.j - 1 >= 0) {
+					t = grid[current.i + 1][current.j - 1];
+					checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
+				}
+
+				if (current.j + 1 < grid[0].length) {
+					t = grid[current.i + 1][current.j + 1];
+					checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
+				}
+			}
+		}
 	}
 
-	static class Cell{  
-		int heuristicCost = 0; //Heuristic cost
-		int finalCost = 0; //G+H
+	static class Cell {
+		int heuristicCost = 0; // Heuristic cost
+		int finalCost = 0; // G+H
 		int i, j;
-		Cell parent; 
+		Cell parent;
 
-		Cell(int i, int j){
+		Cell(int i, int j) {
 			this.i = i;
-			this.j = j; 
+			this.j = j;
 		}
 
 		@Override
-		public String toString(){
-			return "["+this.i+", "+this.j+"]";
+		public String toString() {
+			return "[" + this.i + ", " + this.j + "]";
 		}
 	}
 
-
-	private void setBlocked(Point p){
-		grid[p.getX()][p.getY()] = null;
+	private void setBlocked(Point p) {
+		for (int i = 0; i < objSize.getWidth(); i++) {
+			for (int j = 0; j < objSize.getHeight(); j++) {
+				grid[p.getX() + i][p.getY() + j] = null;
+			}
+		}
 	}
 
-	private void checkAndUpdateCost(Cell current, Cell t, int cost){
-		if(t == null || closed[t.i][t.j])return;
-		int t_final_cost = t.heuristicCost+cost;
+	private void checkAndUpdateCost(Cell current, Cell t, int cost) {
+		if (t == null || closed[t.i][t.j])
+			return;
+		int t_final_cost = t.heuristicCost + cost;
 
 		boolean inOpen = open.contains(t);
-		if(!inOpen || t_final_cost<t.finalCost){
+		if (!inOpen || t_final_cost < t.finalCost) {
 			t.finalCost = t_final_cost;
 			t.parent = current;
-			if(!inOpen)open.add(t);
+			if (!inOpen)
+				open.add(t);
 		}
 	}
 

@@ -21,25 +21,26 @@ public class EditorPanel extends JPanel {
 	
 	public EditorPanel() {
 		setLayout(new BorderLayout());
-		
+
 		JPanel mainPanel = new JPanel();
 
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		
+
 		JPanel mapCateg = createCategory(mainPanel, "Éléments de terrain");
 
-		// Event id 1 is for « add object to map » action
-		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
-		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
-		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
-		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
+		// Event id 0 is for « add ground object to map » action
+		addButtonToCateg(mapCateg, "Herbe 1", "Model.GroundGrass\t1", 0);
+		addButtonToCateg(mapCateg, "Herbe 2", "Model.GroundGrass\t2", 0);
+		addButtonToCateg(mapCateg, "Herbe 3", "Model.GroundGrass\t3", 0);
+		addButtonToCateg(mapCateg, "Parquet 1", "Model.GroundFlooring\t1", 0);
+		addButtonToCateg(mapCateg, "Parquet 2", "Model.GroundFlooring\t2", 0);
+		addButtonToCateg(mapCateg, "Parquet 3", "Model.GroundFlooring\t3", 0);
 		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
 
-		JPanel mobCateg = createCategory(mainPanel, "Mobilier");
+		JPanel mobCateg = createCategory(mainPanel, "Éléments du mobilier");
 
-		addButtonToCateg(mobCateg, "WC", "Model.WaterClosed", 1);
-		addButtonToCateg(mobCateg, "WC", "Model.WaterClosed", 1);
+		// Event id 1 is for « add furniture object to map » action
 		addButtonToCateg(mobCateg, "WC", "Model.WaterClosed", 1);
 
 		JPanel persCateg = createCategory(mainPanel, "Personnages");

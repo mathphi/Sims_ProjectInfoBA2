@@ -30,4 +30,8 @@ public class WaterClosed extends GameObject{
 			((Person)o).emptyBladder(true);
 		}
 	}
+	
+	public GameObject clone() {
+		return (GameObject) new WaterClosed(getPos());
+	}
 }

@@ -50,7 +50,14 @@ public class EditorMouse extends MouseController implements MouseListener, Mouse
 	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {
+		synchronized(editor) {
+			if (!editor.isActive())
+				return;
+			
+			editor.mouseExitedEvent();
+		}
+	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {}

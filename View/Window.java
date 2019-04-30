@@ -73,7 +73,7 @@ public class Window extends JFrame {
     	editorMenuButton.setFocusable(false);
 		
 		borderPanel = new JPanel();
-		borderPanel.setPreferredSize(new Dimension(300, 600));
+		borderPanel.setPreferredSize(new Dimension(350, 600));
 		borderPanel.setLayout(new BorderLayout());
 		
 		// Layouts
@@ -132,9 +132,12 @@ public class Window extends JFrame {
 
     public void update() {
         this.map.redraw();
-        
+
         if (this.status.isVisible())
         	this.status.redraw();
+        
+        if (this.msgZone.isVisible())
+        	this.msgZone.repaint();
         
         if (this.editorPanel.isVisible())
         	this.editorPanel.repaint();

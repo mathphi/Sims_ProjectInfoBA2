@@ -105,6 +105,8 @@ public abstract class GameObject implements Directable, Serializable {
 	
 	public abstract void proximityEvent(GameObject o);
 	
+	public abstract GameObject clone();
+	
 	public void paint(Graphics g, int BLOC_SIZE) {
         g.setColor(color);
         g.fillRect(

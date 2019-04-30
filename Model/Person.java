@@ -64,6 +64,10 @@ public abstract class Person extends GameObject {
 	protected Adult mother;
 	protected Adult father;
 
+	private double bladderRandomFactor = Random.range(0.6, 1.2);
+	private double hungerRandomFactor = Random.range(0.6, 1.2);
+	private double energyRandomFactor = Random.range(0.6, 1.2);
+
 	// Game messages history
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
@@ -121,9 +125,9 @@ public abstract class Person extends GameObject {
 	}
 
 	public void update() {
-		decreaseBladder(Random.range(2.5, 4)); // Random decrease
-		modifyHunger(Random.range(-1.25, -2.5)); // Random decrease
-		modifyEnergy(hygiene >= 20 ? -1 : -3); // Decrease more energy if hygiene is low
+		decreaseBladder(Random.range(2.0, 3.0) * bladderRandomFactor); // Random decrease
+		modifyHunger(Random.range(-1.0, -2.0) * hungerRandomFactor); // Random decrease
+		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor); // Decrease more energy if hygiene is low
 	}
 
 	public int getRelationship(Person friend) {
@@ -578,6 +582,7 @@ public abstract class Person extends GameObject {
 		int xCenter = getPos().getX() * BLOC_SIZE + (BLOC_SIZE - 2) / 2;
 		int yCenter = getPos().getY() * BLOC_SIZE + (BLOC_SIZE - 2) / 2;
 		g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
-
 	}
+	
+	public GameObject clone() {return null;}
 }

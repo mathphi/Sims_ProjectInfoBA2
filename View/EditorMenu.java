@@ -19,6 +19,7 @@ public class EditorMenu extends JDialog {
 
 	private JButton continueButton;
 	private JButton startGameButton;
+	private JButton resetButton;
 	private JButton saveButton;
 	private JButton loadButton;
 	private JButton exitButton;
@@ -26,7 +27,7 @@ public class EditorMenu extends JDialog {
 	public EditorMenu(Frame parent, Editor editor) {
 		super(parent, "Menu principal", true);
 		
-		setPreferredSize(new Dimension(300, 320));
+		setPreferredSize(new Dimension(300, 350));
 		
 		JPanel mainPanel = new JPanel();
 		
@@ -36,6 +37,7 @@ public class EditorMenu extends JDialog {
 		JLabel titleLabel = new JLabel("Menu éditeur", JLabel.CENTER);
 		continueButton = new JButton("Continuer l'édition");
 		startGameButton = new JButton("Démarrer le jeu");
+		resetButton = new JButton("Nouvelle carte");
 		saveButton = new JButton("Enregistrer la carte");
 		loadButton = new JButton("Charger une carte");
 		exitButton = new JButton("Quitter");
@@ -43,6 +45,7 @@ public class EditorMenu extends JDialog {
 		mainPanel.add(titleLabel);
 		mainPanel.add(continueButton);
 		mainPanel.add(startGameButton);
+		mainPanel.add(resetButton);
 		mainPanel.add(saveButton);
 		mainPanel.add(loadButton);
 		mainPanel.add(exitButton);
@@ -53,6 +56,12 @@ public class EditorMenu extends JDialog {
 		
 		continueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				closeMenu();
+			}
+		});
+		resetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editor.resetEditor();
 				closeMenu();
 			}
 		});

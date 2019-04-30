@@ -1,6 +1,7 @@
 package View;
 
 import Model.GameObject;
+import Model.GroundObject;
 import Tools.Size;
 
 import java.awt.Color;
@@ -41,8 +42,27 @@ public class Map extends JPanel {
             }
         }
 
+        // Separate GroundObject from others to avoid to paint ground objects over the other objects
+        ArrayList<GameObject> groundObjects = new ArrayList<GameObject>();
+        ArrayList<GameObject> otherObjects = new ArrayList<GameObject>();
+
+        // Filter GoundObject and others
         for (GameObject object : this.objects) {
-            object.paint(g, BLOC_SIZE);
+        	if (object instanceof GroundObject) {
+        		groundObjects.add(object);
+        	}
+        	else {
+        		otherObjects.add(object);
+        	}
+        }
+
+        // Paint GoundObject before other (paint them under the others)
+        ArrayList<GameObject> ordered = new ArrayList<GameObject>();
+        ordered.addAll(groundObjects);
+        ordered.addAll(otherObjects);
+        
+        for (GameObject o : ordered) {
+        	o.paint(g, BLOC_SIZE);
         }
     }
 

@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -20,6 +22,7 @@ import Model.Person.Gender;
 import Tools.ObjectRestorer;
 import Tools.ObjectSaver;
 import Tools.Point;
+import Tools.Rect;
 import Tools.Size;
 
 public class Editor {
@@ -35,7 +38,6 @@ public class Editor {
 	private boolean controlKeyPressed = false;
 	
 	private GameObject currentPlacing = null;
-	//TODO: make somthing to select the active person
 	private Person activePerson = null;
 	
 	public Editor(Window window) {
@@ -58,12 +60,27 @@ public class Editor {
 					objects.remove(currentPlacing);
 				}
 				try {
-					// Event id 1 is for « add object to map » action
+					// Event id 0 is for « add ground object to map » action
+					// Event id 1 is for « add furniture object to map » action
 					// Event id 2 is for « add person to map » action
-					if (e.getID() == 1) {
+					if (e.getID() == 0) {
+						List<String> args = Arrays.asList(e.getActionCommand().split("\t"));
+
+						int typeArg = 0;
+						if (args.size() > 1) {
+							typeArg = Integer.valueOf(args.get(1));
+						}
+						
+						// Place the new object outside the map to be invisible (he will be moved to the mouse later)
+						currentPlacing = (GameObject) Class.forName(args.get(0))
+								.getDeclaredConstructor(Point.class, int.class)
+								.newInstance(new Point(-100,-100), typeArg);
+					}
+					else if (e.getID() == 1) {
 						// Place the new object outside the map to be invisible (he will be moved to the mouse later)
 						currentPlacing = (GameObject) Class.forName(e.getActionCommand())
-								.getDeclaredConstructor(Point.class).newInstance(new Point(-100,-100));
+								.getDeclaredConstructor(Point.class)
+								.newInstance(new Point(-100,-100));
 					}
 					else if (e.getID() == 2) {
 						// Place a Person object
@@ -75,7 +92,6 @@ public class Editor {
 						if (!ans)
 							return;
 
-						//TODO: add PNJ boolean
 						currentPlacing = (GameObject) Class.forName(e.getActionCommand())
 								.getDeclaredConstructor(Point.class, String.class, Gender.class, Adult.class, Adult.class)
 								.newInstance(
@@ -124,16 +140,16 @@ public class Editor {
 		map.setObjects(objects);
 		
 		map.scrollRectToVisible(new Rectangle(0,0,1,1));
+		
+		notifyView();
 	}
 	
 	public void start() {
 		this.isActive = true;
 		
-		resetEditor();
-		
 		window.switchEditorMode();
 		
-		notifyView();
+		resetEditor();
 	}
 	
 	public void stop() {
@@ -154,8 +170,8 @@ public class Editor {
 				// Place another object of same type if Ctrl is pressed
 				// Don't add twice the same Person !
 				try {
-					currentPlacing = currentPlacing.getClass()
-						.getDeclaredConstructor(Point.class).newInstance(new Point(-100,-100));
+					currentPlacing = (GameObject) currentPlacing.clone();
+					currentPlacing.setPos(new Point(-100, -100));
 					addObject(currentPlacing);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -201,11 +217,22 @@ public class Editor {
 	
 	public void mouseMoveEvent(Point pos) {
 		if (currentPlacing != null) {
-			if (!positionIsObstacle(pos)) {
+			Rect r = new Rect(pos, currentPlacing.getSize());
+			
+			// Accept only free places (or any place if GroundObject)
+			if (currentPlacing instanceof GroundObject || rectIsPlacable(r)) {
 				currentPlacing.setPos(pos);
 				notifyView();
 			}
 			return;
+		}
+	}
+	
+	public void mouseExitedEvent() {
+		if (currentPlacing != null) {
+			// Move the object outside the map (to hide it)
+			currentPlacing.setPos(new Point(-100, -100));
+			notifyView();
 		}
 	}
 	
@@ -237,8 +264,9 @@ public class Editor {
 		
 		for (GameObject o : objects) {
 			if (o.isAtPosition(pos)) {
-				obj = o;
-				break;
+				if (obj == null || (obj instanceof GroundObject)) {
+					obj = o;
+				}
 			}
 		}
 		
@@ -255,6 +283,18 @@ public class Editor {
 		}
 		
 		return isObstacle;
+	}
+	
+	public boolean rectIsPlacable(Rect r) {
+		boolean isPlacable = true;
+		
+		for (GameObject o : objects) {
+			if (o != currentPlacing && o.isObstacle() && r.overlaps(o.getRect())) {
+				isPlacable = false;
+			}
+		}
+		
+		return isPlacable;
 	}
 
 	public void quit() {

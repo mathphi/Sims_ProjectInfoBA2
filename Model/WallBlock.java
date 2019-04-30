@@ -1,6 +1,7 @@
 package Model;
 
 import java.awt.Color;
+import java.awt.Graphics;
 
 import Tools.Point;
 import Tools.Size;
@@ -26,5 +27,19 @@ public class WallBlock extends GameObject {
 
 	public void proximityEvent(GameObject o) {
 		// A wall does nothing
+	}
+	
+	public GameObject clone() {
+		return (GameObject) new WallBlock(getPos());
+	}
+	
+	@Override
+	public void paint(Graphics g, int BLOC_SIZE) {
+		g.setColor(getColor());
+        g.fillRect(
+        		getPos().getX() * BLOC_SIZE-1,
+        		getPos().getY() * BLOC_SIZE-1,
+        		(BLOC_SIZE * getSize().getWidth()),
+        		(BLOC_SIZE * getSize().getHeight()));
 	}
 }
