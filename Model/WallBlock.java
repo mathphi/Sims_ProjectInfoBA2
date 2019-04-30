@@ -21,6 +21,10 @@ public class WallBlock extends GameObject {
 	}
 	
 	public void clickedEvent() {
-		// A wall does nothing when clicked
+		// A wall does nothing
+	}
+
+	public void proximityEvent(GameObject o) {
+		// A wall does nothing
 	}
 }

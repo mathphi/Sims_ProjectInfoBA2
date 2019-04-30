@@ -2,9 +2,8 @@ package Model;
 
 import View.Window;
 import View.Map;
-import View.MenuDialog;
+import View.GameMenu;
 import View.Message;
-import View.Message.MsgType;
 import View.MessagesZone;
 import View.Status;
 import Tools.ObjectRestorer;
@@ -23,7 +22,6 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Game implements DeletableObserver {
-	private final int SAVEFILE_VERSION_ID = 2;
 	private final int ARTIFICIAL_SCROLL_RADIUS = 500;
 
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
@@ -33,13 +31,13 @@ public class Game implements DeletableObserver {
 	private Map map;
 	private Status status;
 	private MessagesZone msgZone;
-	private MenuDialog mainMenu;
+	private GameMenu mainMenu;
 	
 	private Size mapSize;
 	
 	private GameTime gameTime;
 	
-	private boolean isPaused = false;
+	private boolean isRunning = false;
 
 	public Game(Window window) {
 		this.window = window;
@@ -50,19 +48,17 @@ public class Game implements DeletableObserver {
 		
 		gameTime = new GameTime(this, 0);
 		
-		window.addMenuButtonAction(new ActionListener() {
+		window.addGameMenuButtonAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				openGameMenu();
 			}
 		});
 		
-		mainMenu = new MenuDialog(window, this);
+		mainMenu = new GameMenu(window, this);
 		
-		PsychologicalFactors psychologicalFactors = new PsychologicalFactors(20, 12, 23, 20);
-
-		Person p1 = new Kid(new Point(10, 10), "Test", "Person", Person.Gender.Male, null, null, psychologicalFactors);
-		Person p2 = new Kid(new Point(17, 13), "Second", "Player", Person.Gender.Female, null, null, psychologicalFactors);
-		Person p3 = new Adult(new Point(10, 17), "Third", "People", Person.Gender.Female, null, null, psychologicalFactors);
+		Person p1 = new Kid(new Point(10, 10), "Test Person", Person.Gender.Male, null, null);
+		Person p2 = new Kid(new Point(17, 13), "Second Player", Person.Gender.Female, null, null);
+		Person p3 = new Adult(new Point(10, 17), "Third People", Person.Gender.Female, null, null);
 
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
@@ -118,8 +114,19 @@ public class Game implements DeletableObserver {
 		WaterClosed wc = new WaterClosed(new Point(1, 22));
 		attachObjectToGame(wc);
 
-		map.setObjects(this.getGameObjects());
 		notifyView();
+	}
+	
+	public Size getMapBlockSize() {
+		return map.getBlockSize();
+	}
+	
+	public void playerMoveEvent(Person p) {
+		ArrayList<GameObject> obj_lst = p.getObjectsAround();
+		
+		for (GameObject o : obj_lst) {
+			o.proximityEvent(p);
+		}
 	}
 	
 	public void mouseLeftClickEvent(Point pos) {
@@ -197,6 +204,8 @@ public class Game implements DeletableObserver {
 
 		notifyView();
 		centerViewOnPlayer();
+		
+		playerMoveEvent(pers);
 	}
 	
 	public void centerViewOnPlayer() {
@@ -232,7 +241,7 @@ public class Game implements DeletableObserver {
 
 	}
 
-	public void stop() {
+	public void quit() {
 		window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
 	}
 
@@ -246,7 +255,7 @@ public class Game implements DeletableObserver {
 	}*/
 	
 	private void updateActivePerson() {
-		activePerson.updateNeeds();
+		activePerson.update();
 	}
 	
 	public void updateGame() {
@@ -282,24 +291,25 @@ public class Game implements DeletableObserver {
 		notifyView();
 	}
 	
-	public boolean isPaused() {
-		return isPaused;
+	public boolean isRunning() {
+		return isRunning;
 	}
 	
 	public void pauseGame() {
-		isPaused = true;
+		isRunning = false;
 		gameTime.stop();
 		
 	}
 	
 	public void resumeGame() {
-		isPaused = false;
+		isRunning = true;
 		gameTime.start();
 		
 	}
 
 	public void startGame() {
-		// TODO
+		isRunning = true;
+		map.setObjects(this.getGameObjects());
 		
 		gameTime.start();
 		
@@ -321,11 +331,18 @@ public class Game implements DeletableObserver {
 		chooser.setDialogTitle("Destination du fichier de sauvegarde");
 		int returnVal = chooser.showSaveDialog(window);
 		
-	    if(returnVal != JFileChooser.APPROVE_OPTION) {
+	    if (returnVal != JFileChooser.APPROVE_OPTION) {
 	    	return;
 	    }
+	    
+	    String path = chooser.getSelectedFile().getPath();
+	    
+	    // Add .sav if not added automatically
+	    if (!path.endsWith(".sav")) {
+	    	path += ".sav";
+	    }
 		
-		ObjectSaver saver = new ObjectSaver(chooser.getSelectedFile().getPath(), SAVEFILE_VERSION_ID);
+		ObjectSaver saver = new ObjectSaver(path);
 		
 		// WARNING: The order is very important and must be the same as the restoring order !
 		saver.addObjectToSave(objects);
@@ -349,12 +366,7 @@ public class Game implements DeletableObserver {
 	    }
 		
 		ObjectRestorer restorer = new ObjectRestorer(chooser.getSelectedFile().getPath());
-		
-		if (!restorer.versionMatches(SAVEFILE_VERSION_ID)) {
-			System.out.println("Save-file version mismatch");
-			return;
-		}
-		
+				
 		gameTime.stop();
 		gameTime.cancel();
 		

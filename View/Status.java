@@ -41,9 +41,9 @@ public class Status extends JPanel {
         
 		// Draw person infos
         g.setColor(Color.BLACK);
-        g.drawString(p.getFirstName(), 130, 70);
-        g.drawString(p.getLastName(), 130, 90);
-        g.drawString((p.getGender() == Person.Gender.Male) ? "Homme" : "Femme", 130, 120);
+        g.drawString(p.getName(), 130, 70);
+        g.drawString((p.getGender() == Person.Gender.Male) ? "Homme" : "Femme", 130, 100);
+        g.drawString(p.getAge() + " ans", 130, 100);
 
 		// Draw bars
         paintLevelBar(g, 20, 200, BAR_LENGTH*2 + 30, BAR_HEIGHT, "Énergie", p.getEnergy());

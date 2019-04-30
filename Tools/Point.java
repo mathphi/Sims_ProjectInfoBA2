@@ -29,6 +29,12 @@ public class Point implements Serializable {
 		return new Point(x + p.getX(), y + p.getY());
 	}
 	
+	public double getDistance(Point p) {
+		int dx = x - p.getX();
+		int dy = y - p.getY();
+		return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+	}
+	
 	public String toString() {
 		return String.format("Point(%d, %d)", x, y);
 	}

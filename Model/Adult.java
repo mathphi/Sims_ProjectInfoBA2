@@ -8,21 +8,19 @@ public class Adult extends Person {
 	public Adult(Person person) {
 		// constructor if the person need to evolve from teenager to kid
 		super(person.getPos(),
-			  person.getFirstName(),
-			  person.getLastName(),
+			  person.getName(),
 			  person.getGender(),
 			  person.getMother(),
-			  person.getFather(),
-			  person.getPsychologicalFactor());
+			  person.getFather());
 		
 		age = person.getAge();
 		money = person.getMoney();
+		psychologicalFactors = person.getPsychologicalFactor();
 	}
 
-	public Adult(Point pos, String firstName, String lastName, Gender gender, 
-			     Adult mother, Adult father, PsychologicalFactors psychologicalFactors) {
+	public Adult(Point pos, String name, Gender gender, Adult mother, Adult father) {
 		// constructor if it's a new character
-		super(pos, firstName, lastName, gender, mother, father, psychologicalFactors);
+		super(pos, name, gender, mother, father);
 
 	}
 

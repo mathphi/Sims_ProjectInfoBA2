@@ -6,13 +6,10 @@ import java.io.ObjectOutputStream;
 public class ObjectSaver {
 	private ObjectOutputStream objectStream;
 	
-	public ObjectSaver(String filepath, int versionID) {
+	public ObjectSaver(String filepath) {
 		try {
 	        FileOutputStream file = new FileOutputStream(filepath);
 	        objectStream = new ObjectOutputStream(file);
-	        
-	        // Prepend the version-id to sign the file
-	        objectStream.writeInt(versionID);
 		}
 		catch (Exception e) {
             e.printStackTrace();

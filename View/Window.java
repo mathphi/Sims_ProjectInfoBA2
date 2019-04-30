@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 
-import Controller.Mouse;
+import Controller.MouseController;
 
 public class Window extends JFrame {
 	private static final long serialVersionUID = -6602572108147389047L;
@@ -24,7 +24,11 @@ public class Window extends JFrame {
     private Status status = new Status();
     private MessagesZone msgZone = new MessagesZone();
     
-    JButton menuButton;
+    private EditorPanel editorPanel;
+    
+    private JPanel borderPanel;
+    private JButton gameMenuButton;
+    private JButton editorMenuButton;
 
     @SuppressWarnings("serial")
 	public Window(String title) {
@@ -62,20 +66,19 @@ public class Window extends JFrame {
 			}
 		});
 		
-		menuButton = new JButton("Menu");
+		editorPanel = new EditorPanel();
+
+		gameMenuButton = new JButton("Menu");
+    	editorMenuButton = new JButton("Menu");
+    	
+    	// Disable focus to avoid the loss of focus for map, resulting in KeyListener not working
+    	gameMenuButton.setFocusable(false);
+    	editorMenuButton.setFocusable(false);
 		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		buttonPanel.setPreferredSize(new Dimension(300, 50));
-		buttonPanel.add(menuButton);
-		
-		JPanel borderPanel = new JPanel();
+		borderPanel = new JPanel();
 		borderPanel.setPreferredSize(new Dimension(300, 600));
 		borderPanel.setLayout(new BorderLayout());
-		borderPanel.add(status, BorderLayout.NORTH);
-		borderPanel.add(msgZone, BorderLayout.CENTER);
-		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
-
+		
 		// Layouts
         setLayout(new BorderLayout());
         add(mapView, BorderLayout.CENTER);
@@ -84,8 +87,45 @@ public class Window extends JFrame {
         setVisible(true);
     }
     
-    public void addMenuButtonAction(ActionListener a) {
-    	menuButton.addActionListener(a);
+    private void setupGameBorderPanel() {		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		buttonPanel.setPreferredSize(new Dimension(300, 50));
+		buttonPanel.add(gameMenuButton);
+    	
+		borderPanel.removeAll();
+		borderPanel.revalidate();
+		borderPanel.add(status, BorderLayout.NORTH);
+		borderPanel.add(msgZone, BorderLayout.CENTER);
+		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
+    }
+    
+    private void setupEditorBorderPanel() {		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		buttonPanel.setPreferredSize(new Dimension(300, 50));
+		buttonPanel.add(editorMenuButton);
+    	
+		borderPanel.removeAll();
+		borderPanel.revalidate();
+		borderPanel.add(editorPanel, BorderLayout.CENTER);
+		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    public void switchEditorMode() {
+    	setupEditorBorderPanel();
+    }
+    
+    public void switchGameMode() {
+    	setupGameBorderPanel();
+    }
+
+    public void addGameMenuButtonAction(ActionListener a) {
+    	gameMenuButton.addActionListener(a);
+    }
+
+    public void addEditorMenuButtonAction(ActionListener a) {
+    	editorMenuButton.addActionListener(a);
     }
 
     public void update() {
@@ -93,11 +133,11 @@ public class Window extends JFrame {
         this.status.redraw();
     }
 
-    public void setKeyListener(KeyListener keyboard) {
+    public void addMapKeyListener(KeyListener keyboard) {
         this.map.addKeyListener(keyboard);
     }
 
-    public void setMouseListener(Mouse m) {
+    public void addMapMouseListener(MouseController m) {
         this.map.addMouse(m);
     }
 
@@ -111,5 +151,9 @@ public class Window extends JFrame {
 
 	public MessagesZone getMsgZone() {
 		return msgZone;
-	}	
+	}
+	
+	public EditorPanel getEditorPanel() {
+		return editorPanel;
+	}
 }

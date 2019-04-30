@@ -76,4 +76,6 @@ public abstract class GameObject implements Serializable {
 	public abstract boolean isObstacle();
 	
 	public abstract void clickedEvent();
+	
+	public abstract void proximityEvent(GameObject o);
 }

@@ -1,7 +1,6 @@
 package Model;
 
 import java.awt.Color;
-import java.util.ArrayList;
 
 import Tools.Point;
 import Tools.Size;
@@ -21,13 +20,14 @@ public class WaterClosed extends GameObject {
 
 	@Override
 	public void clickedEvent() {
-		// Empty bladder of person around on click
-		ArrayList<GameObject> obj_list = getObjectsAround();
-		
-		for (GameObject obj : obj_list) {
-			if (obj instanceof Person) {
-				((Person)obj).emptyBladder(true);
-			}
+		// Nothing to do on click
+	}
+
+	@Override
+	public void proximityEvent(GameObject o) {
+		// Empty bladder of incoming person
+		if (o instanceof Person) {
+			((Person)o).emptyBladder(true);
 		}
 	}
 }

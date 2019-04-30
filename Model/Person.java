@@ -33,8 +33,7 @@ public abstract class Person extends GameObject implements Directable {
 	protected boolean isActivePerson;
 
 	// general information
-	protected String firstName;
-	protected String lastName;
+	protected String name;
 	protected int age;
 	protected Gender gender;
 
@@ -69,8 +68,7 @@ public abstract class Person extends GameObject implements Directable {
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
 
-	public Person(Point pos, String firstName, String lastName, Gender gender,
-			      Adult mother, Adult father, PsychologicalFactors psychologicalFactors)
+	public Person(Point pos, String name, Gender gender, Adult mother, Adult father)
 	{
 		super(pos, SIZE, Color.BLUE);
 
@@ -84,11 +82,10 @@ public abstract class Person extends GameObject implements Directable {
 		generalKnowledge = 50;
 		othersImpression = 50;
 		
-		this.firstName = firstName;
+		this.name = name;
 		this.gender = gender;
-		this.lastName = lastName;
 
-		this.psychologicalFactors = psychologicalFactors;
+		this.psychologicalFactors = PsychologicalFactors.RandomFactors();
 
 		friendList.put(father, 20);
 		friendList.put(mother, 20); // considered as the higher level of relation but CAN't propose to marry, etc
@@ -100,6 +97,10 @@ public abstract class Person extends GameObject implements Directable {
 	}
 
 	public void clickedEvent() {
+		// TODO
+	}
+	
+	public void proximityEvent(GameObject o) {
 		// TODO
 	}
 
@@ -134,7 +135,7 @@ public abstract class Person extends GameObject implements Directable {
 		return true;
 	}
 
-	public void updateNeeds() {
+	public void update() {
 		decreaseBladder((int) Random.range(10, 16)); // Random decrease
 		modifyHunger((int) Random.range(-5, -10)); // Random decrease
 		modifyEnergy(hygiene >= 20 ? -4 : -12); // Decrease more energy if hygiene is low
@@ -307,7 +308,15 @@ public abstract class Person extends GameObject implements Directable {
 		bladder = Math.max(0, Math.min(bladder, 100));
 
 		if (bladder <= 0) {
-			emptyBladder(false);
+			boolean isOnToilet = false;
+
+			for (GameObject o : getObjectsAround()) {
+				if (o instanceof WaterClosed) {
+					isOnToilet = true;
+				}
+			}
+			
+			emptyBladder(isOnToilet);
 		}
 	}
 
@@ -420,12 +429,8 @@ public abstract class Person extends GameObject implements Directable {
 
 	}
 
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
+	public String getName() {
+		return name;
 	}
 
 	public Gender getGender() {

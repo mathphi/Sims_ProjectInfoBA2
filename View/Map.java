@@ -9,13 +9,13 @@ import Tools.Size;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import Controller.Mouse;
+import Controller.MouseController;
 
 public class Map extends JPanel {
 	private static final long serialVersionUID = 1282569928891942835L;
@@ -23,31 +23,11 @@ public class Map extends JPanel {
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
     private final Size MAP_SIZE = new Size(80, 80);
     private final int BLOC_SIZE = 20;
-    private Mouse mouseController = null;
 
     public Map() {
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.setPreferredSize(new Dimension(MAP_SIZE.getWidth()*BLOC_SIZE, MAP_SIZE.getHeight()*BLOC_SIZE));
-        addMouseListener(new MouseListener() {
-			public void mousePressed(MouseEvent e) {
-				int x = e.getX()/BLOC_SIZE;
-				int y = e.getY()/BLOC_SIZE;
-				
-				// Left clicked
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					mouseController.mapLeftClick(x, y);
-				}
-				// Right click
-				else if (e.getButton() == MouseEvent.BUTTON3) {
-					mouseController.mapRightClick(x, y);
-				}
-			}
-			public void mouseClicked(MouseEvent arg0) {}
-			public void mouseEntered(MouseEvent arg0) {}
-			public void mouseExited(MouseEvent arg0) {}
-			public void mouseReleased(MouseEvent arg0) {}
-		});
     }
 
     public void paint(Graphics g) {
@@ -124,8 +104,9 @@ public class Map extends JPanel {
         this.repaint();
     }
 
-	public void addMouse(Mouse m) {
-		this.mouseController = m;
+	public void addMouse(MouseController m) {
+		addMouseListener((MouseListener) m);
+		addMouseMotionListener((MouseMotionListener) m);
 	}
 	
 	public Size getMapSize() {

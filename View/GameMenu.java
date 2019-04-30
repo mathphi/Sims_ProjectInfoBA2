@@ -14,10 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class MenuDialog extends JDialog {
+public class GameMenu extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
 	
-	public MenuDialog(Frame parent, Game game) {
+	public GameMenu(Frame parent, Game game) {
 		super(parent, "Menu principal", true);
 		
 		setPreferredSize(new Dimension(300, 300));
@@ -60,7 +60,7 @@ public class MenuDialog extends JDialog {
 		});
 		exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				game.stop();
+				game.quit();
 			}
 		});
 	}
