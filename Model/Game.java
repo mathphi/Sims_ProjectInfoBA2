@@ -5,6 +5,7 @@ import View.Map;
 import View.GameMenu;
 import View.InteractionMenu;
 import View.Message;
+import View.Message.MsgType;
 import View.MessagesZone;
 import View.Status;
 import Tools.ObjectRestorer;
@@ -60,11 +61,9 @@ public class Game implements DeletableObserver {
 		
 		mainMenu = new GameMenu(window, this);
 		
-	
-		
-		Person p1 = new Kid(new Point(10, 10), "Test Person", Person.Gender.Male, null, null);
-		Person p2 = new Kid(new Point(11, 11), "Second Player", Person.Gender.Female, null, null);
-		Person p3 = new Adult(new Point(12, 12), "Third People", Person.Gender.Female, null, null);
+		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
+		Person p2 = new Kid(new Point(17, 13), "Second Player", 11, Person.Gender.Female, null, null);
+		Person p3 = new Adult(new Point(10, 17), "Third People", 43, Person.Gender.Female, null, null);
 
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
@@ -180,6 +179,11 @@ public class Game implements DeletableObserver {
 	public Size getMapSize() {
 		return mapSize;
 	}
+
+	public void sendPlayer(Point pos) {
+		Thread t = new Thread(new AStarThread(this, activePerson, pos));
+		t.start();
+	}
 	
 	public void moveActivePlayer(int x, int y) {
 		movePlayer(activePerson, x, y);
@@ -276,14 +280,12 @@ public class Game implements DeletableObserver {
 	public void quit() {
 		window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
 	}
-
-	public void sendPlayer(Point p) {
-		Thread t = new Thread(new AStarThread(this, activePerson, p));
-		t.start();
-	}
 	
 	private void updateAllPopulation() {
-		for (Person p : population) {
+		// We cannot use the 'foreach' structure here because population
+		// can be modified in updatePerson() resulting in a ConcurrentModificationException
+		for (int i = 0 ; i < population.size() ; i++) {
+			Person p = population.get(i);
 			updatePerson(p);
 		}
 	}
@@ -293,6 +295,35 @@ public class Game implements DeletableObserver {
 			return;
 		
 		p.update(gameTime.getVirtualTime());
+		
+		// If this Person reached the age to evolve to the next Person level :
+		// Create a new object of the new level with the same properties to replace this Person.
+		if (p.maxAgeReached()) {
+			if (p instanceof Adult) {
+				//TODO: He dies...
+				p.addMessage("Vous êtes mort !", MsgType.Problem);
+			}
+			else if (p instanceof Teenager) {
+				Person newPers = new Adult(p);
+				replacePerson(p, newPers);
+				newPers.addMessage("Vous êtes maintenant un adulte !", MsgType.Info);
+			}
+			else if (p instanceof Kid) {
+				Person newPers = new Teenager(p);
+				replacePerson(p, newPers);
+				newPers.addMessage("Vous êtes maintenant un adolescent !", MsgType.Info);
+			}
+		}
+	}
+	
+	private void replacePerson(Person from, Person to) {
+		removePersonFromGame(from);
+		attachPersonToGame(to);
+		
+		// 
+		if (from.isActivePerson()) {
+			setActivePerson(to);
+		}
 	}
 	
 	public void updateGame() {
@@ -383,12 +414,7 @@ public class Game implements DeletableObserver {
 		
 		// Select the first person found in the game if none has been selected
 		if (activePerson == null) {
-			for (Person p : population) {
-				if (p.isPlayable) {
-					setActivePerson(p);
-					break;
-				}
-			}
+			selectDefaultActivePerson();
 		}
 		
 		notifyView();
@@ -467,12 +493,16 @@ public class Game implements DeletableObserver {
 			attachObjectToGame(o);
 		}
 	}
-	
+
 	private void attachObjectToGame(GameObject o) {
 		objects.add(o);
 		o.setMapObjectsList(objects);
 	}
 	
+	private void removeObjectFromGame(GameObject o) {
+		objects.remove(o);
+	}
+
 	private void attachPersonToGame(Person p) {
 		if (p == null)
 			return;
@@ -480,6 +510,27 @@ public class Game implements DeletableObserver {
 		population.add(p);
 		attachObjectToGame(p);
 		attachMessageListener(p);
+	}
+	
+	private void removePersonFromGame(Person p) {
+		if (p == null)
+			return;
+		
+		population.remove(p);
+		removeObjectFromGame(p);
+		
+		if (p.isActivePerson()) {
+			selectDefaultActivePerson();
+		}
+	}
+	
+	private void selectDefaultActivePerson() {
+		for (Person p : population) {
+			if (p.isPlayable) {
+				setActivePerson(p);
+				break;
+			}
+		}
 	}
 	
 	private void attachMessageListener(Person p) {

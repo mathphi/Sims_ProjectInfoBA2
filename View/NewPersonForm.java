@@ -17,7 +17,9 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import Model.Adult;
@@ -34,6 +36,7 @@ public class NewPersonForm extends JDialog {
 	private JComboBox<String> genderField;
 	private JComboBox<String> fatherField;
 	private JComboBox<String> motherField;
+	private JSpinner ageField;
 	private JCheckBox unplayableField;
 
 	public NewPersonForm(Frame parent, ArrayList<Person> population) {
@@ -41,7 +44,7 @@ public class NewPersonForm extends JDialog {
 		
 		this.population = population;
 		
-		setPreferredSize(new Dimension(300, 220));
+		setPreferredSize(new Dimension(300, 250));
 		setLayout(new BorderLayout());
 		
 		JPanel mainPanel = new JPanel();
@@ -61,6 +64,10 @@ public class NewPersonForm extends JDialog {
 		
 		JLabel motherLabel = new JLabel("Mère");
 		motherField = new JComboBox<String>(getAdultsNames(population, Gender.Female));
+
+		JLabel ageLabel = new JLabel("Age initial");
+		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(10, 4, 99, 1);
+		ageField = new JSpinner(spinnerModel);
 		
 		unplayableField = new JCheckBox("Personnage non-joueur");
 
@@ -104,6 +111,14 @@ public class NewPersonForm extends JDialog {
 
 		c.gridx = 0;
 		c.gridy = 4;
+		mainPanel.add(ageLabel, c);
+		
+		c.gridx = 1;
+		c.gridy = 4;
+		mainPanel.add(ageField, c);
+
+		c.gridx = 0;
+		c.gridy = 5;
 		c.gridwidth = 2;
 		mainPanel.add(unplayableField, c);
 		c.gridwidth = 0;
@@ -177,6 +192,10 @@ public class NewPersonForm extends JDialog {
 	
 	public String getName() {
 		return nameField.getText();
+	}
+	
+	public int getAge() {
+		return (int) ageField.getValue();
 	}
 	
 	public Gender getGender() {

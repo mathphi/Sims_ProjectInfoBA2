@@ -1,23 +1,29 @@
 package Model;
 
+import java.awt.Color;
+
 import Tools.Point;
 
 public class Teenager extends Person {
 	private static final long serialVersionUID = 1012022981926904899L;
 
-	public Teenager(Person person) {
-		// constructor if the person need to evolve from kid to teenager
-		super(person.getPos(), person.getName(), person.getGender(), person.getMother(), person.getFather());
-
-		age = person.getAge();
-		money = person.getMoney();
-		psychologicalFactors = person.getPsychologicalFactor();
+	public Teenager(Person other) {
+		super(other);
+		
+		setColor(new Color(39, 140, 247));
 	}
 
-	public Teenager(Point pos, String name, Gender gender, Adult mother, Adult father) {
-		// constructor if it's a new character (pnj)
-		super(pos, name, gender, mother, father);
+	public Teenager(Point pos, String name, int age, Gender gender, Adult mother, Adult father)	{
+		super(pos, name, age, gender, mother, father);
+		
+		setColor(new Color(39, 140, 247));
 	}
+
+	@Override
+	public boolean maxAgeReached() {
+		return (getAge() > 21);
+	}
+	
 
 	public void buy(TakableObject achat) {/*
 											 * if (setMoney(-achat.getPrice())) { inventory.add(achat); }

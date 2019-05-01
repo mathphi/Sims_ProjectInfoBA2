@@ -21,7 +21,6 @@ public class AStar {
 	private boolean closed[][];
 	private Point posStart;
 	private Point posEnd;
-	private Size objSize;
 	private Cell[][] grid;
 	private PriorityQueue<Cell> open;
 	private int V_H_COST = 1;
@@ -31,7 +30,6 @@ public class AStar {
 		posStart = pos_start;
 		posEnd = pos_end;
 		mapSize = map_size;
-		objSize = movedObj.getSize();
 
 		grid = new Cell[mapSize.getWidth()][mapSize.getHeight()];
 
@@ -56,7 +54,7 @@ public class AStar {
 		open.add(grid[posStart.getX()][posStart.getY()]);
 		for (GameObject o : objects) {
 			if (o.isObstacle() && o != movedObj) {
-				setBlocked(o.getPos());
+				setBlocked(o);
 			}
 		}
 
@@ -132,10 +130,10 @@ public class AStar {
 		}
 	}
 
-	private void setBlocked(Point p) {
-		for (int i = 0; i < objSize.getWidth(); i++) {
-			for (int j = 0; j < objSize.getHeight(); j++) {
-				grid[p.getX() + i][p.getY() + j] = null;
+	private void setBlocked(GameObject o) {
+		for (int i = 0; i < o.getSize().getWidth(); i++) {
+			for (int j = 0; j < o.getSize().getHeight(); j++) {
+				grid[o.getPos().getX() + i][o.getPos().getY() + j] = null;
 			}
 		}
 	}

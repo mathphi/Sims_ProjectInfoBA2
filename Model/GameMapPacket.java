@@ -3,6 +3,10 @@ package Model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * This class is used to serialise all game objects and data.
+ * That is simpler to save and restore a map/game.
+ */
 public class GameMapPacket implements Serializable {
 	private static final long serialVersionUID = -6168233993736275354L;
 	

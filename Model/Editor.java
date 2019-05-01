@@ -93,10 +93,17 @@ public class Editor {
 							return;
 
 						currentPlacing = (GameObject) Class.forName(e.getActionCommand())
-								.getDeclaredConstructor(Point.class, String.class, Gender.class, Adult.class, Adult.class)
+								.getDeclaredConstructor(
+										Point.class,
+										String.class,
+										int.class,
+										Gender.class,
+										Adult.class,
+										Adult.class)
 								.newInstance(
 										new Point(-100,-100),
 										form.getName(),
+										form.getAge(),
 										form.getGender(),
 										form.getFather(),
 										form.getMother());

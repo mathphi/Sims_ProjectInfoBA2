@@ -1,23 +1,28 @@
 package Model;
 
+import java.awt.Color;
+
 import Tools.Point;
 
 public class Adult extends Person {
 	private static final long serialVersionUID = 532161543919171452L;
 
-	public Adult(Person person) {
-		// constructor if the person need to evolve from teenager to kid
-		super(person.getPos(), person.getName(), person.getGender(), person.getMother(), person.getFather());
-
-		age = person.getAge();
-		money = person.getMoney();
-		psychologicalFactors = person.getPsychologicalFactor();
+	public Adult(Person other) {
+		super(other);
+		
+		setColor(new Color(39, 80, 247));
 	}
 
-	public Adult(Point pos, String name, Gender gender, Adult mother, Adult father) {
-		// constructor if it's a new character
-		super(pos, name, gender, mother, father);
+	public Adult(Point pos, String name, int age, Gender gender, Adult mother, Adult father) {
+		super(pos, name, age, gender, mother, father);
+		
+		setColor(new Color(39, 80, 247));		
+	}
 
+	@Override
+	public boolean maxAgeReached() {
+		//TODO: define a random maxAge for an adult after which he dies ?
+		return (getAge() > 90);
 	}
 
 	public void work() {

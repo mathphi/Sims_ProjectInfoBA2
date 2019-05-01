@@ -29,7 +29,7 @@ public abstract class Person extends GameObject {
 
 	private static Size SIZE = new Size(1, 1);
 
-	protected boolean isActivePerson;
+	private boolean isActivePerson;
 
 	// general information
 	protected String name;
@@ -41,7 +41,7 @@ public abstract class Person extends GameObject {
 
 	// visible properties, if = 100 no need
 	protected double energy;
-	protected float hunger;
+	protected double hunger;
 	protected double mood;
 	protected double hygiene;
 	protected double bladder;
@@ -60,15 +60,13 @@ public abstract class Person extends GameObject {
 	// for the automatic answers. Will be randomly generated for PNJ
 	protected PsychologicalFactors psychologicalFactors;
 
-	protected double relationFactor;
-	protected ArrayList<Product> inventory;
+	protected ArrayList<Product> inventory = new ArrayList<Product>();
 	// relation
 	protected Map<Person, Integer> friendList = new HashMap<>();
 	protected Adult mother;
 	protected Adult father;
 
-	// Random factors to differentiate the avolution of each person (one is hungry
-	// more often,...)
+	// Random factors to differentiate the evolution of each person (one is hungry more often,...)
 	private double bladderRandomFactor = Random.range(0.6, 1.2);
 	private double hungerRandomFactor = Random.range(0.6, 1.2);
 	private double energyRandomFactor = Random.range(0.6, 1.2);
@@ -77,8 +75,47 @@ public abstract class Person extends GameObject {
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
 
-	public Person(Point pos, String name, Gender gender, Adult mother, Adult father) {
+	// Constructor used when the Person evolves (ie from Kid to Teenage)
+	public Person(Person other) {
+		this(other.getPos(),
+			 other.getName(),
+			 other.getAge(),
+			 other.getGender(),
+			 other.getMother(),
+			 other.getFather());
+		
+		money = other.getMoney();
+		
+		energy = other.getEnergy() * 100;
+		mood = other.getMood() * 100;
+		hunger = other.getHunger() * 100;
+		hygiene = other.getHygiene() * 100;
+		bladder = other.getBladder() * 100;
+		
+		generalKnowledge = other.getGeneralKnowledge();
+		othersImpression = other.getOthersImpression();
+		
+		psychologicalFactors = other.getPsychologicalFactor();
+		
+		inventory = other.getInventory();
+		messagesHistory = other.getMessagesHistory();
+		
+		rotate(other.getDirection());
+	}
+	
+	public Person(Point pos, String name, int age, Gender gender, Adult mother, Adult father)
+	{
 		super(pos, SIZE, Color.BLUE);
+		
+		this.name 	= name;
+		this.age 	= age;
+		this.gender = gender;
+		this.mother = mother;
+		this.father = father;
+		
+		// Considered as the higher level of relation but CAN't propose to marry, etc
+		friendList.put(father, 20);
+		friendList.put(mother, 20);
 
 		// Initial Person properties (maximum is 100)
 		energy = 100;
@@ -89,19 +126,8 @@ public abstract class Person extends GameObject {
 
 		generalKnowledge = 50;
 		othersImpression = 50;
-
-		this.name = name;
-		this.gender = gender;
-
-		this.psychologicalFactors = PsychologicalFactors.RandomFactors();
-
-		friendList.put(father, 20);
-		friendList.put(mother, 20); // considered as the higher level of relation but CAN't propose to marry, etc
-
-		this.mother = mother;
-		this.father = father;
-
-		inventory = new ArrayList<Product>();
+		
+		psychologicalFactors = PsychologicalFactors.RandomFactors();
 	}
 
 	public void clickedEvent() {
@@ -111,6 +137,8 @@ public abstract class Person extends GameObject {
 	public void proximityEvent(GameObject o) {
 		// TODO
 	}
+	
+	public abstract boolean maxAgeReached();
 
 	public void setActivePerson(boolean is_active) {
 		isActivePerson = is_active;
@@ -153,8 +181,6 @@ public abstract class Person extends GameObject {
 
 	public void evolves() {
 		age++;
-
-		// TODO: check if we have the age to evolve to next class
 	}
 
 	public int getRelationship(Person friend) {
@@ -488,7 +514,15 @@ public abstract class Person extends GameObject {
 	public double getHunger() {
 		return hunger / 100.0;
 	}
-
+	
+	public int getGeneralKnowledge() {
+		return generalKnowledge;
+	}
+	
+	public int getOthersImpression() {
+		return othersImpression;
+	}
+	
 	public void setPlayable(boolean playable) {
 		isPlayable = playable;
 	}
@@ -501,6 +535,10 @@ public abstract class Person extends GameObject {
 		return psychologicalFactors;
 	}
 
+	public ArrayList<Product> getInventory() {
+		return inventory;
+	}
+	
 	public ArrayList<Message> getMessagesHistory() {
 		return messagesHistory;
 	}
@@ -520,6 +558,10 @@ public abstract class Person extends GameObject {
 		for (MessageEventListener mel : msgListeners) {
 			mel.messageEvent(msg);
 		}
+	}
+	
+	public void addMessage(String text, MsgType type) {
+		addMessage(new Message(text, type));
 	}
 
 	public void addInventory(Product newProduct) {
