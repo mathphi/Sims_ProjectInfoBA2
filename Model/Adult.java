@@ -7,12 +7,8 @@ public class Adult extends Person {
 
 	public Adult(Person person) {
 		// constructor if the person need to evolve from teenager to kid
-		super(person.getPos(),
-			  person.getName(),
-			  person.getGender(),
-			  person.getMother(),
-			  person.getFather());
-		
+		super(person.getPos(), person.getName(), person.getGender(), person.getMother(), person.getFather());
+
 		age = person.getAge();
 		money = person.getMoney();
 		psychologicalFactors = person.getPsychologicalFactor();
@@ -158,72 +154,78 @@ public class Adult extends Person {
 
 	}
 
-	public void characterInteraction(Person people) {
+	public void characterInteraction(Person people, String choice) {
 		// function that allows the people to interact with another one
 		// interaction is the type of interaction
+		switch (choice) {
+		case ("discuss"): {
 
-		switch (getRelationship(people)) {
-		case (0): {
-			// can only discuss
-			// TODO interface graphique: les diff�rentes possibilit�s!
 			if (energy >= 10) {
 				discuss(people);
 
-			}
-		}
-		case (1): {
-			if (energy >= 10) {
-				discuss(people);
-
-			}
-
-			if (energy >= 20) {
-				playWith(people);
-
+			} else {
+				// TODO message comme quoi pas assez d'énergie
 			}
 
 			break;
 		}
-		case (2): {
-			if (energy >= 10) {
-				discuss(people);
-
-			}
+		case ("play"): {
 
 			if (energy >= 20) {
 				playWith(people);
 
+			} else {
+				// TODO message comme quoi pas assez d'énergie
 			}
-			if (energy >= 40) {
+
+			break;
+		}
+		case ("invite"): {
+
+			if (energy >= 25) {
 				invite(people);
-				goToDrink(people);
 
+			} else {
+				// TODO message comme quoi pas assez d'énergie
 			}
 
 			break;
-
 		}
-		case (3): {
-			if (energy >= 10) {
-				discuss(people);
+		case ("embrass"): {
 
+			if (energy >= 10) {
 				embrass(people);
-				marry(people);
 
-			}
-
-			if (energy >= 20) {
-				playWith(people);
-
-			}
-			if (energy >= 40) {
-				invite(people);
-				goToDrink(people);
-
+			} else {
+				// TODO message comme quoi pas assez d'énergie
 			}
 
 			break;
 		}
+		case ("goToDrink"): {
+
+			if (energy >= 40) {
+				goToDrink(people);
+
+			} else {
+				// TODO message comme quoi pas assez d'énergie
+			}
+
+			break;
+		}
+
+		case ("marry"): {
+
+			if (energy >= 10) {
+				goToDrink(people);
+
+			} else {
+				// TODO message comme quoi pas assez d'énergie
+			}
+
+			break;
+		}
+
 		default:
 			break;
 		}

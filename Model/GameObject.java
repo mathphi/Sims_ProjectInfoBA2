@@ -37,25 +37,25 @@ public abstract class GameObject implements Directable, Serializable {
 
 	public Size getSize() {
 		Size s = rect.getSize();
-		
+
 		if (direction == Direction.NORTH || direction == Direction.SOUTH) {
 			s = s.permuted();
 		}
-		
+
 		return s;
 	}
-	
+
 	public Rect getRect() {
 		Rect r = rect;
 
 		if (direction == Direction.NORTH || direction == Direction.SOUTH) {
 			r = r.permuted();
 		}
-		
+
 		return r;
 	}
-	
-	//TODO: remove this...
+
+	// TODO: remove this...
 	public Color getColor() {
 		return color;
 	}
@@ -68,25 +68,25 @@ public abstract class GameObject implements Directable, Serializable {
 		if (direction == Direction.NORTH || direction == Direction.SOUTH) {
 			sz = sz.permuted();
 		}
-		
+
 		rect.setSize(sz);
 	}
-	
+
 	public boolean isAtPosition(Point p) {
 		return getRect().contains(p);
 	}
 
 	public ArrayList<GameObject> getObjectsAround() {
 		// Create a rectangle a bit larger than the object
-		Rect test_rect = new Rect(getRect().getPos().add(-1,-1), getRect().getSize().add(2,2));
-		
+		Rect test_rect = new Rect(getRect().getPos().add(-1, -1), getRect().getSize().add(2, 2));
+
 		ArrayList<GameObject> lst = new ArrayList<GameObject>();
-		
+
 		// Test all objects and keep these that overlaps the test_rect
 		for (GameObject o : allMapObjects) {
 			if (o == this)
 				continue;
-			
+
 			if (o.getRect().overlaps(test_rect)) {
 				lst.add(o);
 			}
@@ -98,29 +98,27 @@ public abstract class GameObject implements Directable, Serializable {
 	public void setMapObjectsList(ArrayList<GameObject> objects) {
 		allMapObjects = objects;
 	}
-	
+
 	public abstract boolean isObstacle();
-	
+
 	public abstract void clickedEvent();
-	
+
 	public abstract void proximityEvent(GameObject o);
-	
+
 	public abstract GameObject clone();
-	
+
 	public void paint(Graphics g, int BLOC_SIZE) {
-        g.setColor(color);
-        g.fillRect(
-        		getPos().getX() * BLOC_SIZE,
-        		getPos().getY() * BLOC_SIZE,
-        		(BLOC_SIZE * getSize().getWidth()) - 2,
-        		(BLOC_SIZE * getSize().getHeight()) - 2);
+		g.setColor(color);
+		g.fillRect(getPos().getX() * BLOC_SIZE, getPos().getY() * BLOC_SIZE, (BLOC_SIZE * getSize().getWidth()) - 2,
+				(BLOC_SIZE * getSize().getHeight()) - 2);
 
-        g.setColor(Color.BLACK);
+		g.setColor(Color.BLACK);
 
-        g.drawRect(
-        		getPos().getX() * BLOC_SIZE,
-        		getPos().getY() * BLOC_SIZE,
-        		(BLOC_SIZE * getSize().getWidth()) - 2,
-        		(BLOC_SIZE * getSize().getHeight()) - 2);
+		g.drawRect(getPos().getX() * BLOC_SIZE, getPos().getY() * BLOC_SIZE, (BLOC_SIZE * getSize().getWidth()) - 2,
+				(BLOC_SIZE * getSize().getHeight()) - 2);
+	}
+
+	public boolean isPerson() {
+		return false;
 	}
 }

@@ -3,6 +3,7 @@ package Model;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
+import View.InteractionMenu;
 import View.Message;
 import View.Message.MsgType;
 
@@ -23,8 +24,7 @@ public abstract class Person extends GameObject {
 	private static final long serialVersionUID = 8476495059211784395L;
 
 	public enum Gender {
-		Male,
-		Female
+		Male, Female
 	}
 
 	private static Size SIZE = new Size(1, 1);
@@ -47,13 +47,16 @@ public abstract class Person extends GameObject {
 	protected double bladder;
 
 	// Automatic answer attributes
-	// Represents the knowledge of the player -> increase by going to school or thing like that
+	// Represents the knowledge of the player -> increase by going to school or
+	// thing like that
 	protected int generalKnowledge;
-	
-	// Represents the impression of other, if often go out, is in good hygiene,... -> higher
-	protected int othersImpression; 
 
-	// Represents the importance of mood, hygiene, generalKnwoledge and ohtersImpression
+	// Represents the impression of other, if often go out, is in good hygiene,...
+	// -> higher
+	protected int othersImpression;
+
+	// Represents the importance of mood, hygiene, generalKnwoledge and
+	// ohtersImpression
 	// for the automatic answers. Will be randomly generated for PNJ
 	protected PsychologicalFactors psychologicalFactors;
 
@@ -64,7 +67,8 @@ public abstract class Person extends GameObject {
 	protected Adult mother;
 	protected Adult father;
 
-	// Random factors to differentiate the avolution of each person (one is hungry more often,...)
+	// Random factors to differentiate the avolution of each person (one is hungry
+	// more often,...)
 	private double bladderRandomFactor = Random.range(0.6, 1.2);
 	private double hungerRandomFactor = Random.range(0.6, 1.2);
 	private double energyRandomFactor = Random.range(0.6, 1.2);
@@ -73,8 +77,7 @@ public abstract class Person extends GameObject {
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
 
-	public Person(Point pos, String name, Gender gender, Adult mother, Adult father)
-	{
+	public Person(Point pos, String name, Gender gender, Adult mother, Adult father) {
 		super(pos, SIZE, Color.BLUE);
 
 		// Initial Person properties (maximum is 100)
@@ -83,10 +86,10 @@ public abstract class Person extends GameObject {
 		hunger = 100;
 		hygiene = 100;
 		bladder = 100;
-		
+
 		generalKnowledge = 50;
 		othersImpression = 50;
-		
+
 		this.name = name;
 		this.gender = gender;
 
@@ -102,15 +105,19 @@ public abstract class Person extends GameObject {
 	}
 
 	public void clickedEvent() {
-		// TODO
+
 	}
-	
+
 	public void proximityEvent(GameObject o) {
 		// TODO
 	}
 
 	public void setActivePerson(boolean is_active) {
 		isActivePerson = is_active;
+	}
+
+	public boolean isPerson() {
+		return true;
 	}
 
 	public boolean isActivePerson() {
@@ -135,19 +142,19 @@ public abstract class Person extends GameObject {
 			increaseNeeds();
 		}
 	}
-	
+
 	public void increaseNeeds() {
 		decreaseBladder(Random.range(2.0, 3.0) * bladderRandomFactor); // Random decrease
 		modifyHunger(Random.range(-1.0, -2.0) * hungerRandomFactor); // Random decrease
-		
+
 		// Decrease more energy if hygiene is low
 		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor);
 	}
-	
+
 	public void evolves() {
 		age++;
-		
-		//TODO: check if we have the age to evolve to next class
+
+		// TODO: check if we have the age to evolve to next class
 	}
 
 	public int getRelationship(Person friend) {
@@ -176,12 +183,19 @@ public abstract class Person extends GameObject {
 		// automaticAnswer is a multiplicatory factor, is ~2 if the character are really
 		// complementary
 		// or is <0.5 if the character are realy not the same
-		if (point < 0 & friendList.get(friend) < -point) {
+
+		if (point < 0 && friendList.get(friend) < -point) {
+
 			// there is not enough point
 			// they became unknown people again
 			friendList.remove(friend);
 		} else {
-			friendList.put(friend, (int) (point * automaticAnswer(friend) + friendList.get(friend)));
+			int value = 0;
+			if (friendList.containsKey(friend)) {
+				value = +friendList.get(friend);
+			}
+			friendList.put(friend, (int) (point * automaticAnswer(friend) + value));
+			System.out.println(friendList.get(friend));
 		}
 	}
 
@@ -191,14 +205,13 @@ public abstract class Person extends GameObject {
 		// if 0 they haven't the same will
 		// take the caracterisic of the player that sent the request mutliply by the
 		// factor from the recever
-		double relationFactor = 
-				mood * people.getPsychologicalFactor().getMood()
+		double relationFactor = mood * people.getPsychologicalFactor().getMood()
 				+ hygiene * people.getPsychologicalFactor().getHygiene()
 				+ generalKnowledge * people.getPsychologicalFactor().getGeneralKnowledge()
 				+ othersImpression * people.getPsychologicalFactor().getOthersImpression();
-	
+
 		relationFactor /= 100.0;
-		
+
 		if (relationFactor > 0.7) {
 			// will multipy by 2 the gain of mood and point relation because realy
 			// complementary
@@ -225,7 +238,9 @@ public abstract class Person extends GameObject {
 	}
 
 	public void discuss(Person people) {
+		System.out.println("discute");
 		modifyRelationship(people, 1);
+
 		modifyMood(automaticAnswer(people) * 15);
 		energy -= 10;
 	}
@@ -245,49 +260,42 @@ public abstract class Person extends GameObject {
 
 	}
 
-	public void characterInteraction(Person people) {
+	public void characterInteraction(Person people, String interaction) {
 		// function that allows the people to interact with another one
 		// interaction is the type of interaction
 		// need to be overwrite in adult and teennager class for interaction with level
 		// 3 friends (thing like embrass, marry,...)
 
-		switch (getRelationship(people)) {
-		case (0): {
-			// can only discuss
-			// TODO interface graphique: les différentes possibilités!
+		switch (interaction) {
+		case ("discuss"): {
+
 			if (energy >= 10) {
 				discuss(people);
 
+			} else {
+				// TODO message comme quoi pas assez d'énergie
 			}
 
 			break;
 		}
-		case (1): {
-			if (energy >= 10) {
-				discuss(people);
-
-			}
+		case ("playWith"): {
 
 			if (energy >= 20) {
 				playWith(people);
 
+			} else {
+				// TODO message comme quoi pas assez d'énergie
 			}
 
 			break;
 		}
-		case (2): {
-			if (energy >= 10) {
-				discuss(people);
+		case ("invite"): {
 
-			}
-
-			if (energy >= 20) {
-				playWith(people);
-
-			}
 			if (energy >= 25) {
 				invite(people);
 
+			} else {
+				// TODO message comme quoi pas assez d'énergie
 			}
 
 			break;
@@ -323,7 +331,7 @@ public abstract class Person extends GameObject {
 					isOnToilet = true;
 				}
 			}
-			
+
 			emptyBladder(isOnToilet);
 		}
 	}
@@ -334,9 +342,9 @@ public abstract class Person extends GameObject {
 	 */
 	public void emptyBladder(boolean isOnToilet) {
 		bladder = 100;
-		
+
 		if (!isOnToilet) {
-			addMessage(new Message("Too late...", MsgType.Problem)); //TODO: I have no idea for this text...
+			addMessage(new Message("Too late...", MsgType.Problem)); // TODO: I have no idea for this text...
 			modifyHygiene(-50);
 			modifyMood(-25);
 		}
@@ -480,11 +488,11 @@ public abstract class Person extends GameObject {
 	public double getHunger() {
 		return hunger / 100.0;
 	}
-	
+
 	public void setPlayable(boolean playable) {
 		isPlayable = playable;
 	}
-	
+
 	public boolean isPlayable() {
 		return isPlayable;
 	}
@@ -553,7 +561,7 @@ public abstract class Person extends GameObject {
 				case ("Nourriture"): {
 					modifyHunger(((Nourriture) product).getNutritionalValue());
 					modifyEnergy(-((Nourriture) product).getEnergyNeed());
-					
+
 				}
 				case ("Livre"): {
 					// modifyGeneralKnowledge(((Book) product).getKnwoledgeAdd()); //TODO faire la
@@ -562,23 +570,20 @@ public abstract class Person extends GameObject {
 
 				}
 				}
-				inventory.remove(product); 
+				inventory.remove(product);
 			}
 		}
 	}
-	
+
 	public void paint(Graphics g, int BLOC_SIZE) {
 		super.paint(g, BLOC_SIZE);
-		
-		//TODO: the yellow border is temporary
-        if (isActivePerson()) {
-        	g.setColor(Color.YELLOW);
-            g.drawRect(
-            		getPos().getX() * BLOC_SIZE,
-            		getPos().getY() * BLOC_SIZE,
-            		(BLOC_SIZE * getSize().getWidth()) - 2,
-            		(BLOC_SIZE * getSize().getHeight()) - 2);
-        }
+
+		// TODO: the yellow border is temporary
+		if (isActivePerson()) {
+			g.setColor(Color.YELLOW);
+			g.drawRect(getPos().getX() * BLOC_SIZE, getPos().getY() * BLOC_SIZE, (BLOC_SIZE * getSize().getWidth()) - 2,
+					(BLOC_SIZE * getSize().getHeight()) - 2);
+		}
 
 		int deltaX = 0;
 		int deltaY = 0;
@@ -602,6 +607,8 @@ public abstract class Person extends GameObject {
 		int yCenter = getPos().getY() * BLOC_SIZE + (BLOC_SIZE - 2) / 2;
 		g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
 	}
-	
-	public GameObject clone() {return null;}
+
+	public GameObject clone() {
+		return null;
+	}
 }

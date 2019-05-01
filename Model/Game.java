@@ -3,6 +3,7 @@ package Model;
 import View.Window;
 import View.Map;
 import View.GameMenu;
+import View.InteractionMenu;
 import View.Message;
 import View.MessagesZone;
 import View.Status;
@@ -34,7 +35,8 @@ public class Game implements DeletableObserver {
 	private Status status;
 	private MessagesZone msgZone;
 	private GameMenu mainMenu;
-	
+
+	private InteractionMenu interactionMenu;
 	private Size mapSize;
 	
 	private GameTime gameTime;
@@ -58,9 +60,11 @@ public class Game implements DeletableObserver {
 		
 		mainMenu = new GameMenu(window, this);
 		
+	
+		
 		Person p1 = new Kid(new Point(10, 10), "Test Person", Person.Gender.Male, null, null);
-		Person p2 = new Kid(new Point(17, 13), "Second Player", Person.Gender.Female, null, null);
-		Person p3 = new Adult(new Point(10, 17), "Third People", Person.Gender.Female, null, null);
+		Person p2 = new Kid(new Point(11, 11), "Second Player", Person.Gender.Female, null, null);
+		Person p3 = new Adult(new Point(12, 12), "Third People", Person.Gender.Female, null, null);
 
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
@@ -133,7 +137,12 @@ public class Game implements DeletableObserver {
 	
 	public void mouseLeftClickEvent(Point pos) {
 		GameObject object = getObjectAtPosition(pos);
-		
+		if (object != null && object.isPerson()) {
+			//TODO le faire bouger sur la case d'a coté 
+			interactionMenu = new InteractionMenu(window, activePerson, (Person)object);
+			interactionMenu.showMenu();
+			
+		}
 		if (object != null && object.isObstacle()) {
 			object.clickedEvent();
 		} else {
