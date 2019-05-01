@@ -15,14 +15,14 @@ public class Main {
 	public static void main(String[] args) {
 		Window window = new Window("Game");
 
-		// Initialize game
+		// Initialise game
 		Game game = new Game(window);
 		GameKeyboard gameKeyboard = new GameKeyboard(game);
 		GameMouse gameMouse = new GameMouse(game);
 		window.addMapKeyListener(gameKeyboard);
 		window.addMapMouseListener(gameMouse);
 
-		// Initialize editor
+		// Initialise editor
 		Editor editor = new Editor(window);
 		EditorKeyboard editorKeyboard = new EditorKeyboard(editor);
 		EditorMouse editorMouse = new EditorMouse(editor);
@@ -48,6 +48,7 @@ public class Main {
 			}
 		});
 		
+		// TODO: we start on what ?
 		game.startGame();
 	}
 }

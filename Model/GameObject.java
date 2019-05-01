@@ -55,9 +55,12 @@ public abstract class GameObject implements Directable, Serializable {
 		return r;
 	}
 	
-	//TODO: remove this...
 	public Color getColor() {
 		return color;
+	}
+	
+	public void setColor(Color c) {
+		color = c;
 	}
 
 	public void setPos(Point p) {
