@@ -39,9 +39,9 @@ public class Game implements DeletableObserver {
 
 	private InteractionMenu interactionMenu;
 	private Size mapSize;
-	
+
 	private GameTime gameTime;
-	
+
 	private boolean isRunning = false;
 
 	public Game(Window window) {
@@ -50,26 +50,25 @@ public class Game implements DeletableObserver {
 		status = window.getStatus();
 		msgZone = window.getMsgZone();
 		mapSize = map.getMapSize();
-		
+
 		gameTime = new GameTime(this, 0);
-		
+
 		window.addGameMenuButtonAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				openGameMenu();
 			}
 		});
-		
+
 		mainMenu = new GameMenu(window, this);
-		
+
 		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
-		Person p2 = new Kid(new Point(17, 13), "Second Player", 11, Person.Gender.Female, null, null);
+		Person p2 = new Adult(new Point(17, 13), "Second Player", 50, Person.Gender.Female, null, null);
 		Person p3 = new Adult(new Point(10, 17), "Third People", 43, Person.Gender.Female, null, null);
 
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
 		attachPersonToGame(p3);
 		setActivePerson(p1);
-
 
 		// Map building
 		// A sample of room
@@ -118,29 +117,47 @@ public class Game implements DeletableObserver {
 		}
 		WaterClosed wc = new WaterClosed(new Point(1, 22));
 		attachObjectToGame(wc);
+		
+		Bed bed = new Bed(new Point(1, 12));
+		attachObjectToGame(bed);
 
 		notifyView();
 	}
-	
+
 	public Size getMapBlockSize() {
 		return map.getBlockSize();
 	}
-	
+
 	public void playerMoveEvent(Person p) {
 		ArrayList<GameObject> obj_lst = p.getObjectsAround();
-		
+
 		for (GameObject o : obj_lst) {
 			o.proximityEvent(p);
 		}
 	}
-	
+
 	public void mouseLeftClickEvent(Point pos) {
 		GameObject object = getObjectAtPosition(pos);
-		if (object != null && object.isPerson()) {
-			//TODO le faire bouger sur la case d'a coté 
-			interactionMenu = new InteractionMenu(window, activePerson, (Person)object);
+
+		if (object != null && object.isPerson() && object != activePerson) {
+			Point point = object.getPos().add(0, 1);
+			// looking for a pos without obstacle
+			if (getObjectAtPosition(point) != null && getObjectAtPosition(point).isObstacle()) {
+				point = object.getPos().add(0, -1);
+			}
+			if (getObjectAtPosition(point) != null && getObjectAtPosition(point).isObstacle()) {
+				
+				
+				point = object.getPos().add(+1, 0);
+			}
+			if (getObjectAtPosition(point) != null && getObjectAtPosition(point).isObstacle()) {
+				point = object.getPos().add(-1, 0);
+			}
+
+			sendPlayer(point);
+			interactionMenu = new InteractionMenu(window, activePerson, (Person) object);
 			interactionMenu.showMenu();
-			
+
 		}
 		if (object != null && object.isObstacle()) {
 			object.clickedEvent();
@@ -148,19 +165,19 @@ public class Game implements DeletableObserver {
 			sendPlayer(pos);
 		}
 	}
-	
+
 	public void mouseRightClickEvent(Point pos) {
 		GameObject object = getObjectAtPosition(pos);
-		
+
 		if (object != null && object instanceof Person) {
-			Person selectedPerson = (Person)(object);
+			Person selectedPerson = (Person) (object);
 			setActivePerson(selectedPerson);
 		}
 	}
-	
+
 	public GameObject getObjectAtPosition(Point pos) {
 		GameObject obj = null;
-		
+
 		for (GameObject o : objects) {
 			if (o.isAtPosition(pos)) {
 				if (obj == null || (obj instanceof GroundObject)) {
@@ -168,14 +185,14 @@ public class Game implements DeletableObserver {
 				}
 			}
 		}
-		
+
 		return obj;
 	}
 
 	public Person getActivePerson() {
 		return activePerson;
 	}
-	
+
 	public Size getMapSize() {
 		return mapSize;
 	}
@@ -184,7 +201,7 @@ public class Game implements DeletableObserver {
 		Thread t = new Thread(new AStarThread(this, activePerson, pos));
 		t.start();
 	}
-	
+
 	public void moveActivePlayer(int x, int y) {
 		movePlayer(activePerson, x, y);
 	}
@@ -196,7 +213,7 @@ public class Game implements DeletableObserver {
 	public void movePlayer(Person pers, int x, int y) {
 		movePlayer(pers, new Point(x, y));
 	}
-	
+
 	public void movePlayer(Person pers, Point pos) {
 		Point nextPos = pers.getPos().add(pos);
 		boolean unreachable = false;
@@ -206,9 +223,9 @@ public class Game implements DeletableObserver {
 		unreachable = !mapRect.contains(nextPos);
 
 		for (GameObject object : objects) {
-			if (object != (GameObject)pers) {
+			if (object != (GameObject) pers) {
 				Rect nextRect = new Rect(nextPos, pers.getSize());
-				
+
 				if (object.getRect().overlaps(nextRect)) {
 					unreachable = object.isObstacle();
 					break;
@@ -220,14 +237,14 @@ public class Game implements DeletableObserver {
 		int y = pos.getY();
 		Direction direction = Direction.EAST;
 
-		if(x == 0 && y == -1)
-            direction = Direction.NORTH;
-        else if(x == 0 && y == 1)
-            direction = Direction.SOUTH;
-        else if(x == 1 && y == 0)
-            direction = Direction.EAST;
-        else if(x == -1 && y == 0)
-            direction = Direction.WEST;
+		if (x == 0 && y == -1)
+			direction = Direction.NORTH;
+		else if (x == 0 && y == 1)
+			direction = Direction.SOUTH;
+		else if (x == 1 && y == 0)
+			direction = Direction.EAST;
+		else if (x == -1 && y == 0)
+			direction = Direction.WEST;
 
 		pers.rotate(direction);
 
@@ -237,22 +254,23 @@ public class Game implements DeletableObserver {
 
 		notifyView();
 		centerViewOnPlayer();
-		
+
 		playerMoveEvent(pers);
 	}
-	
+
 	public void centerViewOnPlayer() {
 		if (activePerson == null)
 			return;
-		
-		// Scroll the map view to the active person (scoll after notifyView for fluidity)
+
+		// Scroll the map view to the active person (scoll after notifyView for
+		// fluidity)
 		// The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
 		// the map's borders
-		map.scrollRectToVisible(new Rectangle(
-				activePerson.getPos().getX() * map.getBlockSize().getWidth() - ARTIFICIAL_SCROLL_RADIUS,
-				activePerson.getPos().getY() * map.getBlockSize().getHeight() - ARTIFICIAL_SCROLL_RADIUS,
-				map.getBlockSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
-				map.getBlockSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
+		map.scrollRectToVisible(
+				new Rectangle(activePerson.getPos().getX() * map.getBlockSize().getWidth() - ARTIFICIAL_SCROLL_RADIUS,
+						activePerson.getPos().getY() * map.getBlockSize().getHeight() - ARTIFICIAL_SCROLL_RADIUS,
+						map.getBlockSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
+						map.getBlockSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
 	}
 
 	private void notifyView() {
@@ -265,7 +283,7 @@ public class Game implements DeletableObserver {
 
 	@Override
 	synchronized public void delete(Deletable ps, ArrayList<GameObject> loot) {
-		objects.remove((GameObject)ps);
+		objects.remove((GameObject) ps);
 		if (loot != null) {
 			attachObjectsToGame(loot);
 		}
@@ -280,90 +298,90 @@ public class Game implements DeletableObserver {
 	public void quit() {
 		window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
 	}
-	
+
 	private void updateAllPopulation() {
 		// We cannot use the 'foreach' structure here because population
-		// can be modified in updatePerson() resulting in a ConcurrentModificationException
-		for (int i = 0 ; i < population.size() ; i++) {
+		// can be modified in updatePerson() resulting in a
+		// ConcurrentModificationException
+		for (int i = 0; i < population.size(); i++) {
 			Person p = population.get(i);
 			updatePerson(p);
 		}
 	}
-	
+
 	private void updatePerson(Person p) {
 		if (p == null)
 			return;
-		
+
 		p.update(gameTime.getVirtualTime());
-		
+
 		// If this Person reached the age to evolve to the next Person level :
-		// Create a new object of the new level with the same properties to replace this Person.
+		// Create a new object of the new level with the same properties to replace this
+		// Person.
 		if (p.maxAgeReached()) {
 			if (p instanceof Adult) {
-				//TODO: He dies...
+				// TODO: He dies...
 				p.addMessage("Vous êtes mort !", MsgType.Problem);
-			}
-			else if (p instanceof Teenager) {
+			} else if (p instanceof Teenager) {
 				Person newPers = new Adult(p);
 				replacePerson(p, newPers);
 				newPers.addMessage("Vous êtes maintenant un adulte !", MsgType.Info);
-			}
-			else if (p instanceof Kid) {
+			} else if (p instanceof Kid) {
 				Person newPers = new Teenager(p);
 				replacePerson(p, newPers);
 				newPers.addMessage("Vous êtes maintenant un adolescent !", MsgType.Info);
 			}
 		}
 	}
-	
+
 	private void replacePerson(Person from, Person to) {
 		removePersonFromGame(from);
 		attachPersonToGame(to);
-		
-		// 
+
+		//
 		if (from.isActivePerson()) {
 			setActivePerson(to);
 		}
 	}
-	
+
 	public void updateGame() {
 		// Update the time string in the status area
 		status.setGameTimeStr(gameTime.getCurrentTimeString());
-		
+
 		long t = gameTime.getVirtualTime();
 
 		// New year
 		if (t % 365 == 0) {
-			
+
 		}
 		// New week (7 days...)
 		if (t % 7 == 0) {
-			
+
 		}
 
 		updateAllPopulation();
-		
+
 		notifyView();
 	}
-	
+
 	public void setActivePerson(Person p) {
 		if (p != null && !p.isPlayable())
 			return;
-		
+
 		activePerson = p;
 		status.setActivePerson(p);
 
 		if (p != null) {
 			msgZone.setMessagesList(p.getMessagesHistory());
 		}
-		
+
 		for (Person people : population) {
 			people.setActivePerson(people == p);
 		}
-		
+
 		notifyView();
 	}
-	
+
 	public void loadGameMapPacket(GameMapPacket gmp) {
 		objects = gmp.getObjects();
 		population = gmp.getPopulation();
@@ -372,33 +390,33 @@ public class Game implements DeletableObserver {
 
 		// Replace objects on the map
 		map.setObjects(objects);
-		
+
 		// Update activePerson status,...
 		setActivePerson(activePerson);
-		
+
 		// Re-attach message listener (transient property)
 		for (Person p : population) {
 			attachMessageListener(p);
 		}
-		
+
 		notifyView();
 	}
-	
+
 	public boolean isRunning() {
 		return isRunning;
 	}
-	
+
 	public void pauseGame() {
 		isRunning = false;
 		gameTime.stop();
 	}
-	
+
 	public void resumeGame() {
 		isRunning = true;
 		gameTime.start();
-		
+
 	}
-	
+
 	public void stopGame() {
 		isRunning = false;
 		gameTime.cancel();
@@ -408,15 +426,15 @@ public class Game implements DeletableObserver {
 		window.switchGameMode();
 		isRunning = true;
 		map.setObjects(this.getGameObjects());
-		
+
 		gameTime.start();
 		status.setGameTimeStr(gameTime.getCurrentTimeString());
-		
+
 		// Select the first person found in the game if none has been selected
 		if (activePerson == null) {
 			selectDefaultActivePerson();
 		}
-		
+
 		notifyView();
 		centerViewOnPlayer();
 	}
@@ -425,69 +443,69 @@ public class Game implements DeletableObserver {
 		pauseGame();
 		mainMenu.showMenu();
 	}
-	
+
 	public void closeGameMenu() {
 		mainMenu.closeMenu();
 	}
-	
+
 	public void saveGame() {
 		JFileChooser chooser = new JFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"Fichier de sauvegarde", "sav");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichier de sauvegarde", "sav");
 		chooser.setFileFilter(filter);
 		chooser.setDialogTitle("Destination du fichier de sauvegarde");
 		int returnVal = chooser.showSaveDialog(window);
-		
-	    if (returnVal != JFileChooser.APPROVE_OPTION) {
-	    	return;
-	    }
-	    
-	    String path = chooser.getSelectedFile().getPath();
-	    
-	    // Add .sav if not added automatically
-	    if (!path.endsWith(".sav")) {
-	    	path += ".sav";
-	    }
-		
+
+		if (returnVal != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+
+		String path = chooser.getSelectedFile().getPath();
+
+		// Add .sav if not added automatically
+		if (!path.endsWith(".sav")) {
+			path += ".sav";
+		}
+
 		ObjectSaver saver = new ObjectSaver(path);
-		
-		// WARNING: The order is very important and must be the same as the restoring order !
+
+		// WARNING: The order is very important and must be the same as the restoring
+		// order !
 		saver.addObjectToSave(getGameMapPack());
 		saver.writeSaveToFile();
 	}
-	
-	public void restoreGame() {		
+
+	public void restoreGame() {
 		JFileChooser chooser = new JFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"Fichier de sauvegarde", "sav");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichier de sauvegarde", "sav");
 		chooser.setFileFilter(filter);
 		chooser.setDialogTitle("Ouvrir un fichier de sauvegarde");
 		int returnVal = chooser.showOpenDialog(window);
-		
-	    if(returnVal != JFileChooser.APPROVE_OPTION) {
-	    	return;
-	    }
-	    
+
+		if (returnVal != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+
 		gameTime.stop();
 		gameTime.cancel();
-		
-		ObjectRestorer restorer = new ObjectRestorer(chooser.getSelectedFile().getPath());	
-		
-		// WARNING: The order is very important and must be the same as the saving order !
-		GameMapPacket mapPacket = (GameMapPacket)(restorer.readNextObjectFromSave());
-		
+
+		ObjectRestorer restorer = new ObjectRestorer(chooser.getSelectedFile().getPath());
+
+		// WARNING: The order is very important and must be the same as the saving order
+		// !
+		GameMapPacket mapPacket = (GameMapPacket) (restorer.readNextObjectFromSave());
+
 		restorer.closeSaveFile();
-		
+
 		loadGameMapPacket(mapPacket);
-		
+
 		mainMenu.closeMenu();
 		startGame();
 	}
-	
+
 	public GameMapPacket getGameMapPack() {
 		return new GameMapPacket(objects, population, activePerson, gameTime.getTimeFromStart());
 	}
-	
+
 	private void attachObjectsToGame(ArrayList<GameObject> lst) {
 		for (GameObject o : lst) {
 			attachObjectToGame(o);
@@ -498,7 +516,7 @@ public class Game implements DeletableObserver {
 		objects.add(o);
 		o.setMapObjectsList(objects);
 	}
-	
+
 	private void removeObjectFromGame(GameObject o) {
 		objects.remove(o);
 	}
@@ -506,24 +524,24 @@ public class Game implements DeletableObserver {
 	private void attachPersonToGame(Person p) {
 		if (p == null)
 			return;
-		
+
 		population.add(p);
 		attachObjectToGame(p);
 		attachMessageListener(p);
 	}
-	
+
 	private void removePersonFromGame(Person p) {
 		if (p == null)
 			return;
-		
+
 		population.remove(p);
 		removeObjectFromGame(p);
-		
+
 		if (p.isActivePerson()) {
 			selectDefaultActivePerson();
 		}
 	}
-	
+
 	private void selectDefaultActivePerson() {
 		for (Person p : population) {
 			if (p.isPlayable) {
@@ -532,11 +550,12 @@ public class Game implements DeletableObserver {
 			}
 		}
 	}
-	
+
 	private void attachMessageListener(Person p) {
 		Game that = this;
 		p.addMessageEventListener(new MessageEventListener() {
 			private static final long serialVersionUID = 2371305630711900167L;
+
 			public void messageEvent(Message msg) {
 				if (p == that.getActivePerson()) {
 					msgZone.appendMessage(msg);
@@ -544,17 +563,17 @@ public class Game implements DeletableObserver {
 			}
 		});
 	}
-	
+
 	public void sendMessageTo(Person p, Message msg) {
 		p.addMessage(msg);
 	}
-	
+
 	public void sendMessageToAll(Message msg) {
 		for (Person p : population) {
 			sendMessageTo(p, msg);
 		}
 	}
-	
+
 	public void setCreatorAction(ActionListener a) {
 		mainMenu.setCreatorAction(a);
 	}

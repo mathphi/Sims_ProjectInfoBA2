@@ -140,6 +140,7 @@ public class Adult extends Person {
 	protected void goToDrink(Person people) {
 		// move to bar pay
 		modifyRelationship(people, 3);
+		people.modifyRelationship(this, 3);
 		modifyMood(automaticAnswer(people) * 25);
 
 		energy -= 30;
@@ -149,10 +150,12 @@ public class Adult extends Person {
 	protected void embrass(Person people) {
 		if (automaticAnswer(people) >= 1.6) {
 			modifyRelationship(people, 5);
+			people.modifyRelationship(this, 5);
 			modifyMood(automaticAnswer(people) * 40);
 		} else {
 			// the other don't want
-			people.modifyRelationship(people, -10); // value to be adapted
+			modifyRelationship(people, -10); // value to be adapted
+			people.modifyRelationship(this, -10);
 			modifyMood(automaticAnswer(people) * -40);
 		}
 		energy -= 15;

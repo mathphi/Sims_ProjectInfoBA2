@@ -1,8 +1,7 @@
 package View;
 
 import Model.Adult;
-import Model.Game;
-import Model.Kid;
+
 import Model.Person;
 import Model.Teenager;
 
@@ -46,7 +45,7 @@ public class InteractionMenu extends JDialog {
 		drinkButton = new JButton("Aller boire un verre");
 		embrassButton = new JButton("Embrasser");
 		marryButton = new JButton("Se marier");
-
+		mainPanel.add(interactionLabel);
 		switch (player.getRelationship(person)) {
 		case (1): {
 			// can play with
@@ -110,7 +109,7 @@ public class InteractionMenu extends JDialog {
 			}
 		}
 
-		mainPanel.add(interactionLabel);
+		
 		mainPanel.add(discussButton);
 
 		add(mainPanel);
@@ -127,7 +126,7 @@ public class InteractionMenu extends JDialog {
 		playButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
-				player.characterInteraction(person, "play");
+				player.characterInteraction(person, "playWith");
 			}
 		});
 		
