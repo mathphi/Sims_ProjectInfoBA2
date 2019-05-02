@@ -49,14 +49,14 @@ public class AStar {
 		for (int i = 0; i < mapSize.getWidth(); i++) {
 			for (int j = 0; j < mapSize.getHeight(); j++) {
 				grid[i][j] = new Cell(i, j);
-				grid[i][j].heuristicCost = Math.abs(i - posEnd.getX()) + Math.abs(j - posEnd.getY());
+				grid[i][j].heuristicCost = Math.abs(i - posEnd.getXInt()) + Math.abs(j - posEnd.getYInt());
 //                  System.out.print(grid[i][j].heuristicCost+" ");
 			}
 //              System.out.println();
 		}
-		grid[posEnd.getX()][posEnd.getY()].finalCost = 0;
+		grid[posEnd.getXInt()][posEnd.getYInt()].finalCost = 0;
 
-		open.add(grid[posStart.getX()][posStart.getY()]);
+		open.add(grid[posStart.getXInt()][posStart.getYInt()]);
 		for (GameObject o : new ArrayList<GameObject>(objects)) {
 			if (o.isObstacle() && o != moved_obj) {
 				setBlocked(o);
@@ -64,7 +64,7 @@ public class AStar {
 		}
 
 		// Use another end position if the selected is blocked
-		if (grid[posEnd.getX()][posEnd.getY()] == null) {
+		if (grid[posEnd.getXInt()][posEnd.getYInt()] == null) {
 			posEnd = getNextFreePos(posEnd);
 		}
 
@@ -76,7 +76,7 @@ public class AStar {
 				break;
 			closed[current.i][current.j] = true;
 
-			if (current.equals(grid[posEnd.getX()][posEnd.getY()])) {
+			if (current.equals(grid[posEnd.getXInt()][posEnd.getYInt()])) {
 				return;
 			}
 
@@ -147,7 +147,7 @@ public class AStar {
 			Point testPos = new Point(pos.getX() - dx, pos.getY() - dy);
 			
 			if (mapRect.contains(testPos)) {
-				if (grid[testPos.getX()][testPos.getY()] != null) {
+				if (grid[testPos.getXInt()][testPos.getYInt()] != null) {
 					nextFreePos = testPos;
 					break;
 				}
@@ -204,8 +204,8 @@ public class AStar {
 	private void setBlocked(GameObject o) {
 		for (int i = 0; i < o.getSize().getWidth(); i++) {
 			for (int j = 0; j < o.getSize().getHeight(); j++) {
-				int x = o.getPos().getX() + i;
-				int y = o.getPos().getY() + j;
+				int x = o.getPos().getXInt() + i;
+				int y = o.getPos().getYInt() + j;
 
 				grid[x][y] = null;
 
@@ -237,15 +237,15 @@ public class AStar {
 
 	public int getNextStep() {
 		int direction = -1;
-		if (closed[posEnd.getX()][posEnd.getY()]) {
+		if (closed[posEnd.getXInt()][posEnd.getYInt()]) {
 			int deltai = 0;
 			int deltaj = 0;
 			// Trace back the path
-			Cell current = grid[posEnd.getX()][posEnd.getY()];
+			Cell current = grid[posEnd.getXInt()][posEnd.getYInt()];
 			while (current != null && current.parent != null) {
-				if (current.parent.i == posStart.getX() && current.parent.j == posStart.getY()) {
-					deltai = current.i - posStart.getX();
-					deltaj = current.j - posStart.getY();
+				if (current.parent.i == posStart.getXInt() && current.parent.j == posStart.getYInt()) {
+					deltai = current.i - posStart.getXInt();
+					deltaj = current.j - posStart.getYInt();
 					direction = 1 - deltai + deltaj * (deltaj + 1);
 				}
 				current = current.parent;

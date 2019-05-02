@@ -8,7 +8,7 @@ public class Rect implements Serializable {
 	private Point point;
 	private Size size;
 	
-	public Rect(int x, int y, int w, int h) {
+	public Rect(double x, double y, int w, int h) {
 		this(new Point(x, y), new Size(w, h));
 	}
 	

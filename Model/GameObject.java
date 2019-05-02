@@ -112,12 +112,18 @@ public abstract class GameObject implements Directable, Serializable {
 
 	public void paint(Graphics g, int BLOC_SIZE) {
 		g.setColor(color);
-		g.fillRect(getPos().getX() * BLOC_SIZE, getPos().getY() * BLOC_SIZE, (BLOC_SIZE * getSize().getWidth()) - 2,
+		g.fillRect(
+				(int)(getPos().getX() * BLOC_SIZE),
+				(int)(getPos().getY() * BLOC_SIZE),
+				(BLOC_SIZE * getSize().getWidth()) - 2,
 				(BLOC_SIZE * getSize().getHeight()) - 2);
 
 		g.setColor(Color.BLACK);
 
-		g.drawRect(getPos().getX() * BLOC_SIZE, getPos().getY() * BLOC_SIZE, (BLOC_SIZE * getSize().getWidth()) - 2,
+		g.drawRect(
+				(int)(getPos().getX() * BLOC_SIZE),
+				(int)(getPos().getY() * BLOC_SIZE),
+				(BLOC_SIZE * getSize().getWidth()) - 2,
 				(BLOC_SIZE * getSize().getHeight()) - 2);
 	}
 

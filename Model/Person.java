@@ -9,6 +9,7 @@ import View.Message.MsgType;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import java.util.HashMap;
@@ -75,7 +76,13 @@ public abstract class Person extends GameObject {
 	// Game messages history
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
+	
+	// Refresh listeners
+	private transient ArrayList<ActionListener> refreshListeners = new ArrayList<ActionListener>();
 
+	// Thread used for smooth moving
+	private MoveThread moveThread;
+	
 	// Constructor used when the Person evolves (ie from Kid to Teenage)
 	public Person(Person other) {
 		this(other.getPos(), other.getName(), other.getAge(), other.getGender(), other.getMother(), other.getFather());
@@ -147,8 +154,14 @@ public abstract class Person extends GameObject {
 		return isActivePerson;
 	}
 
-	public void move(Point p) {
-		this.setPos(this.getPos().add(p));
+	public void move(Point delta) {
+		if (moveThread != null) {
+			moveThread.abort();
+		}
+		moveThread = new MoveThread(this, delta);
+		
+		Thread t = new Thread(moveThread);
+		t.start();
 	}
 
 	public boolean isObstacle() {
@@ -597,6 +610,21 @@ public abstract class Person extends GameObject {
 		addMessage(new Message(text, type));
 	}
 
+	public void addRefreshListener(ActionListener a) {
+		// refreshListeners is null when Person is restored from the save file
+		if (refreshListeners == null) {
+			refreshListeners = new ArrayList<ActionListener>();
+		}
+
+		refreshListeners.add(a);
+	}
+	
+	public void refresh() {
+		for (ActionListener a : refreshListeners) {
+			a.actionPerformed(null);
+		}
+	}
+	
 	public void addInventory(Product newProduct) {
 		inventory.add(newProduct);
 		if (newProduct instanceof Wearable) {
@@ -656,7 +684,10 @@ public abstract class Person extends GameObject {
 		// TODO: the yellow border is temporary
 		if (isActivePerson()) {
 			g.setColor(Color.YELLOW);
-			g.drawRect(getPos().getX() * BLOC_SIZE, getPos().getY() * BLOC_SIZE, (BLOC_SIZE * getSize().getWidth()) - 2,
+			g.drawRect(
+					(int)(getPos().getX() * BLOC_SIZE), 
+					(int)(getPos().getY() * BLOC_SIZE), 
+					(BLOC_SIZE * getSize().getWidth()) - 2,
 					(BLOC_SIZE * getSize().getHeight()) - 2);
 		}
 
@@ -680,8 +711,8 @@ public abstract class Person extends GameObject {
 			break;
 		}
 
-		int xCenter = getPos().getX() * BLOC_SIZE + (realSize.getWidth() - 2) / 2;
-		int yCenter = getPos().getY() * BLOC_SIZE + (realSize.getHeight() - 2) / 2;
+		int xCenter = (int)(getPos().getX() * BLOC_SIZE) + (realSize.getWidth() - 2) / 2;
+		int yCenter = (int)(getPos().getY() * BLOC_SIZE) + (realSize.getHeight() - 2) / 2;
 		g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
 	}
 

@@ -233,8 +233,8 @@ public class Game implements DeletableObserver {
 			}
 		}
 
-		int x = pos.getX();
-		int y = pos.getY();
+		int x = pos.getXInt();
+		int y = pos.getYInt();
 		Direction direction = Direction.EAST;
 
 		if (x == 0 && y == -1)
@@ -254,8 +254,6 @@ public class Game implements DeletableObserver {
 
 		notifyView();
 		centerViewOnPlayer();
-
-		playerMoveEvent(pers);
 	}
 
 	public void centerViewOnPlayer() {
@@ -267,8 +265,9 @@ public class Game implements DeletableObserver {
 		// The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
 		// the map's borders
 		map.scrollRectToVisible(
-				new Rectangle(activePerson.getPos().getX() * map.getBlockSize().getWidth() - ARTIFICIAL_SCROLL_RADIUS,
-						activePerson.getPos().getY() * map.getBlockSize().getHeight() - ARTIFICIAL_SCROLL_RADIUS,
+				new Rectangle(
+						(int)(activePerson.getPos().getX() * map.getBlockSize().getWidth()) - ARTIFICIAL_SCROLL_RADIUS,
+						(int)(activePerson.getPos().getY() * map.getBlockSize().getHeight()) - ARTIFICIAL_SCROLL_RADIUS,
 						map.getBlockSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
 						map.getBlockSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
 	}
@@ -527,6 +526,7 @@ public class Game implements DeletableObserver {
 
 		population.add(p);
 		attachObjectToGame(p);
+		attachRefreshListener(p);
 		attachMessageListener(p);
 	}
 
@@ -549,6 +549,16 @@ public class Game implements DeletableObserver {
 				break;
 			}
 		}
+	}
+	
+	private void attachRefreshListener(Person p) {
+		p.addRefreshListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				map.redraw();
+				playerMoveEvent(p);
+			}
+		});
 	}
 
 	private void attachMessageListener(Person p) {
