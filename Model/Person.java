@@ -130,6 +130,10 @@ public abstract class Person extends GameObject {
 		othersImpression = 50;
 
 		psychologicalFactors = PsychologicalFactors.RandomFactors();
+
+		moveThread = new MoveThread(this, null);
+		Thread t = new Thread(moveThread);
+		t.start();
 	}
 
 	public void clickedEvent() {
@@ -155,13 +159,7 @@ public abstract class Person extends GameObject {
 	}
 
 	public void move(Point delta) {
-		if (moveThread != null) {
-			moveThread.abort();
-		}
-		moveThread = new MoveThread(this, delta);
-		
-		Thread t = new Thread(moveThread);
-		t.start();
+		moveThread.newMovement(delta);
 	}
 
 	public boolean isObstacle() {

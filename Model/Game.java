@@ -251,19 +251,17 @@ public class Game implements DeletableObserver {
 		if (!unreachable) {
 			pers.move(pos);
 		}
-
-		notifyView();
-		centerViewOnPlayer();
 	}
 
 	public void centerViewOnPlayer() {
 		if (activePerson == null)
 			return;
 
-		// Scroll the map view to the active person (scoll after notifyView for
-		// fluidity)
-		// The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
-		// the map's borders
+		/* 
+		 * Scroll the map view to the active person (scoll after notifyView for fluidity)
+		 * The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
+		 * the map's borders
+		 */
 		map.scrollRectToVisible(
 				new Rectangle(
 						(int)(activePerson.getPos().getX() * map.getBlockSize().getWidth()) - ARTIFICIAL_SCROLL_RADIUS,
@@ -557,6 +555,7 @@ public class Game implements DeletableObserver {
 			public void actionPerformed(ActionEvent e) {
 				map.redraw();
 				playerMoveEvent(p);
+				centerViewOnPlayer();
 			}
 		});
 	}
