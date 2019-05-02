@@ -1,7 +1,5 @@
 package Model;
 
-import Model.Game;
-
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
@@ -362,7 +360,7 @@ public abstract class Person extends GameObject {
 
 	// TODO function that make evolve the hunger of the player during the game
 	public void goToBed() {
-		Point point = new Point(4,16);
+		//Point point = new Point(4,16);
 		//sendPlayer(point); et j'arrive pas a le faire bouger je comprends pas!!
 		//TODO to be change the bed will not always be there!!!
 		addMessage(
