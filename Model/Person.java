@@ -27,7 +27,7 @@ public abstract class Person extends GameObject {
 		Female
 	}
 
-	private static Size SIZE = new Size(1, 1);
+	private static Size SIZE = new Size(2, 2);
 
 	private boolean isActivePerson;
 
@@ -624,24 +624,26 @@ public abstract class Person extends GameObject {
 
 		int deltaX = 0;
 		int deltaY = 0;
+		
+		Size realSize = new Size(BLOC_SIZE*getSize().getWidth(), BLOC_SIZE*getSize().getHeight());
 
 		switch (getDirection()) {
 		case EAST:
-			deltaX = +(BLOC_SIZE - 2) / 2;
+			deltaX = +(realSize.getWidth() - 2) / 2;
 			break;
 		case NORTH:
-			deltaY = -(BLOC_SIZE - 2) / 2;
+			deltaY = -(realSize.getHeight() - 2) / 2;
 			break;
 		case WEST:
-			deltaX = -(BLOC_SIZE - 2) / 2;
+			deltaX = -(realSize.getWidth() - 2) / 2;
 			break;
 		case SOUTH:
-			deltaY = (BLOC_SIZE - 2) / 2;
+			deltaY = (realSize.getHeight() - 2) / 2;
 			break;
 		}
 
-		int xCenter = getPos().getX() * BLOC_SIZE + (BLOC_SIZE - 2) / 2;
-		int yCenter = getPos().getY() * BLOC_SIZE + (BLOC_SIZE - 2) / 2;
+		int xCenter = getPos().getX() * BLOC_SIZE + (realSize.getWidth() - 2) / 2;
+		int yCenter = getPos().getY() * BLOC_SIZE + (realSize.getHeight() - 2) / 2;
 		g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
 	}
 	

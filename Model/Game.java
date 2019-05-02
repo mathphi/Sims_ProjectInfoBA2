@@ -61,7 +61,7 @@ public class Game implements DeletableObserver {
 		
 		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
 		Person p2 = new Kid(new Point(17, 13), "Second Player", 11, Person.Gender.Female, null, null);
-		Person p3 = new Adult(new Point(10, 17), "Third People", 43, Person.Gender.Female, null, null);
+		Person p3 = new Adult(new Point(11, 16), "Third People", 43, Person.Gender.Female, null, null);
 
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);

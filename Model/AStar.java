@@ -11,12 +11,14 @@
 package Model;
 
 import Tools.Point;
+import Tools.Rect;
 import Tools.Size;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class AStar {
+	private Rect mapRect;
 	private Size mapSize;
 	private boolean closed[][];
 	private Point posStart;
@@ -24,12 +26,15 @@ public class AStar {
 	private Cell[][] grid;
 	private PriorityQueue<Cell> open;
 	private int V_H_COST = 1;
-	private int DIAGONAL_COST = 100000;
+	// private int DIAGONAL_COST = 100000;
+	private GameObject movedObj;
 
-	public AStar(Size map_size, Point pos_start, Point pos_end, GameObject movedObj, ArrayList<GameObject> objects) {
+	public AStar(Size map_size, Point pos_start, Point pos_end, GameObject moved_obj, ArrayList<GameObject> objects) {
 		posStart = pos_start;
 		posEnd = pos_end;
 		mapSize = map_size;
+		mapRect = new Rect(new Point(0, 0), map_size);
+		movedObj = moved_obj;
 
 		grid = new Cell[mapSize.getWidth()][mapSize.getHeight()];
 
@@ -52,10 +57,15 @@ public class AStar {
 		grid[posEnd.getX()][posEnd.getY()].finalCost = 0;
 
 		open.add(grid[posStart.getX()][posStart.getY()]);
-		for (GameObject o : objects) {
-			if (o.isObstacle() && o != movedObj) {
+		for (GameObject o : new ArrayList<GameObject>(objects)) {
+			if (o.isObstacle() && o != moved_obj) {
 				setBlocked(o);
 			}
+		}
+
+		// Use another end position if the selected is blocked
+		if (grid[posEnd.getX()][posEnd.getY()] == null) {
+			posEnd = getNextFreePos(posEnd);
 		}
 
 		Cell current;
@@ -77,12 +87,13 @@ public class AStar {
 
 				if (current.j - 1 >= 0) {
 					t = grid[current.i - 1][current.j - 1];
-					checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
+					// DIAGONAL are commented because the player cannot move on diagonal !
+					// checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
 				}
 
 				if (current.j + 1 < grid[0].length) {
 					t = grid[current.i - 1][current.j + 1];
-					checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
+					// checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
 				}
 			}
 
@@ -102,15 +113,75 @@ public class AStar {
 
 				if (current.j - 1 >= 0) {
 					t = grid[current.i + 1][current.j - 1];
-					checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
+					// checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
 				}
 
 				if (current.j + 1 < grid[0].length) {
 					t = grid[current.i + 1][current.j + 1];
-					checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
+					// checkAndUpdateCost(current, t, current.finalCost + DIAGONAL_COST);
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Search for next accessible position by scanning Cells in a square of the size of movedObj
+	 * 
+	 * @param pos
+	 * The initial position (eventually blocked)
+	 * 
+	 * @return
+	 */
+	private Point getNextFreePos(Point pos) {
+		int w = movedObj.getSize().getWidth();
+		int h = movedObj.getSize().getHeight();
+
+		int dx = 0;
+		int dy = 0;
+		
+		Point nextFreePos = pos;
+
+		int level = 1;
+		int count = 1;
+		for (int i = 1 ; i < w * h + 1 ; i++) {
+			Point testPos = new Point(pos.getX() - dx, pos.getY() - dy);
+			
+			if (mapRect.contains(testPos)) {
+				if (grid[testPos.getX()][testPos.getY()] != null) {
+					nextFreePos = testPos;
+					break;
+				}
+			}
+
+			// Permutation
+			int dxp = dx;
+			int dyp = dy;
+			
+			dx = dyp;
+			dy = dxp;
+
+			// Next on the contour
+			if (count % 2 != 0) {
+				if (dx > dy)
+					dy++;
+				else
+					dx++;
+			}
+
+			// Next rectangle size contour
+			if (i % (level*level) == 0) {
+				level++;
+				
+				dx = level-1;
+				dy = 0;
+				
+				count = 1;
+			}
+			
+			count++;
+		}
+		
+		return nextFreePos;
 	}
 
 	static class Cell {
@@ -133,7 +204,19 @@ public class AStar {
 	private void setBlocked(GameObject o) {
 		for (int i = 0; i < o.getSize().getWidth(); i++) {
 			for (int j = 0; j < o.getSize().getHeight(); j++) {
-				grid[o.getPos().getX() + i][o.getPos().getY() + j] = null;
+				int x = o.getPos().getX() + i;
+				int y = o.getPos().getY() + j;
+
+				grid[x][y] = null;
+
+				// Add contour to obstacles to allow to move object with size larger than 1x1
+				for (int w = 0 ; w < movedObj.getSize().getWidth() ; w++) {
+					for (int h = 0 ; h < movedObj.getSize().getHeight() ; h++) {
+						if (mapRect.contains(new Point(x - w, y - h))) {
+							grid[x - w][y - h] = null;
+						}
+					}
+				}
 			}
 		}
 	}
