@@ -146,7 +146,7 @@ public class NewPersonForm extends JDialog {
 
 		btnOk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (!nameField.getText().isBlank()) {
+				if (!nameField.getText().isEmpty()) { //Attention j'ai du changer le isBlanck car était pas défini pour les str
 					validated = true;
 					closeForm();
 				}
