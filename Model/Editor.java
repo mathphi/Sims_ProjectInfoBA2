@@ -6,7 +6,6 @@ import View.Map;
 import View.NewPersonForm;
 import View.Window;
 
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -146,7 +145,7 @@ public class Editor {
 		
 		map.setObjects(objects);
 		
-		map.scrollRectToVisible(new Rectangle(0,0,1,1));
+		map.resetViewOffset();
 		
 		notifyView();
 	}
@@ -250,14 +249,9 @@ public class Editor {
 	}
 	
 	public void moveView(int dx, int dy) {
-		java.awt.Point l = map.getVisibleRect().getLocation();
-		l.translate(dx * getMapBlockSize().getWidth(),
-					dy * getMapBlockSize().getHeight());
-		
-		Rectangle r = map.getVisibleRect();
-		r.setLocation(l);
-		
-		map.scrollRectToVisible(r);
+		Point dp = new Point(dx, dy);
+		map.moveView(dp);
+		map.redraw();
 	}
 	
 	public void addObject(GameObject o) {

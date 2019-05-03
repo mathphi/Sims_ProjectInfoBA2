@@ -18,9 +18,10 @@ public class GameMouse extends MouseController implements MouseListener, MouseMo
     
     private Point getMapEventPos(MouseEvent e) {
     	Size blocSize = game.getMapBlockSize();
+    	Point offset = game.getMapViewOffset();
     	return new Point(
-    			e.getX() / blocSize.getWidth(), 
-    			e.getY() / blocSize.getHeight());
+    			(e.getX() + offset.getX()) / blocSize.getWidth(), 
+    			(e.getY() + offset.getY()) / blocSize.getHeight());
     }
 
 	@Override
