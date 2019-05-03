@@ -62,7 +62,7 @@ public class MoveThread implements Runnable {
 				p.refresh();
 					
 				try {
-					Thread.sleep(180 / STEPS);
+					Thread.sleep(160 / STEPS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

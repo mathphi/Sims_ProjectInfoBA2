@@ -14,7 +14,6 @@ import Tools.Point;
 import Tools.Size;
 import Tools.Rect;
 
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -26,7 +25,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import Model.Directable.Direction;
 
 public class Game implements DeletableObserver {
-	private final int ARTIFICIAL_SCROLL_RADIUS = 500;
 
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
@@ -126,6 +124,10 @@ public class Game implements DeletableObserver {
 	public Size getMapBlockSize() {
 		return map.getBlockSize();
 	}
+	
+	public Point getMapViewOffset() {
+		return map.getViewOffset();
+	}
 
 	public void playerMoveEvent(Person p) {
 		ArrayList<GameObject> obj_lst = p.getObjectsAround();
@@ -153,6 +155,8 @@ public class Game implements DeletableObserver {
 			sendPlayer(pos);
 		}
 	}
+	
+	//TODO: useless if the Person is not auto-controlled
 	public Point getPoint(Point point) {
 		//return the nearest position from an obstacle but free
 		Point finalPoint = point;
@@ -259,17 +263,13 @@ public class Game implements DeletableObserver {
 	public void centerViewOnPlayer() {
 		if (activePerson == null)
 			return;
-
+		
 		/*
-		 * Scroll the map view to the active person (scoll after notifyView for
-		 * fluidity) The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the
+		 * Scroll the map view to the active person 
+		 * The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the
 		 * player and the map's borders
 		 */
-		map.scrollRectToVisible(new Rectangle(
-				(int) (activePerson.getPos().getX() * map.getBlockSize().getWidth()) - ARTIFICIAL_SCROLL_RADIUS,
-				(int) (activePerson.getPos().getY() * map.getBlockSize().getHeight()) - ARTIFICIAL_SCROLL_RADIUS,
-				map.getBlockSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
-				map.getBlockSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
+		map.scrollToObject(activePerson);
 	}
 
 	private void notifyView() {
@@ -434,8 +434,8 @@ public class Game implements DeletableObserver {
 			selectDefaultActivePerson();
 		}
 
-		notifyView();
 		centerViewOnPlayer();
+		notifyView();
 	}
 
 	public void openGameMenu() {
@@ -555,9 +555,9 @@ public class Game implements DeletableObserver {
 		p.addRefreshListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				centerViewOnPlayer();
 				map.redraw();
 				playerMoveEvent(p);
-				centerViewOnPlayer();
 			}
 		});
 	}

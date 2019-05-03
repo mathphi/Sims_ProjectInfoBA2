@@ -2,6 +2,7 @@ package View;
 
 import Model.GameObject;
 import Model.GroundObject;
+import Tools.Point;
 import Tools.Rect;
 import Tools.Size;
 
@@ -22,6 +23,8 @@ public class Map extends JPanel {
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
     private final Size MAP_SIZE = new Size(80, 80);
     private final int BLOC_SIZE = 20;
+    
+    private Point viewOffset = new Point(0, 0);
 
     public Map() {
         this.setFocusable(true);
@@ -32,8 +35,54 @@ public class Map extends JPanel {
     public Rect getRect() {
     	return new Rect(0, 0, (int)getSize().getWidth(), (int)getSize().getHeight());
     }
+    
+    public void resetViewOffset() {
+    	viewOffset = new Point(0, 0);
+    }
+    
+    public void scrollToObject(GameObject o) {
+    	scrollToPos(o.getPos());
+    }
+    
+    public void scrollToPos(Point pos) {
+    	Point offset = pos
+    			.multiply(BLOC_SIZE)
+    			.add(-this.getVisibleRect().getWidth() / 2.0,
+    				 -this.getVisibleRect().getHeight() / 2.0);
+
+    	setViewOffset(offset);
+    }
+    
+    public void moveView(Point dp) {
+    	setViewOffset(viewOffset.add(dp.multiply(BLOC_SIZE)));
+    }
+    
+    private void setViewOffset(Point offset) {
+    	// Don't exceed the map's view with the offset
+    	double maxX = MAP_SIZE.getWidth() * BLOC_SIZE - this.getVisibleRect().getWidth();
+    	double maxY = MAP_SIZE.getHeight() * BLOC_SIZE - this.getVisibleRect().getHeight();
+
+    	maxX = (maxX < 0 ? 0 : maxX);
+    	maxY = (maxY < 0 ? 0 : maxY);
+    	
+    	offset = new Point(
+    			(offset.getX() < 0 ? 0 : offset.getX()),
+    			(offset.getY() < 0 ? 0 : offset.getY()));
+    	
+    	offset = new Point(
+    			(offset.getX() > maxX ? maxX : offset.getX()),
+    			(offset.getY() > maxY ? maxY : offset.getY()));
+    	
+    	viewOffset = offset;
+    }
+    
+    public Point getViewOffset() {
+    	return viewOffset;
+    }
 
     public void paint(Graphics g) {
+    	g.translate(-viewOffset.getXInt(), -viewOffset.getYInt());
+    	
 		super.paintComponent(g);
 		
         for (int i = 0; i < MAP_SIZE.getWidth(); i++) { 
