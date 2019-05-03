@@ -2,6 +2,7 @@ package View;
 
 import Model.GameObject;
 import Model.GroundObject;
+import Tools.Rect;
 import Tools.Size;
 
 import java.awt.Color;
@@ -26,6 +27,10 @@ public class Map extends JPanel {
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.setPreferredSize(new Dimension(MAP_SIZE.getWidth()*BLOC_SIZE, MAP_SIZE.getHeight()*BLOC_SIZE));
+    }
+    
+    public Rect getRect() {
+    	return new Rect(0, 0, (int)getSize().getWidth(), (int)getSize().getHeight());
     }
 
     public void paint(Graphics g) {

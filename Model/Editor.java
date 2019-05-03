@@ -169,7 +169,9 @@ public class Editor {
 	
 	public void mouseLeftClickEvent(Point pos) {
 		if (currentPlacing != null) {
-			if (currentPlacing.getPos().getDistance(pos) > 2.0) {
+			if (currentPlacing.getPos().getDistance(pos) > 2.0 ||
+				!map.getRect().contains(currentPlacing.getPos()))
+			{
 				// Don't place the object if it is far the mouse pointer
 				return;
 			}
@@ -370,6 +372,16 @@ public class Editor {
 	}
 	
 	public GameMapPacket getGameMapPacket() {
+		// Remove objects that are outside the map
+		for (int i = 0 ; i < objects.size() ; i++) {
+			GameObject o = objects.get(i);
+			
+			if (!map.getRect().contains(o.getPos())) {
+				objects.remove(i);
+				i--;
+			}
+		}
+		
 		return new GameMapPacket(objects, population, activePerson);
 	}
 

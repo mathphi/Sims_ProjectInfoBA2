@@ -205,10 +205,15 @@ public class Game implements DeletableObserver {
 	}
 
 	public void sendPlayer(Point pos) {
-
-		Thread t = new Thread(new AStarThread(this, activePerson, pos));
-		t.start();
-
+		Rect r = new Rect(0, 0, (int)map.getSize().getWidth(), (int)map.getSize().getHeight());
+		
+		if (r.contains(pos)) {
+			Thread t = new Thread(new AStarThread(this, activePerson, pos));
+			t.start();
+		}
+		else {
+			activePerson.setPos(pos);
+		}
 	}
 
 	public void moveActivePlayer(int x, int y) {
@@ -232,13 +237,15 @@ public class Game implements DeletableObserver {
 		unreachable = !mapRect.contains(nextPos);
 
 		for (GameObject object : objects) {
-			if (object != (GameObject) pers) {
-				Rect nextRect = new Rect(nextPos, pers.getSize());
+			if (object == (GameObject) pers) {
+				continue;
+			}
+			
+			Rect nextRect = new Rect(nextPos, pers.getSize());
 
-				if (object.getRect().overlaps(nextRect)) {
-					unreachable = object.isObstacle();
-					break;
-				}
+			if (object.getRect().overlaps(nextRect) && object.isObstacle()) {
+				unreachable = true;
+				break;
 			}
 		}
 
@@ -256,7 +263,7 @@ public class Game implements DeletableObserver {
 			direction = Direction.WEST;
 
 		pers.rotate(direction);
-
+		
 		if (!unreachable) {
 			pers.move(pos);
 		}
@@ -293,11 +300,6 @@ public class Game implements DeletableObserver {
 			attachObjectsToGame(loot);
 		}
 		notifyView();
-	}
-
-	public void playerPos() {
-		System.out.println(activePerson.getPos().getX() + ":" + activePerson.getPos().getY());
-
 	}
 
 	public void quit() {
@@ -402,6 +404,11 @@ public class Game implements DeletableObserver {
 		// Re-attach message listener (transient property)
 		for (Person p : population) {
 			attachMessageListener(p);
+		}
+		
+		// Re-attach refresh listener (transient property)
+		for (Person p : population) {
+			attachRefreshListener(p);
 		}
 
 		notifyView();

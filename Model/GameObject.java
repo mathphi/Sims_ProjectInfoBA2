@@ -104,7 +104,7 @@ public abstract class GameObject implements Directable, Serializable {
 
 	public abstract boolean isObstacle();
 
-	public abstract void clickedEvent(Person person); //Needed for restoring energy
+	public abstract void clickedEvent(GameObject o);
 
 	public abstract void proximityEvent(GameObject o);
 

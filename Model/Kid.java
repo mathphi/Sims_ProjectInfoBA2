@@ -17,12 +17,6 @@ public class Kid extends Person {
 	public boolean maxAgeReached() {
 		return (getAge() > 13);
 	}
-
-	@Override
-	public void clickedEvent(Person person) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	// ACTION
 	

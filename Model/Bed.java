@@ -1,6 +1,5 @@
 package Model;
 
-import Model.Game;
 import java.time.Duration;
 import java.awt.Color;
 import java.time.LocalDateTime;
@@ -23,13 +22,14 @@ public class Bed extends GameObject {
 	}
 
 	@Override
-	public void clickedEvent(Person person) {
-		Duration d = Duration.between(person.getLastBedTime(), LocalDateTime.now());
+	public void clickedEvent(GameObject o) {
+		Person p = (Person) o;
+		Duration d = Duration.between(p.getLastBedTime(), LocalDateTime.now());
 		System.out.print(d.getSeconds());
-		if(d.getSeconds()>30){
+		if(d.getSeconds() > 30){
 			//can go to bed every 30 seconds
-			person.restoreEnergy();
-			person.setLastBedTime(LocalDateTime.now());
+			p.restoreEnergy();
+			p.setLastBedTime(LocalDateTime.now());
 		}
 		 
 		 

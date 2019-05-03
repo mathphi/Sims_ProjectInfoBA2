@@ -1,7 +1,6 @@
 package Model;
 
 import Tools.Point;
-import Model.Game;
 
 public class AStarThread implements Runnable {
 	private Game g;

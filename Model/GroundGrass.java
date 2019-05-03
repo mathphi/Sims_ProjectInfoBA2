@@ -13,12 +13,6 @@ public class GroundGrass extends GroundObject {
 		super(pos, new Size(type, type), new Color(70, 200, 60));
 		this.type = type;
 	}
-	
-	@Override
-	public void clickedEvent(Person person) {}
-
-	@Override
-	public void proximityEvent(GameObject o) {}
 
 	@Override
 	public GameObject clone() {

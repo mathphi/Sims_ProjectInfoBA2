@@ -203,9 +203,13 @@ public class AStar {
 
 	private void setBlocked(GameObject o) {
 		for (int i = 0; i < o.getSize().getWidth(); i++) {
-			for (int j = 0; j < o.getSize().getHeight(); j++) {
+			for (int j = 0; j < o.getSize().getHeight(); j++) {						
 				int x = o.getPos().getXInt() + i;
 				int y = o.getPos().getYInt() + j;
+				
+				if (!mapRect.contains(new Point(x, y))) {
+					continue;
+				}
 
 				grid[x][y] = null;
 

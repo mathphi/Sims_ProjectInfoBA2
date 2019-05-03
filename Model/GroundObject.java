@@ -19,6 +19,12 @@ public abstract class GroundObject extends GameObject {
 	}
 
 	@Override
+	public void clickedEvent(GameObject o) {}
+
+	@Override
+	public void proximityEvent(GameObject o) {}
+
+	@Override
 	public void paint(Graphics g, int BLOC_SIZE) {
 		g.setColor(getColor());
         g.fillRect(

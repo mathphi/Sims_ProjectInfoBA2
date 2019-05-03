@@ -239,10 +239,4 @@ public class Adult extends Person {
 		}
 
 	}
-
-	@Override
-	public void clickedEvent(Person person) {
-		// TODO Auto-generated method stub
-		
-	}
 }

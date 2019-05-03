@@ -36,7 +36,9 @@ public class EditorPanel extends JPanel {
 		addButtonToCateg(mapCateg, "Parquet 1", "Model.GroundFlooring\t1", 0);
 		addButtonToCateg(mapCateg, "Parquet 2", "Model.GroundFlooring\t2", 0);
 		addButtonToCateg(mapCateg, "Parquet 3", "Model.GroundFlooring\t3", 0);
-		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 1);
+		addButtonToCateg(mapCateg, "Mur 1", "Model.WallBlock\t1", 0);
+		addButtonToCateg(mapCateg, "Mur 2", "Model.WallBlock\t2", 0);
+		addButtonToCateg(mapCateg, "Mur 3", "Model.WallBlock\t3", 0);
 
 		JPanel mobCateg = createCategory(mainPanel, "Éléments du mobilier");
 

@@ -8,9 +8,23 @@ import Tools.Size;
 
 public class WallBlock extends GameObject {
 	private static final long serialVersionUID = -1900225227739246245L;
+	
+	private int type = 1;
 
 	public WallBlock(int x, int y) {
 		this(new Point(x, y));
+	}
+
+	public WallBlock(int x, int y, int type) {
+		this(new Point(x, y));
+		this.setSize(new Size(type, 1));
+		this.type = type;
+	}
+
+	public WallBlock(Point pos, int type) {
+		this(pos);
+		this.setSize(new Size(type, 1));
+		this.type = type;
 	}
 	
 	public WallBlock(Point pos) {
@@ -21,16 +35,16 @@ public class WallBlock extends GameObject {
 		return true;
 	}
 	
-	public void clickedEvent() {
-		// A wall does nothing
-	}
-
-	public void proximityEvent(GameObject o) {
-		// A wall does nothing
-	}
+	// A wall does nothing
+	public void clickedEvent(GameObject o) {}
+	
+	// A wall does nothing
+	public void proximityEvent(GameObject o) {}
 	
 	public GameObject clone() {
-		return (GameObject) new WallBlock(getPos());
+		WallBlock clone = new WallBlock(getPos(), type);
+		clone.rotate(this.getDirection());
+		return (GameObject) clone;
 	}
 	
 	@Override
@@ -41,11 +55,5 @@ public class WallBlock extends GameObject {
         		(int)(getPos().getY() * BLOC_SIZE-1),
         		(BLOC_SIZE * getSize().getWidth()),
         		(BLOC_SIZE * getSize().getHeight()));
-	}
-
-	@Override
-	public void clickedEvent(Person person) {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -15,12 +15,6 @@ public class GroundFlooring extends GroundObject {
 	}
 
 	@Override
-	public void clickedEvent(Person person) {}
-
-	@Override
-	public void proximityEvent(GameObject o) {}
-
-	@Override
 	public GameObject clone() {
 		return (GameObject) new GroundFlooring(getPos(), type);
 	}

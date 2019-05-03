@@ -8,14 +8,12 @@ public class MoveThread implements Runnable {
 	private boolean stopped = false;
 	private boolean active = false;
 	private Person p;
-	private Point initPos;
-	private Point deltaPos;
-	private Point nextDeltaPos;
+	private Point initPos = null;
+	private Point deltaPos = null;
+	private Point nextDeltaPos = null;
 
-	public MoveThread(Person p, Point deltaPos) {
+	public MoveThread(Person p) {
 		this.p = p;
-		this.deltaPos = deltaPos;
-		this.initPos = p.getPos();
 	}
 	
 	public void abort() {
@@ -27,6 +25,7 @@ public class MoveThread implements Runnable {
 	}
 
 	public void newMovement(Point delta) {
+		System.out.println(deltaPos);
 		if (deltaPos == null) {
 			deltaPos = delta;
 		}
@@ -53,7 +52,8 @@ public class MoveThread implements Runnable {
 					continue;
 				}
 			}
-			
+
+			initPos = p.getPos();
 			active = true;
 			
 			for (int i = 0 ; i < STEPS && !stopped ; i++) {

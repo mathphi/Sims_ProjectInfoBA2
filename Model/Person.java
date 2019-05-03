@@ -1,6 +1,4 @@
 package Model;
-import java.lang.Object;
-import java.time.LocalTime;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
@@ -11,6 +9,7 @@ import View.Message.MsgType;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import java.util.HashMap;
@@ -21,7 +20,7 @@ import Products.Nourriture;
 import Products.Product;
 import Products.Toy;
 import Products.Wearable;
-import java.time.LocalDateTime;
+
 public abstract class Person extends GameObject {
 	private static final long serialVersionUID = 8476495059211784395L;
 
@@ -41,7 +40,8 @@ public abstract class Person extends GameObject {
 
 	protected int money;
 
-	protected LocalDateTime  lastBedTime;
+	private LocalDateTime lastBedTime;
+	
 	// visible properties, if = 100 no need
 	protected double energy;
 	protected double hunger;
@@ -75,6 +75,10 @@ public abstract class Person extends GameObject {
 	private double hungerRandomFactor = Random.range(0.6, 1.2);
 	private double energyRandomFactor = Random.range(0.6, 1.2);
 
+	/* WARNING: Use of transient keyword to avoid to save these attributes in the 
+	 * saving file. These attributes are null when the object is restored from the file.
+	 */
+	
 	// Game messages history
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
@@ -83,9 +87,9 @@ public abstract class Person extends GameObject {
 	private transient ArrayList<ActionListener> refreshListeners = new ArrayList<ActionListener>();
 
 	// Thread used for smooth moving
-	private MoveThread moveThread;
-
-	// Constructor used when the Person evolves (ie from Kid to Teenage)
+	private transient MoveThread moveThread;
+	
+	// Constructor used when the Person evolves (ie from Kid to Teenager)
 	public Person(Person other) {
 		this(other.getPos(), other.getName(), other.getAge(), other.getGender(), other.getMother(), other.getFather());
 
@@ -132,13 +136,9 @@ public abstract class Person extends GameObject {
 		othersImpression = 50;
 
 		psychologicalFactors = PsychologicalFactors.RandomFactors();
-
-		moveThread = new MoveThread(this, null);
-		Thread t = new Thread(moveThread);
-		t.start();
 	}
 
-	public void clickedEvent() {
+	public void clickedEvent(GameObject o) {
 
 	}
 
@@ -161,6 +161,13 @@ public abstract class Person extends GameObject {
 	}
 
 	public void move(Point delta) {
+		// moveThread is null when restored from saving file
+		if (moveThread == null) {
+			moveThread = new MoveThread(this);
+			Thread t = new Thread(moveThread);
+			t.start();
+		}
+		
 		moveThread.newMovement(delta);
 	}
 
@@ -625,6 +632,9 @@ public abstract class Person extends GameObject {
 	}
 
 	public void refresh() {
+		if (refreshListeners == null)
+			return;
+		
 		for (ActionListener a : refreshListeners) {
 			a.actionPerformed(null);
 		}
@@ -722,6 +732,7 @@ public abstract class Person extends GameObject {
 		return null;
 	}
 
+	
 	public void setLastBedTime(LocalDateTime localDateTime) {
 		 lastBedTime = LocalDateTime.now();
 	
