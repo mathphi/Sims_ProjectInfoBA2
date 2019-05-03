@@ -139,6 +139,9 @@ public abstract class Person extends GameObject {
 		othersImpression = 50;
 
 		psychologicalFactors = PsychologicalFactors.RandomFactors();
+
+		// Use a past time as initial time
+		lastBedTime = LocalDateTime.now().minusDays(1);
 	}
 
 	public void clickedEvent(GameObject o) {
@@ -154,11 +157,7 @@ public abstract class Person extends GameObject {
 	public void setActivePerson(boolean is_active) {
 		isActivePerson = is_active;
 	}
-
-	public boolean isPerson() {
-		return true;
-	}
-
+	
 	public boolean isActivePerson() {
 		return isActivePerson;
 	}

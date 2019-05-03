@@ -126,8 +126,4 @@ public abstract class GameObject implements Directable, Serializable {
 				(BLOC_SIZE * getSize().getWidth()) - 2,
 				(BLOC_SIZE * getSize().getHeight()) - 2);
 	}
-
-	public boolean isPerson() {
-		return false;
-	}
 }

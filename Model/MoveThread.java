@@ -25,7 +25,6 @@ public class MoveThread implements Runnable {
 	}
 
 	public void newMovement(Point delta) {
-		System.out.println(deltaPos);
 		if (deltaPos == null) {
 			deltaPos = delta;
 		}
@@ -63,7 +62,7 @@ public class MoveThread implements Runnable {
 				p.refresh();
 					
 				try {
-					Thread.sleep(160 / STEPS);
+					Thread.sleep(180 / STEPS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

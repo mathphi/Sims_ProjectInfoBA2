@@ -138,7 +138,7 @@ public class Game implements DeletableObserver {
 	public void mouseLeftClickEvent(Point pos) {
 		GameObject object = getObjectAtPosition(pos);
 
-		if (object != null && object.isPerson() && object != activePerson && activePerson.getObjectsAround().contains(object)) {
+		if (object != null && object instanceof Person && object != activePerson && activePerson.getObjectsAround().contains(object)) {
 			
 
 			interactionMenu = new InteractionMenu(window, activePerson, (Person) object);
