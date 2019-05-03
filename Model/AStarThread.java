@@ -1,6 +1,7 @@
 package Model;
 
 import Tools.Point;
+import Model.Game;
 
 public class AStarThread implements Runnable {
 	private Game g;
@@ -12,29 +13,37 @@ public class AStarThread implements Runnable {
 		this.p = p;
 		this.pos = pos;
 	}
-	
+
 	@Override
 	public void run() {
 		int direction = 0;
-		synchronized(p) {
-		while(direction != -1) {
-			if (g.isRunning()) {
-				direction = (new AStar(g.getMapSize(), p.getPos(), pos, p, g.getGameObjects())).getNextStep();
-				switch (direction) {
-					case 0 : g.movePlayer(p,1,0); break;
-					case 1 : g.movePlayer(p,0,-1); break;
-					case 2 : g.movePlayer(p,-1,0); break;
-					case 3 : g.movePlayer(p,0,1); break;
+		synchronized (p) {
+			while (direction != -1) {
+				if (g.isRunning()) {
+					direction = (new AStar(g.getMapSize(), p.getPos(), pos, p, g.getGameObjects())).getNextStep();
+					switch (direction) {
+					case 0:
+						g.movePlayer(p, 1, 0);
+						break;
+					case 1:
+						g.movePlayer(p, 0, -1);
+						break;
+					case 2:
+						g.movePlayer(p, -1, 0);
+						break;
+					case 3:
+						g.movePlayer(p, 0, 1);
+						break;
+					}
+				}
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+
 		}
 	}
-		
 
 }

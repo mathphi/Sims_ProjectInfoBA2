@@ -36,7 +36,6 @@ public class Game implements DeletableObserver {
 	private Status status;
 	private MessagesZone msgZone;
 	private GameMenu mainMenu;
-
 	private InteractionMenu interactionMenu;
 	private Size mapSize;
 
@@ -62,7 +61,7 @@ public class Game implements DeletableObserver {
 		mainMenu = new GameMenu(window, this);
 
 		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
-		Person p2 = new Kid(new Point(17, 13), "Second Player", 11, Person.Gender.Female, null, null);
+		Person p2 = new Adult(new Point(17, 13), "Second Player", 11, Person.Gender.Female, null, null);
 		Person p3 = new Adult(new Point(11, 16), "Third People", 43, Person.Gender.Female, null, null);
 
 		attachPersonToGame(p1);
@@ -117,7 +116,7 @@ public class Game implements DeletableObserver {
 		}
 		WaterClosed wc = new WaterClosed(new Point(1, 22));
 		attachObjectToGame(wc);
-		
+
 		Bed bed = new Bed(new Point(1, 12));
 		attachObjectToGame(bed);
 
@@ -146,8 +145,7 @@ public class Game implements DeletableObserver {
 				point = object.getPos().add(0, -1);
 			}
 			if (getObjectAtPosition(point) != null && getObjectAtPosition(point).isObstacle()) {
-				
-				
+
 				point = object.getPos().add(+1, 0);
 			}
 			if (getObjectAtPosition(point) != null && getObjectAtPosition(point).isObstacle()) {
@@ -155,15 +153,24 @@ public class Game implements DeletableObserver {
 			}
 
 			sendPlayer(point);
+
 			interactionMenu = new InteractionMenu(window, activePerson, (Person) object);
 			interactionMenu.showMenu();
 
 		}
 		if (object != null && object.isObstacle()) {
-			object.clickedEvent();
+			object.clickedEvent(activePerson);
+
+			// TODO move the player next 
 		} else {
 			sendPlayer(pos);
 		}
+	}
+	public Point getPoint(Point point) {
+		//return the nearest position from an obstacle but free
+		Point finalPoint = point;
+		//TODO
+		return finalPoint;
 	}
 
 	public void mouseRightClickEvent(Point pos) {
@@ -198,8 +205,10 @@ public class Game implements DeletableObserver {
 	}
 
 	public void sendPlayer(Point pos) {
+
 		Thread t = new Thread(new AStarThread(this, activePerson, pos));
 		t.start();
+
 	}
 
 	public void moveActivePlayer(int x, int y) {
@@ -257,17 +266,16 @@ public class Game implements DeletableObserver {
 		if (activePerson == null)
 			return;
 
-		/* 
-		 * Scroll the map view to the active person (scoll after notifyView for fluidity)
-		 * The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the player and
-		 * the map's borders
+		/*
+		 * Scroll the map view to the active person (scoll after notifyView for
+		 * fluidity) The ARTIFICIAL_SCROLL_RADIUS is used to keep a space between the
+		 * player and the map's borders
 		 */
-		map.scrollRectToVisible(
-				new Rectangle(
-						(int)(activePerson.getPos().getX() * map.getBlockSize().getWidth()) - ARTIFICIAL_SCROLL_RADIUS,
-						(int)(activePerson.getPos().getY() * map.getBlockSize().getHeight()) - ARTIFICIAL_SCROLL_RADIUS,
-						map.getBlockSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
-						map.getBlockSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
+		map.scrollRectToVisible(new Rectangle(
+				(int) (activePerson.getPos().getX() * map.getBlockSize().getWidth()) - ARTIFICIAL_SCROLL_RADIUS,
+				(int) (activePerson.getPos().getY() * map.getBlockSize().getHeight()) - ARTIFICIAL_SCROLL_RADIUS,
+				map.getBlockSize().getWidth() + 2 * ARTIFICIAL_SCROLL_RADIUS,
+				map.getBlockSize().getHeight() + 2 * ARTIFICIAL_SCROLL_RADIUS));
 	}
 
 	private void notifyView() {
@@ -548,7 +556,7 @@ public class Game implements DeletableObserver {
 			}
 		}
 	}
-	
+
 	private void attachRefreshListener(Person p) {
 		p.addRefreshListener(new ActionListener() {
 			@Override

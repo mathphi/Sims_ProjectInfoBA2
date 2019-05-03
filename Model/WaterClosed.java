@@ -19,7 +19,7 @@ public class WaterClosed extends GameObject{
 	}
 
 	@Override
-	public void clickedEvent() {
+	public void clickedEvent(Person person) {
 		// Nothing to do on click
 	}
 

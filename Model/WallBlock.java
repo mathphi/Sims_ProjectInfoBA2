@@ -42,4 +42,10 @@ public class WallBlock extends GameObject {
         		(BLOC_SIZE * getSize().getWidth()),
         		(BLOC_SIZE * getSize().getHeight()));
 	}
+
+	@Override
+	public void clickedEvent(Person person) {
+		// TODO Auto-generated method stub
+		
+	}
 }

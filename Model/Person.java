@@ -1,5 +1,6 @@
 package Model;
-
+import java.lang.Object;
+import java.time.LocalTime;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
@@ -20,7 +21,7 @@ import Products.Nourriture;
 import Products.Product;
 import Products.Toy;
 import Products.Wearable;
-
+import java.time.LocalDateTime;
 public abstract class Person extends GameObject {
 	private static final long serialVersionUID = 8476495059211784395L;
 
@@ -40,6 +41,7 @@ public abstract class Person extends GameObject {
 
 	protected int money;
 
+	protected LocalDateTime  lastBedTime;
 	// visible properties, if = 100 no need
 	protected double energy;
 	protected double hunger;
@@ -76,13 +78,13 @@ public abstract class Person extends GameObject {
 	// Game messages history
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
-	
+
 	// Refresh listeners
 	private transient ArrayList<ActionListener> refreshListeners = new ArrayList<ActionListener>();
 
 	// Thread used for smooth moving
 	private MoveThread moveThread;
-	
+
 	// Constructor used when the Person evolves (ie from Kid to Teenage)
 	public Person(Person other) {
 		this(other.getPos(), other.getName(), other.getAge(), other.getGender(), other.getMother(), other.getFather());
@@ -183,7 +185,7 @@ public abstract class Person extends GameObject {
 
 		// Decrease more energy if hygiene is low
 		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor);
-		if (energy ==0) {
+		if (energy == 0) {
 			goToBed();
 		}
 	}
@@ -371,11 +373,10 @@ public abstract class Person extends GameObject {
 
 	// TODO function that make evolve the hunger of the player during the game
 	public void goToBed() {
-		//Point point = new Point(4,16);
-		//sendPlayer(point); et j'arrive pas a le faire bouger je comprends pas!!
-		//TODO to be change the bed will not always be there!!!
-		addMessage(
-				new Message("Tu viens de dormir", MsgType.Info));
+		// Point point = new Point(4,16);
+		// sendPlayer(point); et j'arrive pas a le faire bouger je comprends pas!!
+		// TODO to be change the bed will not always be there!!!
+		addMessage(new Message("Tu viens de dormir", MsgType.Info));
 		restoreEnergy();
 	}
 
@@ -416,6 +417,31 @@ public abstract class Person extends GameObject {
 		}
 	}
 
+	public void restoreEnergy() {
+		// function that take in turns the hygiene, mood and a random factor in the
+		// calcul of energy
+		// will be run when player go to bed
+		
+			// if more than 50 no need to be restored
+			double moodHygieneFactor = Math.pow(Math.E, hygiene * Math.log(2) * mood / 10000.0) - 1; // always beetween
+																										// 0
+																										// and 1
+			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
+			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
+
+			double energyAdd = 100 * moodHygieneFactor * randomFactor;
+			if (energyAdd < 20) {
+				// minimum of energy
+				energyAdd = 20;
+
+			
+
+			energy = energy + (int) (energyAdd);
+			addMessage(new Message("Vous avez dormi", MsgType.Info));
+			// TODO plusieurs messages en fonction du gain d'énergie
+		}
+	}
+
 	/**
 	 * Modify the hygiene of a factor If the hygiene is too low... (?) TODO
 	 * 
@@ -442,25 +468,6 @@ public abstract class Person extends GameObject {
 	public void modifyEnergy(double factor) {
 		energy += factor;
 		energy = Math.max(0, Math.min(energy, 100));
-	}
-
-	public void restoreEnergy() {
-		// function that take in turns the hygiene, mood and a random factor in the
-		// calcul of energy
-		// will be run when player go to bed
-
-		double moodHygieneFactor = Math.pow(Math.E, hygiene * Math.log(2) * mood / 10000.0) - 1; // always beetween 0
-																									// and 1
-		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
-
-		double energyAdd = 100 * moodHygieneFactor * randomFactor;
-		if (energyAdd < 20) {
-			// minimum of energy
-			energyAdd = 20;
-		}
-
-		energy = (int) (energyAdd);
 	}
 
 	public void modifyMoney(int amount) {
@@ -616,13 +623,13 @@ public abstract class Person extends GameObject {
 
 		refreshListeners.add(a);
 	}
-	
+
 	public void refresh() {
 		for (ActionListener a : refreshListeners) {
 			a.actionPerformed(null);
 		}
 	}
-	
+
 	public void addInventory(Product newProduct) {
 		inventory.add(newProduct);
 		if (newProduct instanceof Wearable) {
@@ -682,17 +689,14 @@ public abstract class Person extends GameObject {
 		// TODO: the yellow border is temporary
 		if (isActivePerson()) {
 			g.setColor(Color.YELLOW);
-			g.drawRect(
-					(int)(getPos().getX() * BLOC_SIZE), 
-					(int)(getPos().getY() * BLOC_SIZE), 
-					(BLOC_SIZE * getSize().getWidth()) - 2,
-					(BLOC_SIZE * getSize().getHeight()) - 2);
+			g.drawRect((int) (getPos().getX() * BLOC_SIZE), (int) (getPos().getY() * BLOC_SIZE),
+					(BLOC_SIZE * getSize().getWidth()) - 2, (BLOC_SIZE * getSize().getHeight()) - 2);
 		}
 
 		int deltaX = 0;
 		int deltaY = 0;
-		
-		Size realSize = new Size(BLOC_SIZE*getSize().getWidth(), BLOC_SIZE*getSize().getHeight());
+
+		Size realSize = new Size(BLOC_SIZE * getSize().getWidth(), BLOC_SIZE * getSize().getHeight());
 
 		switch (getDirection()) {
 		case EAST:
@@ -709,12 +713,20 @@ public abstract class Person extends GameObject {
 			break;
 		}
 
-		int xCenter = (int)(getPos().getX() * BLOC_SIZE) + (realSize.getWidth() - 2) / 2;
-		int yCenter = (int)(getPos().getY() * BLOC_SIZE) + (realSize.getHeight() - 2) / 2;
+		int xCenter = (int) (getPos().getX() * BLOC_SIZE) + (realSize.getWidth() - 2) / 2;
+		int yCenter = (int) (getPos().getY() * BLOC_SIZE) + (realSize.getHeight() - 2) / 2;
 		g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
 	}
 
 	public GameObject clone() {
 		return null;
+	}
+
+	public void setLastBedTime(LocalDateTime localDateTime) {
+		 lastBedTime = LocalDateTime.now();
+	
+	}
+	public LocalDateTime getLastBedTime() {
+		return lastBedTime;
 	}
 }

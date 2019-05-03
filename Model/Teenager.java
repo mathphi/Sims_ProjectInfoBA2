@@ -134,4 +134,10 @@ public class Teenager extends Person {
 
 	}
 
+	@Override
+	public void clickedEvent(Person person) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

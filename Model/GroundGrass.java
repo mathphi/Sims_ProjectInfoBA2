@@ -15,7 +15,7 @@ public class GroundGrass extends GroundObject {
 	}
 	
 	@Override
-	public void clickedEvent() {}
+	public void clickedEvent(Person person) {}
 
 	@Override
 	public void proximityEvent(GameObject o) {}
