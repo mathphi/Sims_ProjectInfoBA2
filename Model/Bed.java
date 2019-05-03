@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import Tools.Point;
 import Tools.Size;
+import View.Message.MsgType;
 
 public class Bed extends GameObject {
 	private static final long serialVersionUID = 5573360277831892967L;
@@ -28,9 +29,13 @@ public class Bed extends GameObject {
 
 		if (d.getSeconds() > 30) {
 			// can go to bed every 30 seconds
-
-			p.restoreEnergy();
-			p.setLastBedTime(LocalDateTime.now());
+			p.sleep();
+		}
+		else if (d.getSeconds() < 30) {
+			p.addMessage("Vous venez de vous réveiller", MsgType.Problem);
+		}
+		else {
+			p.addMessage("Vous avez dormi il y a peu de temps", MsgType.Problem);
 		}
 	}
 

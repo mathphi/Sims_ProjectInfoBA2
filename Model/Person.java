@@ -194,8 +194,9 @@ public abstract class Person extends GameObject {
 
 		// Decrease more energy if hygiene is low
 		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor);
+		
 		if (energy == 0) {
-			goToBed();
+			//TODO: what can we do ?
 		}
 	}
 
@@ -259,6 +260,10 @@ public abstract class Person extends GameObject {
 
 		relationFactor /= 100.0;
 
+		/*
+		 * TODO: Why we multiply by 2 ?
+		 * 		 AND SPECIALLY why multiply by -1 ? The factor become negative but what is the goal ?
+		 */
 		if (relationFactor > 0.7) {
 			// will multipy by 2 the gain of mood and point relation because realy
 			// complementary
@@ -310,83 +315,85 @@ public abstract class Person extends GameObject {
 
 	}
 
-	public void characterInteraction(Person people, String interaction) {
-		// function that allows the people to interact with another one
-		// interaction is the type of interaction
-		// need to be overwrite in adult and teennager class for interaction with level
-		// 3 friends (thing like embrass, marry,...)
+	/**
+	 * Function that allows the people to interact with another one.
+	 * need to be overwrite in adult and teenager class for interaction with
+	 * level 3 friends (thing like kiss, marry,...)
+	 * 
+	 * TODO: NOOO implement the level 3 here (just not used if this is a Kid,...)
+	 * 		 Else we have to overwrite this bug function uselessly
+	 * 
+	 * @param otherPeople
+	 * The other people with which to interact
+	 * 
+	 * @param interaction
+	 * The type of interaction
+	 */
+	public void characterInteraction(Person otherPeople, String interaction) {	
 		boolean action = true;
+		
+		//TODO: move the energy check in the target functions
 		switch (interaction) {
-		case ("discuss"): {
-
+		case ("discuss"):
 			if (energy >= 10) {
-				discuss(people);
-
+				discuss(otherPeople);
 			} else {
 				action = false;
 				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
 			}
-
 			break;
-		}
-		case ("playWith"): {
-
+		case ("playWith"):
 			if (energy >= 20) {
-				playWith(people);
-
+				playWith(otherPeople);
 			} else {
 				action = false;
 				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
 			}
-
 			break;
-		}
-		case ("invite"): {
-
+		case ("invite"):
 			if (energy >= 25) {
-				invite(people);
-
+				invite(otherPeople);
 			} else {
 				action = false;
 				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
 			}
 
 			break;
-		}
-
 		default:
 			break;
 		}
+		
+		/* 
+		 * TODO: I don't understand why we call automaticAnswer twice (in the
+		 * 		 action's functions and here). Also it might be good to move this section in a 
+		 * 		 separated function called by the action's target functions.
+		 */
 		if (action) {
-			double value = automaticAnswer(people);
+			double value = automaticAnswer(otherPeople);
+			
 			if (value > 0.8) {
 				// second condition for not double printing
-				addMessage(new Message(people.getName()
-						+ ":C'était vraiment un chouette moment! Tu es hyper sympathique et incroyable merci pour tout!",
-						MsgType.Info));
+				addMessage(
+						otherPeople.getName() + ": C'était vraiment un chouette moment! Tu es hyper sympathique et incroyable merci pour tout!",
+						MsgType.Info);
 			} else if (value > 0.6) {
-				addMessage(new Message(
-						people.getName() + ":Je n'avais rien d'autre à faire mais c'était cool d'être avec toi ",
-						MsgType.Info));
+				addMessage(
+						otherPeople.getName() + ": Je n'avais rien d'autre à faire mais c'était cool d'être avec toi ",
+						MsgType.Info);
 			} else if (value > 0.5) {
-				addMessage(new Message(people.getName() + ":Bon... Content de t'avoir vu. ", MsgType.Info));
+				addMessage(
+						otherPeople.getName() + ": Bon... Content de t'avoir vu. ",
+						MsgType.Info);
 			} else if (value > 0.3) {
-				addMessage(new Message(people.getName() + ":Je me suis ennuyé j'aurais pas du venir ", MsgType.Info));
+				addMessage(
+						otherPeople.getName() + ": Je me suis ennuyé j'aurais pas du venir ",
+						MsgType.Info);
 			} else {
 				addMessage(
-						new Message(people.getName() + ": T'es vraiment pas sympathique, me recontacte plus jamais! ",
-								MsgType.Info));
+						otherPeople.getName() + ": T'es vraiment pas sympathique, me recontacte plus jamais! ",
+						MsgType.Info);
 			}
 		}
-	}
-
-	// TODO function that make evolve the hunger of the player during the game
-	public void goToBed() {
-		// Point point = new Point(4,16);
-		// sendPlayer(point); et j'arrive pas a le faire bouger je comprends pas!!
-		// TODO to be change the bed will not always be there!!!
-		// DECIDE WHAT WE DO
-		// restoreEnergy();
 	}
 
 	/**
@@ -444,10 +451,7 @@ public abstract class Person extends GameObject {
 			energyAdd = 20;
 		}
 
-		energy = energy + (int) (energyAdd);
-		addMessage(new Message("Vous avez dormi", MsgType.Info));
-		// TODO plusieurs messages en fonction du gain d'énergie
-	}
+		energy = energy + (int) (energyAdd);	}
 
 	/**
 	 * Modify the hygiene of a factor If the hygiene is too low... (?) TODO
@@ -732,12 +736,19 @@ public abstract class Person extends GameObject {
 		return null;
 	}
 
-	public void setLastBedTime(LocalDateTime localDateTime) {
+	private void setLastBedTime(LocalDateTime localDateTime) {
 		lastBedTime = LocalDateTime.now();
-
 	}
 
 	public LocalDateTime getLastBedTime() {
 		return lastBedTime;
+	}
+	
+	public void sleep() {
+		setLastBedTime(LocalDateTime.now());
+		restoreEnergy();
+		
+		// TODO plusieurs messages en fonction du gain d'énergie
+		addMessage("Vous avez dormi et récupéré de l'énergie", MsgType.Info);
 	}
 }

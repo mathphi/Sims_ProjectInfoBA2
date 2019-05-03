@@ -58,7 +58,7 @@ public class MessagesZone extends JPanel {
 		// Use the html + css to word-wrap
 		JLabel l = new JLabel(String.format(
 				"<html>"
-				+ "<body style='width: 200px; text-align: justify;'>%s</body>"
+				+ "<body style='width: 250px; text-align: justify;'>%s</body>"
 				+ "</html>", msg.getMessage()));
 		
 		l.setOpaque(true);

@@ -56,13 +56,18 @@ public class MoveThread implements Runnable {
 			active = true;
 			
 			for (int i = 0 ; i < STEPS && !stopped ; i++) {
+				// Save the start time
+				long start_t = System.currentTimeMillis();
+				
 				// Add the deltaPos divided by the number of steps
 				Point nextPos = p.getPos().add(deltaPos.multiply(1.0/STEPS));
 				p.setPos(nextPos);
 				p.refresh();
 					
 				try {
-					Thread.sleep(160 / STEPS);
+					// Compute the elapsed time to refresh,... and remove it from sleep time
+					long dt = System.currentTimeMillis() - start_t;
+					Thread.sleep((170 - dt) / STEPS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

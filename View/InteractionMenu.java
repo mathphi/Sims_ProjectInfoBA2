@@ -27,9 +27,9 @@ public class InteractionMenu extends JDialog {
 	private JButton embrassButton;
 	private JButton marryButton;
 
-	public InteractionMenu(Frame parent, Person player, Person person) {
+	public InteractionMenu(Frame parent, Person player, Person otherPerson) {
 		// player is the sender of the request
-		super(parent, person.getName(), true); // Print the name of the people
+		super(parent, otherPerson.getName(), true); // Print the name of the people
 
 		setPreferredSize(new Dimension(300, 320));
 
@@ -46,70 +46,65 @@ public class InteractionMenu extends JDialog {
 		embrassButton = new JButton("Embrasser");
 		marryButton = new JButton("Se marier");
 		mainPanel.add(interactionLabel);
-		switch (player.getRelationship(person)) {
-		case (1): {
+
+		switch (player.getRelationship(otherPerson)) {
+		case (1):
 			// can play with
 			mainPanel.add(playButton);
-
-		}
-		case (2): {
+			break;
+		case (2):
 			mainPanel.add(playButton);
 			mainPanel.add(inviteButton);
+			break;
+		default:
+			break;
 		}
 
-		}
-
-		if (person instanceof Teenager) {
-
+		if (otherPerson instanceof Teenager) {
 			if (player instanceof Teenager) {
-				switch (player.getRelationship(person)) {
-				case (2): {
-
+				switch (player.getRelationship(otherPerson)) {
+				case (2):
 					mainPanel.add(drinkButton);
-
-				}
-				case (3): {
+					break;
+				case (3):
 					mainPanel.add(drinkButton);
 					mainPanel.add(embrassButton);
-				}
-
+					break;
+				default:
+					break;
 				}
 			}
-
-		} else if (person instanceof Adult) {
+		} 
+		else if (otherPerson instanceof Adult) {
 			if (player instanceof Teenager) {
-				switch (player.getRelationship(person)) {
-				case (2): {
-
+				switch (player.getRelationship(otherPerson)) {
+				case (2):
 					mainPanel.add(drinkButton);
-
-				}
-				case (3): {
+					break;
+				case (3):
 					mainPanel.add(drinkButton);
 					mainPanel.add(embrassButton);
+					break;
+				default:
+					break;
 				}
-
-				}
-
-			} else if (player instanceof Adult) {
-				switch (player.getRelationship(person)) {
-				case (2): {
-
+			} 
+			else if (player instanceof Adult) {
+				switch (player.getRelationship(otherPerson)) {
+				case (2):
 					mainPanel.add(drinkButton);
-
-				}
-				case (3): {
+					break;
+				case (3):
 					mainPanel.add(drinkButton);
 					mainPanel.add(embrassButton);
 					mainPanel.add(marryButton);
+					break;
+				default:
+					break;
 				}
-
-				}
-
 			}
 		}
 
-		
 		mainPanel.add(discussButton);
 
 		add(mainPanel);
@@ -119,47 +114,45 @@ public class InteractionMenu extends JDialog {
 		discussButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
-				player.characterInteraction(person, "discuss");
+				player.characterInteraction(otherPerson, "discuss");
 			}
 		});
-		
+
 		playButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
-				player.characterInteraction(person, "playWith");
+				player.characterInteraction(otherPerson, "playWith");
 			}
 		});
-		
+
 		inviteButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
-				player.characterInteraction(person, "invite");
+				player.characterInteraction(otherPerson, "invite");
 			}
 		});
-		
+
 		embrassButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
-				player.characterInteraction(person, "embrass");
+				player.characterInteraction(otherPerson, "embrass");
 			}
 		});
-		
+
 		drinkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
-				player.characterInteraction(person, "goTodrink");
+				player.characterInteraction(otherPerson, "goTodrink");
 			}
 		});
-		
+
 		marryButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
-				player.characterInteraction(person, "marry");
+				player.characterInteraction(otherPerson, "marry");
 			}
 		});
 	}
-
-	
 
 	public void showMenu() {
 		pack();

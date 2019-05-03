@@ -140,28 +140,18 @@ public class Game implements DeletableObserver {
 	public void mouseLeftClickEvent(Point pos) {
 		GameObject object = getObjectAtPosition(pos);
 
-		if (object != null && object instanceof Person && object != activePerson && activePerson.getObjectsAround().contains(object)) {
-			
-
-			interactionMenu = new InteractionMenu(window, activePerson, (Person) object);
-			interactionMenu.showMenu();
-
-		}
-		if (object != null && object.isObstacle()&& activePerson.getObjectsAround().contains(object)) {
-			object.clickedEvent(activePerson);
-
-			// TODO move the player next 
-		} else {
+		if (object == null || !object.isObstacle()) {
 			sendPlayer(pos);
 		}
-	}
-	
-	//TODO: useless if the Person is not auto-controlled
-	public Point getPoint(Point point) {
-		//return the nearest position from an obstacle but free
-		Point finalPoint = point;
-		//TODO
-		return finalPoint;
+		
+		else if (activePerson.getObjectsAround().contains(object)) {
+			object.clickedEvent(activePerson);
+			
+			if (object instanceof Person && object != activePerson) {
+				interactionMenu = new InteractionMenu(window, activePerson, (Person) object);
+				interactionMenu.showMenu();
+			}
+		}
 	}
 
 	public void mouseRightClickEvent(Point pos) {

@@ -21,7 +21,7 @@ public class Map extends JPanel {
 	private static final long serialVersionUID = 1282569928891942835L;
 	
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
-    private final Size MAP_SIZE = new Size(80, 80);
+    private final Size MAP_SIZE = new Size(80, 80); //TODO: this may be a setting in editor !!!
     private final int BLOC_SIZE = 20;
     
     private Point viewOffset = new Point(0, 0);
