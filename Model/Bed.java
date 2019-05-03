@@ -25,14 +25,13 @@ public class Bed extends GameObject {
 	public void clickedEvent(GameObject o) {
 		Person p = (Person) o;
 		Duration d = Duration.between(p.getLastBedTime(), LocalDateTime.now());
-		System.out.print(d.getSeconds());
-		if(d.getSeconds() > 30){
-			//can go to bed every 30 seconds
+
+		if (d.getSeconds() > 30) {
+			// can go to bed every 30 seconds
+
 			p.restoreEnergy();
 			p.setLastBedTime(LocalDateTime.now());
 		}
-		 
-		 
 	}
 
 	@Override

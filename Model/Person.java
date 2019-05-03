@@ -1,4 +1,5 @@
 package Model;
+
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
@@ -40,8 +41,8 @@ public abstract class Person extends GameObject {
 
 	protected int money;
 
-	private LocalDateTime lastBedTime;
-	
+	private LocalDateTime lastBedTime = LocalDateTime.now();
+
 	// visible properties, if = 100 no need
 	protected double energy;
 	protected double hunger;
@@ -75,10 +76,12 @@ public abstract class Person extends GameObject {
 	private double hungerRandomFactor = Random.range(0.6, 1.2);
 	private double energyRandomFactor = Random.range(0.6, 1.2);
 
-	/* WARNING: Use of transient keyword to avoid to save these attributes in the 
-	 * saving file. These attributes are null when the object is restored from the file.
+	/*
+	 * WARNING: Use of transient keyword to avoid to save these attributes in the
+	 * saving file. These attributes are null when the object is restored from the
+	 * file.
 	 */
-	
+
 	// Game messages history
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
 	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
@@ -88,7 +91,7 @@ public abstract class Person extends GameObject {
 
 	// Thread used for smooth moving
 	private transient MoveThread moveThread;
-	
+
 	// Constructor used when the Person evolves (ie from Kid to Teenager)
 	public Person(Person other) {
 		this(other.getPos(), other.getName(), other.getAge(), other.getGender(), other.getMother(), other.getFather());
@@ -167,7 +170,7 @@ public abstract class Person extends GameObject {
 			Thread t = new Thread(moveThread);
 			t.start();
 		}
-		
+
 		moveThread.newMovement(delta);
 	}
 
@@ -383,8 +386,8 @@ public abstract class Person extends GameObject {
 		// Point point = new Point(4,16);
 		// sendPlayer(point); et j'arrive pas a le faire bouger je comprends pas!!
 		// TODO to be change the bed will not always be there!!!
-		addMessage(new Message("Tu viens de dormir", MsgType.Info));
-		restoreEnergy();
+		// DECIDE WHAT WE DO
+		// restoreEnergy();
 	}
 
 	/**
@@ -428,25 +431,23 @@ public abstract class Person extends GameObject {
 		// function that take in turns the hygiene, mood and a random factor in the
 		// calcul of energy
 		// will be run when player go to bed
-		
-			// if more than 50 no need to be restored
-			double moodHygieneFactor = Math.pow(Math.E, hygiene * Math.log(2) * mood / 10000.0) - 1; // always beetween
-																										// 0
-																										// and 1
-			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
 
-			double energyAdd = 100 * moodHygieneFactor * randomFactor;
-			if (energyAdd < 20) {
-				// minimum of energy
-				energyAdd = 20;
+		// if more than 50 no need to be restored
+		double moodHygieneFactor = Math.pow(Math.E, hygiene * Math.log(2) * mood / 10000.0) - 1; // always beetween
+																									// 0
+																									// and 1
+		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
+		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
 
-			
-
-			energy = energy + (int) (energyAdd);
-			addMessage(new Message("Vous avez dormi", MsgType.Info));
-			// TODO plusieurs messages en fonction du gain d'énergie
+		double energyAdd = 100 * moodHygieneFactor * randomFactor;
+		if (energyAdd < 20) {
+			// minimum of energy
+			energyAdd = 20;
 		}
+
+		energy = energy + (int) (energyAdd);
+		addMessage(new Message("Vous avez dormi", MsgType.Info));
+		// TODO plusieurs messages en fonction du gain d'énergie
 	}
 
 	/**
@@ -634,7 +635,7 @@ public abstract class Person extends GameObject {
 	public void refresh() {
 		if (refreshListeners == null)
 			return;
-		
+
 		for (ActionListener a : refreshListeners) {
 			a.actionPerformed(null);
 		}
@@ -732,11 +733,11 @@ public abstract class Person extends GameObject {
 		return null;
 	}
 
-	
 	public void setLastBedTime(LocalDateTime localDateTime) {
-		 lastBedTime = LocalDateTime.now();
-	
+		lastBedTime = LocalDateTime.now();
+
 	}
+
 	public LocalDateTime getLastBedTime() {
 		return lastBedTime;
 	}
