@@ -4,6 +4,7 @@ import View.Window;
 import View.Map;
 import View.GameMenu;
 import View.InteractionMenu;
+import View.InteractionMenu.InteractionType;
 import View.Message;
 import View.Message.MsgType;
 import View.MessagesZone;
@@ -34,7 +35,6 @@ public class Game implements DeletableObserver {
 	private Status status;
 	private MessagesZone msgZone;
 	private GameMenu mainMenu;
-	private InteractionMenu interactionMenu;
 	private Size mapSize;
 
 	private GameTime gameTime;
@@ -148,8 +148,8 @@ public class Game implements DeletableObserver {
 			object.clickedEvent(activePerson);
 			
 			if (object instanceof Person && object != activePerson) {
-				interactionMenu = new InteractionMenu(window, activePerson, (Person) object);
-				interactionMenu.showMenu();
+				Person other = (Person) object;
+				interractWith(other);
 			}
 		}
 	}
@@ -572,5 +572,18 @@ public class Game implements DeletableObserver {
 
 	public void setCreatorAction(ActionListener a) {
 		mainMenu.setCreatorAction(a);
+	}
+	
+	public void interractWith(Person other) {
+		InteractionType interract_type = InteractionMenu.showInterractionMenu(
+				window, other.getName(),
+				activePerson.getRelationship(other),
+				activePerson,
+				other);
+		
+		if (interract_type == InteractionType.None)
+			return;
+		
+		activePerson.characterInteraction(other, interract_type);
 	}
 }

@@ -3,7 +3,7 @@ package Model;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
-
+import View.InteractionMenu.InteractionType;
 import View.Message;
 import View.Message.MsgType;
 
@@ -12,7 +12,6 @@ import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,8 +24,12 @@ import Products.Wearable;
 public abstract class Person extends GameObject {
 	private static final long serialVersionUID = 8476495059211784395L;
 
-	public enum Gender {
+	public static enum Gender {
 		Male, Female
+	}
+	
+	public static enum Relationship {
+		Unknown, Acquaintance, CloseFriend, SeriousRelation, Parent
 	}
 
 	private static Size SIZE = new Size(2, 2);
@@ -204,26 +207,34 @@ public abstract class Person extends GameObject {
 		age++;
 	}
 
-	public int getRelationship(Person friend) {
-		// function who return the level of friendship by reading the hashmap with all
-		// the people known
-		int relationship = 0;
-		if (friendList.containsKey(friend)) {
-			// if the people is not in the friendList he is unknown
-			int relationPoint = friendList.get(friend);
+	/**
+	 * This function return the level of friendship by reading the friendList HashMap.
+	 * 
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public Relationship getRelationship(Person other) {
+		Relationship relationship = Relationship.Unknown;
+		
+		// If the Person is not in the friendList -> unknown
+		int relationPoints = friendList.getOrDefault(other, 0);
 
-			if (relationPoint > 20) {
-				relationship = 3; // serious relation, can propose to marry
-			} else if (relationPoint > 10) {
-				relationship = 2; // ami proche
-			} else {
-				relationship = 1; // just a connaissance
-			}
+		// Set the relationship level
+		if (other == mother || other == father) {
+			relationship = Relationship.Parent;
+		} else if (relationPoints > 20) {
+			relationship = Relationship.SeriousRelation;
+		} else if (relationPoints > 10) {
+			relationship = Relationship.CloseFriend;
+		} else if (relationPoints > 0) {
+			relationship = Relationship.Acquaintance;
 		}
+		
 		return relationship;
 	}
 
-	public void modifyRelationship(Person friend, int point) {
+	public void modifyRelationPoints(Person friend, int point) {
 		// function that wil modify the relation ship
 		// take the old value and add the new amount of point
 		// if new friend, ony all "point"
@@ -290,8 +301,8 @@ public abstract class Person extends GameObject {
 
 	public void discuss(Person people) {
 
-		modifyRelationship(people, 1);
-		people.modifyRelationship(this, 1);
+		modifyRelationPoints(people, 1);
+		people.modifyRelationPoints(this, 1);
 
 		modifyMood(automaticAnswer(people) * 15);
 
@@ -299,16 +310,16 @@ public abstract class Person extends GameObject {
 	}
 
 	public void playWith(Person people) {
-		modifyRelationship(people, 2);
-		people.modifyRelationship(this, 2);
+		modifyRelationPoints(people, 2);
+		people.modifyRelationPoints(this, 2);
 		modifyMood(automaticAnswer(people) * 20);
 		energy -= 20;
 	}
 
 	public void invite(Person people) {
 
-		modifyRelationship(people, 3);
-		people.modifyRelationship(this, 3);
+		modifyRelationPoints(people, 3);
+		people.modifyRelationPoints(this, 3);
 		modifyMood(automaticAnswer(people) * 30);
 		energy -= 25;
 		// TODO bringing the people at house!
@@ -323,41 +334,40 @@ public abstract class Person extends GameObject {
 	 * TODO: NOOO implement the level 3 here (just not used if this is a Kid,...)
 	 * 		 Else we have to overwrite this bug function uselessly
 	 * 
-	 * @param otherPeople
+	 * @param other
 	 * The other people with which to interact
 	 * 
 	 * @param interaction
 	 * The type of interaction
 	 */
-	public void characterInteraction(Person otherPeople, String interaction) {	
+	public void characterInteraction(Person other, InteractionType interaction) {	
 		boolean action = true;
 		
 		//TODO: move the energy check in the target functions
 		switch (interaction) {
-		case ("discuss"):
+		case Discuss:
 			if (energy >= 10) {
-				discuss(otherPeople);
+				discuss(other);
 			} else {
 				action = false;
 				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
 			}
 			break;
-		case ("playWith"):
+		case Play:
 			if (energy >= 20) {
-				playWith(otherPeople);
+				playWith(other);
 			} else {
 				action = false;
 				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
 			}
 			break;
-		case ("invite"):
+		case Invite:
 			if (energy >= 25) {
-				invite(otherPeople);
+				invite(other);
 			} else {
 				action = false;
 				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
 			}
-
 			break;
 		default:
 			break;
@@ -369,28 +379,28 @@ public abstract class Person extends GameObject {
 		 * 		 separated function called by the action's target functions.
 		 */
 		if (action) {
-			double value = automaticAnswer(otherPeople);
+			double value = automaticAnswer(other);
 			
 			if (value > 0.8) {
 				// second condition for not double printing
 				addMessage(
-						otherPeople.getName() + ": C'était vraiment un chouette moment! Tu es hyper sympathique et incroyable merci pour tout!",
+						other.getName() + ": C'était vraiment un chouette moment! Tu es hyper sympathique et incroyable merci pour tout!",
 						MsgType.Info);
 			} else if (value > 0.6) {
 				addMessage(
-						otherPeople.getName() + ": Je n'avais rien d'autre à faire mais c'était cool d'être avec toi ",
+						other.getName() + ": Je n'avais rien d'autre à faire mais c'était cool d'être avec toi ",
 						MsgType.Info);
 			} else if (value > 0.5) {
 				addMessage(
-						otherPeople.getName() + ": Bon... Content de t'avoir vu. ",
+						other.getName() + ": Bon... Content de t'avoir vu. ",
 						MsgType.Info);
 			} else if (value > 0.3) {
 				addMessage(
-						otherPeople.getName() + ": Je me suis ennuyé j'aurais pas du venir ",
+						other.getName() + ": Je me suis ennuyé j'aurais pas du venir ",
 						MsgType.Info);
 			} else {
 				addMessage(
-						otherPeople.getName() + ": T'es vraiment pas sympathique, me recontacte plus jamais! ",
+						other.getName() + ": T'es vraiment pas sympathique, me recontacte plus jamais! ",
 						MsgType.Info);
 			}
 		}

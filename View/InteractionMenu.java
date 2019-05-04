@@ -1,8 +1,8 @@
 package View;
 
 import Model.Adult;
-
 import Model.Person;
+import Model.Person.Relationship;
 import Model.Teenager;
 
 import java.awt.Dimension;
@@ -11,6 +11,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -20,16 +21,31 @@ import javax.swing.border.EmptyBorder;
 public class InteractionMenu extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
 
+	private static enum PersonType {
+		Kid, Teenager, Adult
+	}
+	
+	public static enum InteractionType {
+		None, Discuss, Play, Invite, Drink, Kiss, Marry
+	}
+
 	private JButton discussButton;
 	private JButton playButton;
 	private JButton inviteButton;
 	private JButton drinkButton;
-	private JButton embrassButton;
+	private JButton kissButton;
 	private JButton marryButton;
+	
+	private InteractionType selectedInterraction = InteractionType.None;
 
-	public InteractionMenu(Frame parent, Person player, Person otherPerson) {
-		// player is the sender of the request
-		super(parent, otherPerson.getName(), true); // Print the name of the people
+	public InteractionMenu(
+			Frame parent,
+			String name,
+			Relationship relationship,
+			Person p1,
+			Person p2)
+	{
+		super(parent, "Intéractions", true);
 
 		setPreferredSize(new Dimension(300, 320));
 
@@ -38,129 +54,121 @@ public class InteractionMenu extends JDialog {
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		mainPanel.setLayout(new GridLayout(0, 1, 0, 10));
 
-		JLabel interactionLabel = new JLabel("Intéractions", JLabel.CENTER);
+		JLabel nameLabel = new JLabel(name, JLabel.CENTER);
+		nameLabel.setFont(nameLabel.getFont().deriveFont((float) 28));
+		mainPanel.add(nameLabel);
+		
 		discussButton = new JButton("Discuter");
 		playButton = new JButton("Jouer");
 		inviteButton = new JButton("Inviter");
 		drinkButton = new JButton("Aller boire un verre");
-		embrassButton = new JButton("Embrasser");
+		kissButton = new JButton("Embrasser");
 		marryButton = new JButton("Se marier");
-		mainPanel.add(interactionLabel);
 
-		switch (player.getRelationship(otherPerson)) {
-		case (1):
-			// can play with
-			mainPanel.add(playButton);
-			break;
-		case (2):
-			mainPanel.add(playButton);
+		PersonType p1_type = getPersonType(p1);
+		PersonType p2_type = getPersonType(p2);
+
+		/*
+		 * Cascading switch-case. SO DON'T ADD BREAK HERE !
+		 * For example a close friend can do the same things as an acquaintance
+		 * and more (invite and drink).
+		 */
+		switch (relationship) {
+		case SeriousRelation:
+			if (p1_type == PersonType.Adult && p2_type == PersonType.Adult) {
+				//TODO: maybe add a condition if already married (the other person refuses for example)
+				mainPanel.add(marryButton);
+			}
+		case Parent: 
+			// This section comes after SeriousRelation because a
+			// Person cannot marry with his parents...
+			mainPanel.add(kissButton);
+		case CloseFriend:
 			mainPanel.add(inviteButton);
-			break;
+			if (p1_type != PersonType.Kid && p2_type != PersonType.Kid) {
+				// A Kid cannot drink
+				mainPanel.add(drinkButton);
+			}
+		case Acquaintance:
+			mainPanel.add(playButton);
 		default:
+			mainPanel.add(discussButton);
 			break;
 		}
-
-		if (otherPerson instanceof Teenager) {
-			if (player instanceof Teenager) {
-				switch (player.getRelationship(otherPerson)) {
-				case (2):
-					mainPanel.add(drinkButton);
-					break;
-				case (3):
-					mainPanel.add(drinkButton);
-					mainPanel.add(embrassButton);
-					break;
-				default:
-					break;
-				}
-			}
-		} 
-		else if (otherPerson instanceof Adult) {
-			if (player instanceof Teenager) {
-				switch (player.getRelationship(otherPerson)) {
-				case (2):
-					mainPanel.add(drinkButton);
-					break;
-				case (3):
-					mainPanel.add(drinkButton);
-					mainPanel.add(embrassButton);
-					break;
-				default:
-					break;
-				}
-			} 
-			else if (player instanceof Adult) {
-				switch (player.getRelationship(otherPerson)) {
-				case (2):
-					mainPanel.add(drinkButton);
-					break;
-				case (3):
-					mainPanel.add(drinkButton);
-					mainPanel.add(embrassButton);
-					mainPanel.add(marryButton);
-					break;
-				default:
-					break;
-				}
-			}
-		}
-
-		mainPanel.add(discussButton);
+		
+		mainPanel.add(Box.createVerticalStrut(2000));
 
 		add(mainPanel);
 
-		interactionLabel.setFont(interactionLabel.getFont().deriveFont((float) 28));
-
-		discussButton.addActionListener(new ActionListener() {
+		ActionListener buttonsAction = new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
+				Object src = e.getSource();
+				
+				if (src == discussButton) {
+					selectedInterraction = InteractionType.Discuss;
+				} else if (src == playButton) {
+					selectedInterraction = InteractionType.Play;
+				} else if (src == inviteButton) {
+					selectedInterraction = InteractionType.Invite;
+				} else if (src == kissButton) {
+					selectedInterraction = InteractionType.Kiss;
+				} else if (src == drinkButton) {
+					selectedInterraction = InteractionType.Drink;
+				} else if (src == marryButton) {
+					selectedInterraction = InteractionType.Marry;
+				}
+				
 				closeMenu();
-				player.characterInteraction(otherPerson, "discuss");
 			}
-		});
+		};
 
-		playButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				closeMenu();
-				player.characterInteraction(otherPerson, "playWith");
-			}
-		});
-
-		inviteButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				closeMenu();
-				player.characterInteraction(otherPerson, "invite");
-			}
-		});
-
-		embrassButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				closeMenu();
-				player.characterInteraction(otherPerson, "embrass");
-			}
-		});
-
-		drinkButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				closeMenu();
-				player.characterInteraction(otherPerson, "goTodrink");
-			}
-		});
-
-		marryButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				closeMenu();
-				player.characterInteraction(otherPerson, "marry");
-			}
-		});
+		discussButton.addActionListener(buttonsAction);
+		playButton.addActionListener(buttonsAction);
+		inviteButton.addActionListener(buttonsAction);
+		kissButton.addActionListener(buttonsAction);
+		drinkButton.addActionListener(buttonsAction);
+		marryButton.addActionListener(buttonsAction);
+	}
+	
+	public static InteractionType showInterractionMenu(
+			Frame parent,
+			String name,
+			Relationship relationship,
+			Person p1,
+			Person p2)
+	{
+		InteractionMenu menu = new InteractionMenu(parent, name, relationship, p1, p2);
+		menu.showMenu();
+		
+		return menu.getSelectedInterraction();
+	}
+	
+	private InteractionType getSelectedInterraction() {
+		return selectedInterraction;
+	}
+	
+	private PersonType getPersonType(Person p) {
+		PersonType type;
+		
+		if (p instanceof Adult) {
+			type = PersonType.Adult;
+		} else if (p instanceof Teenager) {
+			type = PersonType.Teenager;
+		} else {
+			type = PersonType.Kid;
+		}
+		
+		return type;
 	}
 
-	public void showMenu() {
+	private void showMenu() {
 		pack();
 		setLocationRelativeTo(getOwner());
 		setVisible(true);
 	}
 
-	public void closeMenu() {
+	private void closeMenu() {
 		setVisible(false);
 	}
 }

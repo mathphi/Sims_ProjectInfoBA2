@@ -1,7 +1,6 @@
 package View;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.KeyListener;
@@ -40,7 +39,6 @@ public class Window extends JFrame {
     	super(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1250, 800);
-        setBackground(Color.gray);
         
         // Configure the map's scrolling
         JScrollPane mapView = new JScrollPane(map);
