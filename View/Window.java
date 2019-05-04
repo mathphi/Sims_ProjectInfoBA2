@@ -3,6 +3,7 @@ package View;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,8 +26,13 @@ public class Window extends JFrame {
     private MessagesZone msgZone = new MessagesZone();
     private EditorPanel editorPanel = new EditorPanel();
     
-    private JPanel borderPanel;
+    private JPanel borderPanel;	
+	private JPanel gameButtonPanel;
+	private JPanel editorButtonPanel;
+	
     private JButton gameMenuButton;
+    private JButton friendListButton;
+    private JButton catalogButton;
     private JButton editorMenuButton;
 
     @SuppressWarnings("serial")
@@ -64,13 +70,32 @@ public class Window extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		
+		gameButtonPanel = new JPanel();
+		gameButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+		gameButtonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		gameButtonPanel.setPreferredSize(new Dimension(300, 50));
 
 		gameMenuButton = new JButton("Menu");
+		friendListButton = new JButton("Liste d'amis");
+		catalogButton = new JButton("Catalogue");
+
+		gameButtonPanel.add(gameMenuButton);
+		gameButtonPanel.add(friendListButton);
+		gameButtonPanel.add(catalogButton);
+		
+		editorButtonPanel = new JPanel();
+		editorButtonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		editorButtonPanel.setPreferredSize(new Dimension(300, 50));
+		
     	editorMenuButton = new JButton("Menu");
+    	editorButtonPanel.add(editorMenuButton);
     	
     	// Disable focus to avoid the loss of focus for map, resulting in KeyListener not working
     	gameMenuButton.setFocusable(false);
     	editorMenuButton.setFocusable(false);
+    	friendListButton.setFocusable(false);
+    	catalogButton.setFocusable(false);
 		
 		borderPanel = new JPanel();
 		borderPanel.setPreferredSize(new Dimension(350, 600));
@@ -84,28 +109,18 @@ public class Window extends JFrame {
         setVisible(true);
     }
     
-    private void setupGameBorderPanel() {		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		buttonPanel.setPreferredSize(new Dimension(300, 50));
-		buttonPanel.add(gameMenuButton);
-    	
+    private void setupGameBorderPanel() {    	
 		borderPanel.removeAll();
 		borderPanel.add(status, BorderLayout.NORTH);
 		borderPanel.add(msgZone, BorderLayout.CENTER);
-		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
+		borderPanel.add(gameButtonPanel, BorderLayout.SOUTH);
 		borderPanel.revalidate();
     }
     
-    private void setupEditorBorderPanel() {		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		buttonPanel.setPreferredSize(new Dimension(300, 50));
-		buttonPanel.add(editorMenuButton);
-    	
+    private void setupEditorBorderPanel() {
 		borderPanel.removeAll();
 		borderPanel.add(editorPanel, BorderLayout.CENTER);
-		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
+		borderPanel.add(editorButtonPanel, BorderLayout.SOUTH);
 		borderPanel.revalidate();
     }
 
@@ -128,6 +143,14 @@ public class Window extends JFrame {
 
     public void addEditorMenuButtonAction(ActionListener a) {
     	editorMenuButton.addActionListener(a);
+    }
+
+    public void addFriendListButtonAction(ActionListener a) {
+    	friendListButton.addActionListener(a);
+    }
+
+    public void addCatalogButtonAction(ActionListener a) {
+    	catalogButton.addActionListener(a);
     }
 
     public void update() {

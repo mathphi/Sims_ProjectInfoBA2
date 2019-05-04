@@ -452,8 +452,6 @@ public abstract class Person extends GameObject {
 
 		energy += total;
 		
-		System.out.println(total);
-		
 		// Don't exceed 100 pts of energy
 		energy = Math.min(100, energy);
 	}
