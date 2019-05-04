@@ -27,8 +27,8 @@ public class Bed extends GameObject {
 		Person p = (Person) o;
 		Duration d = Duration.between(p.getLastBedTime(), LocalDateTime.now());
 
-		if (d.getSeconds() > 30) {
-			// can go to bed every 30 seconds
+		if (d.getSeconds() > 60) {
+			// Can go to bed every 60 seconds
 			p.sleep();
 		}
 		else if (d.getSeconds() < 30) {

@@ -262,7 +262,7 @@ public abstract class Person extends GameObject {
 
 		/*
 		 * TODO: Why we multiply by 2 ?
-		 * 		 AND SPECIALLY why multiply by -1 ? The factor become negative but what is the goal ?
+		 * 		 AND OVERALL why multiply by -1 ? The factor become negative but what is the goal ?
 		 */
 		if (relationFactor > 0.7) {
 			// will multipy by 2 the gain of mood and point relation because realy
@@ -427,31 +427,36 @@ public abstract class Person extends GameObject {
 		bladder = 100;
 
 		if (!isOnToilet) {
-			addMessage(new Message("Too late...", MsgType.Problem)); // TODO: I have no idea for this text...
+			addMessage(
+					"Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale",
+					MsgType.Problem);
 			modifyHygiene(-50);
-			modifyMood(-25);
+			modifyMood(-20);
 		}
 	}
 
-	public void restoreEnergy() {
-		// function that take in turns the hygiene, mood and a random factor in the
-		// calcul of energy
-		// will be run when player go to bed
+	/**
+	 * This function take care of the hygiene and mood to compute the energy gain.
+	 * A random factor is also applied.
+	 * 
+	 * This function is typically called when the Person sleeps.
+	 */
+	public void restoreEnergy() {		
+		double gain = (getHygiene() + getMood()) / 2.0 * 80;
+		double randomFactor = Random.range(10, 20);
 
-		// if more than 50 no need to be restored
-		double moodHygieneFactor = Math.pow(Math.E, hygiene * Math.log(2) * mood / 10000.0) - 1; // always beetween
-																									// 0
-																									// and 1
-		double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-		randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
+		double total = gain + randomFactor;
+		
+		// Get a total gain of at least 20
+		total = Math.max(20, total);
 
-		double energyAdd = 100 * moodHygieneFactor * randomFactor;
-		if (energyAdd < 20) {
-			// minimum of energy
-			energyAdd = 20;
-		}
-
-		energy = energy + (int) (energyAdd);	}
+		energy += total;
+		
+		System.out.println(total);
+		
+		// Don't exceed 100 pts of energy
+		energy = Math.min(100, energy);
+	}
 
 	/**
 	 * Modify the hygiene of a factor If the hygiene is too low... (?) TODO
@@ -745,6 +750,8 @@ public abstract class Person extends GameObject {
 	}
 	
 	public void sleep() {
+		//TODO disable movement when sleeping !
+		
 		setLastBedTime(LocalDateTime.now());
 		restoreEnergy();
 		
