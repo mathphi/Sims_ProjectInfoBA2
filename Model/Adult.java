@@ -130,12 +130,33 @@ public class Adult extends Person {
 		}
 		}
 	}
+	
+	/**
+	 * This function return the level of friendship by parsing the relation points.
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public Relationship getRelationship(Person other) {
+		Relationship relationship = super.getRelationship(other);
+		
+		if (relationship == Relationship.VerySeriousRelation) {
+			//TODO: Check if i'm married ->
+			// 		if true we don't want a VerySeriousRelation (disable marry interaction)
+			
+			// relationship = Relationship.SeriousRelation
+		}
+		
+		return relationship;
+	}
 
 	private void marry(Person people) {
 		/*
 		 * TODO big todo to do including to do what's suppose to be done
 		 * because it should already have be done as it was to be done
 		 */
+		
+		//TODO: add a condition if already married (the other person refuses)
 
 		if (people.getAppreciationOf(this) >= 0.9) {
 			if (!useEnergy(15))

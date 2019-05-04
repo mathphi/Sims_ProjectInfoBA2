@@ -150,13 +150,9 @@ public abstract class Person extends GameObject {
 		lastBedTime = LocalDateTime.now().minusDays(1);
 	}
 
-	public void clickedEvent(GameObject o) {
+	public void clickedEvent(GameObject o) {}
 
-	}
-
-	public void proximityEvent(GameObject o) {
-		// TODO
-	}
+	public void proximityEvent(GameObject o) {}
 
 	public abstract boolean maxAgeReached();
 
@@ -200,7 +196,7 @@ public abstract class Person extends GameObject {
 
 		// Decrease more energy if hygiene is low
 		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor);
-
+		
 		if (energy == 0) {
 			// TODO: what can we do ?
 		}
@@ -342,7 +338,7 @@ public abstract class Person extends GameObject {
 		//TODO: Euh... Eating cost energy ???
 		modifyEnergy(-nourriture.getEnergyNeed());
 	}
-
+	
 	protected void discuss(Person people) {
 		if (!useEnergy(10))
 			return;
@@ -393,8 +389,6 @@ public abstract class Person extends GameObject {
 	/**
 	 * Function that allows the people to interact with another one.
 	 * Overwritten in Adult and Teenager classes for interaction more types of interactions
-	 * 
-	 * TODO: OVERWRITE
 	 * 
 	 * @param other
 	 * The other people with which to interact
@@ -476,7 +470,7 @@ public abstract class Person extends GameObject {
 	}
 
 	/**
-	 * Modify the hygiene of a factor If the hygiene is too low... (?) TODO
+	 * Modify the hygiene of a factor
 	 * 
 	 * @param factor
 	 */
@@ -735,7 +729,6 @@ public abstract class Person extends GameObject {
 	public void paint(Graphics g, int BLOC_SIZE) {
 		super.paint(g, BLOC_SIZE);
 
-		// TODO: the yellow border is temporary
 		if (isActivePerson()) {
 			g.setColor(Color.YELLOW);
 			g.drawRect((int) (getPos().getX() * BLOC_SIZE), (int) (getPos().getY() * BLOC_SIZE),
@@ -780,12 +773,11 @@ public abstract class Person extends GameObject {
 	}
 
 	public void sleep() {
-		// TODO disable movement when sleeping !
+		// TODO disable movement when sleeping ! ---> Thread
 
 		setLastBedTime(LocalDateTime.now());
 		restoreEnergy();
 
-		// TODO plusieurs messages en fonction du gain d'énergie
 		addMessage("Vous avez dormi et récupéré de l'énergie", MsgType.Info);
 	}
 }

@@ -70,7 +70,6 @@ public class InteractionMenu extends JDialog {
 		switch (relationship) {
 		case VerySeriousRelation:
 			if (p1_type == PersonType.Adult && p2_type == PersonType.Adult) {
-				//TODO: maybe add a condition if already married (the other person refuses for example)
 				mainPanel.add(marryButton);
 			}
 		case SeriousRelation:
