@@ -24,8 +24,31 @@ public class Bed extends GameObject {
 
 	@Override
 	public void clickedEvent(GameObject o) {
+		// The clicked event must comes from an object at proximity
+		if (!getObjectsAround().contains(o))
+			return;
+		
 		Person p = (Person) o;
 		Duration d = Duration.between(p.getLastBedTime(), LocalDateTime.now());
+		
+		// Search for a sleeping Person around the bed
+		boolean bed_occupied = false;
+		for (GameObject o_around : getObjectsAround()) {
+			if (o_around instanceof Person) {
+				Person p_around = (Person) o_around;
+				
+				if (p_around.isSleeping()) {
+					bed_occupied = true;
+					break;
+				}
+			}
+		}
+		
+		// The bed is already occupied by another Person
+		if (bed_occupied) {
+			p.addMessage("Le lit est déjà occupé !", MsgType.Problem);
+			return;
+		}
 
 		if (d.getSeconds() > 240) {
 			// Can go back to bed after 4 minutes
@@ -40,9 +63,7 @@ public class Bed extends GameObject {
 	}
 
 	@Override
-	public void proximityEvent(GameObject o) {
-
-	}
+	public void proximityEvent(GameObject o) {}
 
 	@Override
 	public GameObject clone() {

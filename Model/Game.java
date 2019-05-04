@@ -138,19 +138,20 @@ public class Game implements DeletableObserver {
 
 	public void mouseLeftClickEvent(Point pos) {
 		GameObject object = getObjectAtPosition(pos);
-
+		
 		if (object == null || !object.isObstacle()) {
 			sendPlayer(pos);
+			return;
 		}
 		
-		else if (activePerson.getObjectsAround().contains(object)) {
-			object.clickedEvent(activePerson);
-			
+		if (activePerson.getObjectsAround().contains(object)) {
 			if (object instanceof Person && object != activePerson) {
 				Person other = (Person) object;
 				interractWith(other);
 			}
 		}
+		
+		object.clickedEvent(activePerson);
 	}
 
 	public void mouseRightClickEvent(Point pos) {
@@ -167,6 +168,7 @@ public class Game implements DeletableObserver {
 
 		for (GameObject o : objects) {
 			if (o.isAtPosition(pos)) {
+				// Get important object before any GroundObject
 				if (obj == null || (obj instanceof GroundObject)) {
 					obj = o;
 				}
