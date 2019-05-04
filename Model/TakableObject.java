@@ -5,6 +5,7 @@ import java.awt.Color;
 import Tools.Point;
 import Tools.Size;
 
+//TODO: if we use this, use it as interface
 public abstract class TakableObject extends GameObject {
 	private static final long serialVersionUID = -7682427739183023327L;
 	

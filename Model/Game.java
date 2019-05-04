@@ -26,7 +26,6 @@ import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
 public class Game implements DeletableObserver {
-
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
 	private Person activePerson = null;

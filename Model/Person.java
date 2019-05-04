@@ -788,7 +788,7 @@ public abstract class Person extends GameObject {
 		// Mark Person as sleeping (prevent movements,...)
 		isSleeping = true;
 		
-		SleepThread.sleep(30, new ActionListener() {
+		SleepThread.sleep(60, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setLastBedTime(LocalDateTime.now());
