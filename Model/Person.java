@@ -8,6 +8,7 @@ import View.Message.MsgType;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public abstract class Person extends GameObject {
 	private static Size SIZE = new Size(2, 2);
 
 	private boolean isActivePerson;
+	private boolean isSleeping = false;
 
 	// general information
 	protected String name;
@@ -165,6 +167,10 @@ public abstract class Person extends GameObject {
 	}
 
 	public void move(Point delta) {
+		// Don't move if the Person sleep
+		if (isSleeping)
+			return;
+		
 		// moveThread is null when restored from saving file
 		if (moveThread == null) {
 			moveThread = new MoveThread(this);
@@ -191,6 +197,10 @@ public abstract class Person extends GameObject {
 	}
 
 	public void increaseNeeds() {
+		// Don't update the needs when sleeping...
+		if (isSleeping)
+			return;
+		
 		decreaseBladder(Random.range(2.0, 3.0) * bladderRandomFactor); // Random decrease
 		modifyHunger(Random.range(-1.0, -2.0) * hungerRandomFactor); // Random decrease
 
@@ -773,11 +783,25 @@ public abstract class Person extends GameObject {
 	}
 
 	public void sleep() {
-		// TODO disable movement when sleeping ! ---> Thread
+		addMessage("Bonne nuit, vous êtes maintenant endormi", MsgType.Info);
+		
+		// Mark Person as sleeping (prevent movements,...)
+		isSleeping = true;
+		
+		SleepThread.sleep(30, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setLastBedTime(LocalDateTime.now());
+				restoreEnergy();
+				
+				isSleeping = false;
 
-		setLastBedTime(LocalDateTime.now());
-		restoreEnergy();
-
-		addMessage("Vous avez dormi et récupéré de l'énergie", MsgType.Info);
+				addMessage("Vous avez dormi et récupéré de l'énergie", MsgType.Info);
+			}
+		});
+	}
+	
+	public boolean isSleeping() {
+		return isSleeping;
 	}
 }

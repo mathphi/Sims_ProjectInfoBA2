@@ -186,6 +186,10 @@ public class Game implements DeletableObserver {
 	}
 
 	public void sendPlayer(Point pos) {
+		// Don't act on the Person if he is sleeping
+		if (activePerson.isSleeping())
+			return;
+		
 		Rect r = new Rect(0, 0, (int)map.getSize().getWidth(), (int)map.getSize().getHeight());
 		
 		if (r.contains(pos)) {
@@ -210,6 +214,10 @@ public class Game implements DeletableObserver {
 	}
 
 	public void movePlayer(Person pers, Point pos) {
+		// Don't act on the Person if he is sleeping
+		if (pers.isSleeping())
+			return;
+		
 		Point nextPos = pers.getPos().add(pos);
 		boolean unreachable = false;
 
@@ -602,6 +610,10 @@ public class Game implements DeletableObserver {
 	}
 	
 	public void interractWith(Person other) {
+		// Don't interact with a sleeping people...
+		if (other.isSleeping() || activePerson.isSleeping())
+			return;
+		
 		// Rotate Persons face-to-face
 		activePerson.rotate(getDirectionToObject(activePerson, other));
 		other.rotate(getDirectionToObject(other, activePerson));
