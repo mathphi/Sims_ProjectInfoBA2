@@ -142,7 +142,7 @@ public class InteractionMenu extends JDialog {
 		drinkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
-				player.characterInteraction(otherPerson, "goTodrink");
+				player.characterInteraction(otherPerson, "goToDrink");
 			}
 		});
 

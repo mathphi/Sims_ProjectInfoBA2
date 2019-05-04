@@ -157,7 +157,7 @@ public abstract class Person extends GameObject {
 	public void setActivePerson(boolean is_active) {
 		isActivePerson = is_active;
 	}
-	
+
 	public boolean isActivePerson() {
 		return isActivePerson;
 	}
@@ -194,9 +194,9 @@ public abstract class Person extends GameObject {
 
 		// Decrease more energy if hygiene is low
 		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor);
-		
+
 		if (energy == 0) {
-			//TODO: what can we do ?
+			// TODO: what can we do ?
 		}
 	}
 
@@ -261,8 +261,8 @@ public abstract class Person extends GameObject {
 		relationFactor /= 100.0;
 
 		/*
-		 * TODO: Why we multiply by 2 ?
-		 * 		 AND OVERALL why multiply by -1 ? The factor become negative but what is the goal ?
+		 * TODO: Why we multiply by 2 ? AND OVERALL why multiply by -1 ? The factor
+		 * become negative but what is the goal ?
 		 */
 		if (relationFactor > 0.7) {
 			// will multipy by 2 the gain of mood and point relation because realy
@@ -289,20 +289,19 @@ public abstract class Person extends GameObject {
 	}
 
 	public void discuss(Person people) {
-
+		//TODO put the automatic answer here!
 		modifyRelationship(people, 1);
 		people.modifyRelationship(this, 1);
 
 		modifyMood(automaticAnswer(people) * 15);
 
-		energy -= 10;
 	}
 
 	public void playWith(Person people) {
 		modifyRelationship(people, 2);
 		people.modifyRelationship(this, 2);
 		modifyMood(automaticAnswer(people) * 20);
-		energy -= 20;
+
 	}
 
 	public void invite(Person people) {
@@ -310,87 +309,78 @@ public abstract class Person extends GameObject {
 		modifyRelationship(people, 3);
 		people.modifyRelationship(this, 3);
 		modifyMood(automaticAnswer(people) * 30);
-		energy -= 25;
+
 		// TODO bringing the people at house!
 
 	}
 
 	/**
-	 * Function that allows the people to interact with another one.
-	 * need to be overwrite in adult and teenager class for interaction with
-	 * level 3 friends (thing like kiss, marry,...)
+	 * Function that allows the people to interact with another one. need to be
+	 * overwrite in adult and teenager class for interaction with level 3 friends
+	 * (thing like kiss, marry,...)
 	 * 
 	 * TODO: NOOO implement the level 3 here (just not used if this is a Kid,...)
-	 * 		 Else we have to overwrite this bug function uselessly
+	 * Else we have to overwrite this bug function uselessly
 	 * 
-	 * @param otherPeople
-	 * The other people with which to interact
+	 * @param otherPeople The other people with which to interact
 	 * 
-	 * @param interaction
-	 * The type of interaction
+	 * @param interaction The type of interaction
 	 */
-	public void characterInteraction(Person otherPeople, String interaction) {	
-		boolean action = true;
+	public void characterInteraction(Person otherPeople, String interaction) {
+		boolean action = false;
+
 		
-		//TODO: move the energy check in the target functions
 		switch (interaction) {
 		case ("discuss"):
-			if (energy >= 10) {
+			if (modifyEnergy(-10)) {
 				discuss(otherPeople);
-			} else {
-				action = false;
-				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
+				action = true;
 			}
 			break;
 		case ("playWith"):
-			if (energy >= 20) {
+			if (modifyEnergy(-20)) {
 				playWith(otherPeople);
-			} else {
-				action = false;
-				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
+				action = true;
+
 			}
+
 			break;
 		case ("invite"):
-			if (energy >= 25) {
+			if (modifyEnergy(-25)) {
 				invite(otherPeople);
-			} else {
-				action = false;
-				addMessage(new Message("Vous n'avez plus assez d'énergie!", MsgType.Warning));
+				action = true;
 			}
 
 			break;
 		default:
 			break;
 		}
-		
-		/* 
-		 * TODO: I don't understand why we call automaticAnswer twice (in the
-		 * 		 action's functions and here). Also it might be good to move this section in a 
-		 * 		 separated function called by the action's target functions.
+
+		/*
+		 * TODO: I don't understand why we call automaticAnswer twice (in the action's
+		 * functions and here). Also it might be good to move this section in a
+		 * separated function called by the action's target functions.
 		 */
+
+		// TODO yes i'm working on it
 		if (action) {
 			double value = automaticAnswer(otherPeople);
-			
+
 			if (value > 0.8) {
 				// second condition for not double printing
-				addMessage(
-						otherPeople.getName() + ": C'était vraiment un chouette moment! Tu es hyper sympathique et incroyable merci pour tout!",
+				addMessage(otherPeople.getName()
+						+ ": C'était vraiment un chouette moment! Tu es hyper sympathique et incroyable merci pour tout!",
 						MsgType.Info);
 			} else if (value > 0.6) {
 				addMessage(
 						otherPeople.getName() + ": Je n'avais rien d'autre à faire mais c'était cool d'être avec toi ",
 						MsgType.Info);
 			} else if (value > 0.5) {
-				addMessage(
-						otherPeople.getName() + ": Bon... Content de t'avoir vu. ",
-						MsgType.Info);
+				addMessage(otherPeople.getName() + ": Bon... Content de t'avoir vu. ", MsgType.Info);
 			} else if (value > 0.3) {
-				addMessage(
-						otherPeople.getName() + ": Je me suis ennuyé j'aurais pas du venir ",
-						MsgType.Info);
+				addMessage(otherPeople.getName() + ": Je me suis ennuyé j'aurais pas du venir ", MsgType.Info);
 			} else {
-				addMessage(
-						otherPeople.getName() + ": T'es vraiment pas sympathique, me recontacte plus jamais! ",
+				addMessage(otherPeople.getName() + ": T'es vraiment pas sympathique, me recontacte plus jamais! ",
 						MsgType.Info);
 			}
 		}
@@ -427,31 +417,29 @@ public abstract class Person extends GameObject {
 		bladder = 100;
 
 		if (!isOnToilet) {
-			addMessage(
-					"Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale",
-					MsgType.Problem);
+			addMessage("Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale", MsgType.Problem);
 			modifyHygiene(-50);
 			modifyMood(-20);
 		}
 	}
 
 	/**
-	 * This function take care of the hygiene and mood to compute the energy gain.
-	 * A random factor is also applied.
+	 * This function take care of the hygiene and mood to compute the energy gain. A
+	 * random factor is also applied.
 	 * 
 	 * This function is typically called when the Person sleeps.
 	 */
-	public void restoreEnergy() {		
+	public void restoreEnergy() {
 		double gain = (getHygiene() + getMood()) / 2.0 * 80;
 		double randomFactor = Random.range(10, 20);
 
 		double total = gain + randomFactor;
-		
+
 		// Get a total gain of at least 20
 		total = Math.max(20, total);
 
 		energy += total;
-		
+
 		// Don't exceed 100 pts of energy
 		energy = Math.min(100, energy);
 	}
@@ -479,9 +467,17 @@ public abstract class Person extends GameObject {
 		}
 	}
 
-	public void modifyEnergy(double factor) {
-		energy += factor;
-		energy = Math.max(0, Math.min(energy, 100));
+	public boolean modifyEnergy(double factor) {
+		boolean res = true;
+		if (factor < 0 && -factor > energy) {
+			res = false;
+			addMessage("Vous n'avez plus assez d'énergie!", MsgType.Warning);
+		} else {
+			energy += factor;
+			energy = Math.max(0, Math.min(energy, 100));
+		}
+		return res;
+
 	}
 
 	public void modifyMoney(int amount) {
@@ -746,13 +742,13 @@ public abstract class Person extends GameObject {
 	public LocalDateTime getLastBedTime() {
 		return lastBedTime;
 	}
-	
+
 	public void sleep() {
-		//TODO disable movement when sleeping !
-		
+		// TODO disable movement when sleeping !
+
 		setLastBedTime(LocalDateTime.now());
 		restoreEnergy();
-		
+
 		// TODO plusieurs messages en fonction du gain d'énergie
 		addMessage("Vous avez dormi et récupéré de l'énergie", MsgType.Info);
 	}
