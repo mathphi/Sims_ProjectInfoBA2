@@ -3,7 +3,6 @@ package Model;
 import java.awt.Color;
 
 import Tools.Point;
-import View.Message.MsgType;
 
 public class Teenager extends Person {
 	private static final long serialVersionUID = 1012022981926904899L;
@@ -31,28 +30,6 @@ public class Teenager extends Person {
 
 	}
 
-	protected void goToDrink(Person people) {
-		// move to bar pay
-		modifyRelationPoints(people, 3);
-		people.modifyRelationPoints(this, 3);
-		modifyMood(automaticAnswer(people) * 25);
-
-	}
-
-	protected void embrass(Person people) {
-		if (automaticAnswer(people) >= 1.6) {
-			modifyRelationPoints(people, 5);
-			people.modifyRelationPoints(this, 5);
-			modifyMood(automaticAnswer(people) * 40);
-		} else {
-			// the other don't want
-			modifyRelationPoints(people, -10); // value to be adapted
-			people.modifyRelationPoints(this, -10);
-			modifyMood(automaticAnswer(people) * -40);
-		}
-
-	}
-
 	public void work() {
 		// as a teenager only "little job" available
 		energy -= 20;
@@ -62,81 +39,60 @@ public class Teenager extends Person {
 
 	}
 
-	public void characterInteraction(Person otherPeople, String interaction) {
-		boolean action = false;
-
-		switch (interaction) {
-		case ("discuss"):
-			if (modifyEnergy(-10)) {
-				discuss(otherPeople);
-				action = true;
-			}
-			break;
-		case ("playWith"):
-			if (modifyEnergy(-20)) {
-				playWith(otherPeople);
-				action = true;
-
-			}
-
-			break;
-		case ("invite"):
-			if (modifyEnergy(-25)) {
-				invite(otherPeople);
-				action = true;
-			}
-
-			break;
-
-		case ("embrass"):
-
-			if (modifyEnergy(-15)) {
-				embrass(otherPeople);
-				action = true;
-			}
-			break;
-
-		case ("goToDrink"):
-
-			if (modifyEnergy(-40)) {
-
-				goToDrink(otherPeople);
-				action = true;
-			}
-			break;
-
-		default:
-			break;
-		}
-
-		/*
-		 * TODO: I don't understand why we call automaticAnswer twice (in the action's
-		 * functions and here). Also it might be good to move this section in a
-		 * separated function called by the action's target functions.
-		 */
-
-		// TODO yes i'm working on it
-		if (action) {
-			double value = automaticAnswer(otherPeople);
-
-			if (value > 0.8) {
-				// second condition for not double printing
-				addMessage(otherPeople.getName()
-						+ ": C'était vraiment un chouette moment! Tu es hyper sympathique et incroyable merci pour tout!",
-						MsgType.Info);
-			} else if (value > 0.6) {
-				addMessage(
-						otherPeople.getName() + ": Je n'avais rien d'autre à faire mais c'était cool d'être avec toi ",
-						MsgType.Info);
-			} else if (value > 0.5) {
-				addMessage(otherPeople.getName() + ": Bon... Content de t'avoir vu. ", MsgType.Info);
-			} else if (value > 0.3) {
-				addMessage(otherPeople.getName() + ": Je me suis ennuyé j'aurais pas du venir ", MsgType.Info);
-			} else {
-				addMessage(otherPeople.getName() + ": T'es vraiment pas sympathique, me recontacte plus jamais! ",
-						MsgType.Info);
-			}
+	private void drinkWith(Person people) {
+		if (people.getAppreciationOf(this) >= 0.3) {
+			if (!useEnergy(40))
+				return;
+		
+			applyInteractionEffect(people, 20, 30);
+			
+			//TODO move to bar pay
+		} else {
+			// The other don't want
+			applyRejectedEffect(people, 10, 10);
 		}
 	}
 
+	private void kiss(Person people) {
+		if (people.getAppreciationOf(this) >= 0.6) {
+			if (!useEnergy(5))
+				return;
+			
+			applyInteractionEffect(people, 30, 40);
+		} else {
+			// The other don't want
+			applyRejectedEffect(people, 15, 30);
+		}
+	}
+	
+	/**
+	 * Function that allows the people to interact with another one.
+	 * 
+	 * @param other
+	 * The other people with which to interact
+	 * 
+	 * @param interaction The type of interaction
+	 */
+	@Override
+	public void characterInteraction(Person other, InteractionType interaction) {	
+		switch (interaction) {
+		case Discuss:
+			discuss(other);
+			break;
+		case Play:
+			playWith(other);
+			break;
+		case Invite:
+			invite(other);
+			break;
+		case Kiss:
+			kiss(other);
+			break;
+		case Drink:
+			drinkWith(other);
+			break;
+		default:
+			break;
+		}
+	}
 }
