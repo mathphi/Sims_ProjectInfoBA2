@@ -38,10 +38,10 @@ public class PsychologicalFactors implements Serializable {
 		double sum = mood + hygiene + generalKnowledge + othersImpression;
 
 		if (sum > 0) {
-			mood *= (1.0 / sum);
-			hygiene *= (1.0 / sum);
-			generalKnowledge *= (1.0 / sum);
-			othersImpression *= (1.0 / sum);
+			mood /= sum;
+			hygiene /= sum;
+			generalKnowledge /= sum;
+			othersImpression /= sum;
 		}
 	}
 	

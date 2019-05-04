@@ -4,7 +4,6 @@ import View.Window;
 import View.Map;
 import View.GameMenu;
 import View.InteractionMenu;
-import View.InteractionMenu.InteractionType;
 import View.Message;
 import View.Message.MsgType;
 import View.MessagesZone;
@@ -24,6 +23,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Model.Directable.Direction;
+import Model.Person.InteractionType;
 
 public class Game implements DeletableObserver {
 

@@ -2,6 +2,7 @@ package View;
 
 import Model.Adult;
 import Model.Person;
+import Model.Person.InteractionType;
 import Model.Person.Relationship;
 import Model.Teenager;
 
@@ -11,7 +12,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -23,10 +23,6 @@ public class InteractionMenu extends JDialog {
 
 	private static enum PersonType {
 		Kid, Teenager, Adult
-	}
-	
-	public static enum InteractionType {
-		None, Discuss, Play, Invite, Drink, Kiss, Marry
 	}
 
 	private JButton discussButton;
@@ -95,8 +91,6 @@ public class InteractionMenu extends JDialog {
 			mainPanel.add(discussButton);
 			break;
 		}
-		
-		mainPanel.add(Box.createVerticalStrut(2000));
 
 		add(mainPanel);
 

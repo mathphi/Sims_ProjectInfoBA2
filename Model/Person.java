@@ -3,7 +3,6 @@ package Model;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
-import View.InteractionMenu.InteractionType;
 import View.Message;
 import View.Message.MsgType;
 
@@ -31,6 +30,10 @@ public abstract class Person extends GameObject {
 	public static enum Relationship {
 		Unknown, Acquaintance, CloseFriend, SeriousRelation, Parent
 	}
+	
+	public static enum InteractionType {
+		None, Discuss, Play, Invite, Drink, Kiss, Marry
+	}
 
 	private static Size SIZE = new Size(2, 2);
 
@@ -56,11 +59,11 @@ public abstract class Person extends GameObject {
 	// Automatic answer attributes
 	// Represents the knowledge of the player -> increase by going to school or
 	// thing like that
-	protected int generalKnowledge;
+	protected double generalKnowledge;
 
 	// Represents the impression of other, if often go out, is in good hygiene,...
 	// -> higher
-	protected int othersImpression;
+	protected double othersImpression;
 
 	// Represents the importance of mood, hygiene, generalKnwoledge and
 	// ohtersImpression
@@ -107,8 +110,8 @@ public abstract class Person extends GameObject {
 		hygiene = other.getHygiene() * 100;
 		bladder = other.getBladder() * 100;
 
-		generalKnowledge = other.getGeneralKnowledge();
-		othersImpression = other.getOthersImpression();
+		generalKnowledge = other.getGeneralKnowledge() * 100;
+		othersImpression = other.getOthersImpression() * 100;
 
 		psychologicalFactors = other.getPsychologicalFactor();
 
@@ -234,55 +237,68 @@ public abstract class Person extends GameObject {
 		return relationship;
 	}
 
-	public void modifyRelationPoints(Person friend, int point) {
-		// function that wil modify the relation ship
-		// take the old value and add the new amount of point
-		// if new friend, ony all "point"
-		// automaticAnswer is a multiplicatory factor, is ~2 if the character are really
-		// complementary
-		// or is <0.5 if the character are realy not the same
-		// the other also need to be adapted
-		if (point < 0 && friendList.get(friend) < -point) {
-
-			// there is not enough point
-			// they became unknown people again
-			friendList.remove(friend);
-
-		} else {
-			int value = 0;
-			if (friendList.containsKey(friend)) {
-				value = +friendList.get(friend);
-			}
-			friendList.put(friend, (int) (point * automaticAnswer(friend) + value));
-
-		}
+	public void modifyRelationPoints(Person friend, double factor) {
+		int value = friendList.getOrDefault(friend, 0);
+		
+		// Apply modification factor
+		value += (int) factor;
+		
+		// Keep range between 0 and 100
+		value = Math.max(0, Math.min(value, 100));
+		
+		// Update the value in the friendList
+		friendList.put(friend, value);
 	}
 
-	public double automaticAnswer(Person people) {
-		// function that return a number beetween 0 and 1
-		// if 1 the 2 characters are realy complementary
-		// if 0 they haven't the same will
-		// take the caracterisic of the player that sent the request mutliply by the
-		// factor from the recever
-		double relationFactor = mood * people.getPsychologicalFactor().getMood()
-				+ hygiene * people.getPsychologicalFactor().getHygiene()
-				+ generalKnowledge * people.getPsychologicalFactor().getGeneralKnowledge()
-				+ othersImpression * people.getPsychologicalFactor().getOthersImpression();
-
-		relationFactor /= 100.0;
-
-		/*
-		 * TODO: Why we multiply by 2 ? AND OVERALL why multiply by -1 ? The factor
-		 * become negative but what is the goal ?
-		 */
-		if (relationFactor > 0.7) {
-			// will multipy by 2 the gain of mood and point relation because realy
-			// complementary
-			relationFactor *= 2;
-		} else if (relationFactor < 0.3) {
-			// the person are realy not the same -> mood and point of relation need to be
-			// reduce
-			relationFactor *= -1;
+	/**
+	 * This function compute the appreciation that this Person has of another Person.
+	 * The calculation is based on the mood, the hygiene, the general knowledge and
+	 * the others impression of the other Person.
+	 * 
+	 * @param other
+	 * The other Person whose appreciation is calculated
+	 * 
+	 * @return
+	 * A relation factor between 0 and 1 (a number close to 1 means good agreement between
+	 * this Person and the other, a number close to 0 is the opposite).
+	 */
+	public double automaticAnswer(Person other) {
+		double relationFactor = other.getMood() * psychologicalFactors.getMood()
+				+ other.getHygiene() * psychologicalFactors.getHygiene()
+				+ other.getGeneralKnowledge() * psychologicalFactors.getGeneralKnowledge()
+				+ other.getOthersImpression() * psychologicalFactors.getOthersImpression();
+		
+		// The sum of psychological factors is always 1
+		// So we are sure that the relation factor is between 0 and 1
+		
+		// TODO: move these messages in a specific function that contains
+		//		 appropriate answers for the corresponding action
+		if (relationFactor > 0.8) {
+			other.addMessageFrom(
+					this,
+					"C'était vraiment un chouette moment! "
+					+ "Tu es hyper sympathique et incroyable merci pour tout!",
+					MsgType.Info);
+		} else if (relationFactor > 0.6) {
+			other.addMessageFrom(
+					this,
+					"C'était vraiment cool d'être avec toi",
+					MsgType.Info);
+		} else if (relationFactor > 0.4) {
+			other.addMessageFrom(
+					this,
+					"Je n'avais rien d'autre à faire mais bon... Content de t'avoir vu",
+					MsgType.Info);
+		} else if (relationFactor > 0.2) {
+			other.addMessageFrom(
+					this,
+					"Je me suis ennuyé j'aurais pas du venir",
+					MsgType.Info);
+		} else {
+			other.addMessageFrom(
+					this,
+					"T'es vraiment pas sympathique, ne me recontacte plus jamais!",
+					MsgType.Info);
 		}
 
 		return relationFactor;
@@ -296,33 +312,46 @@ public abstract class Person extends GameObject {
 			// too much point
 			hunger = 100;
 		}
+		
+		//TODO: Euh... Eating cost energy ???
 		modifyEnergy(-nourriture.getEnergyNeed());
 	}
 
-	public void discuss(Person people) {
-		//TODO put the automatic answer here!
-		modifyRelationPoints(people, 1);
-		people.modifyRelationPoints(this, 1);
+	public boolean discuss(Person people) {
+		if (!modifyEnergy(-10))
+			return false;
 
-		modifyMood(automaticAnswer(people) * 15);
+		applyInteractionEffect(people, 1, 15);
 
+		return true;
 	}
 
-	public void playWith(Person people) {
-		modifyRelationPoints(people, 2);
-		people.modifyRelationPoints(this, 2);
-		modifyMood(automaticAnswer(people) * 20);
+	public boolean playWith(Person people) {
+		if (!modifyEnergy(-20))
+			return false;
 
+		applyInteractionEffect(people, 2, 20);
+
+		return true;
 	}
 
-	public void invite(Person people) {
+	public boolean invite(Person people) {
+		if (!modifyEnergy(-25))
+			return false;
 
-		modifyRelationPoints(people, 3);
-		people.modifyRelationPoints(this, 3);
-		modifyMood(automaticAnswer(people) * 30);
+		applyInteractionEffect(people, 3, 30);
 
 		// TODO bringing the people at house!
-
+		
+		return true;
+	}
+	
+	protected void applyInteractionEffect(Person people, double relationWeight, double moodWeight) {
+		double relationFactor = automaticAnswer(people);
+		
+		modifyRelationPoints(people, relationWeight * relationFactor);
+		people.modifyRelationPoints(this, relationWeight * people.automaticAnswer(this));
+		modifyMood(moodWeight * relationFactor);
 	}
 
 	/**
@@ -331,7 +360,7 @@ public abstract class Person extends GameObject {
 	 * (thing like kiss, marry,...)
 	 * 
 	 * TODO: NOOO implement the level 3 here (just not used if this is a Kid,...)
-	 * Else we have to overwrite this bug function uselessly
+	 * Else we have to overwrite this big function uselessly
 	 * 
 	 * @param other
 	 * The other people with which to interact
@@ -339,63 +368,18 @@ public abstract class Person extends GameObject {
 	 * @param interaction The type of interaction
 	 */
 	public void characterInteraction(Person other, InteractionType interaction) {	
-		boolean action = false;
-		
 		switch (interaction) {
 		case Discuss:
-			if (modifyEnergy(-10)) {
-				discuss(other);
-				action = true;
-			}
+			discuss(other);
 			break;
 		case Play:
-			if (modifyEnergy(-20)) {
-				playWith(other);
-				action = true;
-			}
-
+			playWith(other);
 			break;
 		case Invite:
-			if (modifyEnergy(-25)) {
-				invite(other);
-				action = true;
-			}
+			invite(other);
 			break;
 		default:
 			break;
-		}
-
-		/*
-		 * TODO: I don't understand why we call automaticAnswer twice (in the action's
-		 * functions and here). Also it might be good to move this section in a
-		 * separated function called by the action's target functions.
-		 */
-
-		// TODO yes i'm working on it
-		if (action) {
-			double value = automaticAnswer(other);
-			if (value > 0.8) {
-				// second condition for not double printing
-				addMessage(
-						other.getName() + ": C'était vraiment un chouette moment! Tu es hyper sympathique et incroyable merci pour tout!",
-						MsgType.Info);
-			} else if (value > 0.6) {
-				addMessage(
-						other.getName() + ": Je n'avais rien d'autre à faire mais c'était cool d'être avec toi ",
-						MsgType.Info);
-			} else if (value > 0.5) {
-				addMessage(
-						other.getName() + ": Bon... Content de t'avoir vu. ",
-						MsgType.Info);
-			} else if (value > 0.3) {
-				addMessage(
-						other.getName() + ": Je me suis ennuyé j'aurais pas du venir ",
-						MsgType.Info);
-			} else {
-				addMessage(
-						other.getName() + ": T'es vraiment pas sympathique, me recontacte plus jamais! ",
-						MsgType.Info);
-			}
 		}
 	}
 
@@ -481,16 +465,16 @@ public abstract class Person extends GameObject {
 	}
 
 	public boolean modifyEnergy(double factor) {
-		boolean res = true;
+		// Check if enough energy
 		if (factor < 0 && -factor > energy) {
-			res = false;
 			addMessage("Vous n'avez plus assez d'énergie!", MsgType.Warning);
-		} else {
-			energy += factor;
-			energy = Math.max(0, Math.min(energy, 100));
+			return false;
 		}
-		return res;
 
+		energy += factor;
+		energy = Math.max(0, Math.min(energy, 100));
+
+		return true;
 	}
 
 	public void modifyMoney(int amount) {
@@ -585,16 +569,16 @@ public abstract class Person extends GameObject {
 		return hunger / 100.0;
 	}
 
-	public int getGeneralKnowledge() {
-		return generalKnowledge;
+	public double getGeneralKnowledge() {
+		return generalKnowledge / 100.0;
+	}
+
+	public double getOthersImpression() {
+		return othersImpression / 100.0;
 	}
 
 	public Map<Person, Integer> getFriendList() {
 		return friendList;
-	}
-
-	public int getOthersImpression() {
-		return othersImpression;
 	}
 
 	public void setPlayable(boolean playable) {
@@ -636,6 +620,16 @@ public abstract class Person extends GameObject {
 
 	public void addMessage(String text, MsgType type) {
 		addMessage(new Message(text, type));
+	}
+	
+	/**
+	 * Add a message from another person in the messages list.
+	 * The name of the other person is added in bold at start of the message
+	 */
+	public void addMessageFrom(Person other, String text, MsgType type) {
+		addMessage(
+				String.format("<b>%s:</b> %s", other.getName(), text),
+				type);
 	}
 
 	public void addRefreshListener(ActionListener a) {
