@@ -344,20 +344,20 @@ public abstract class Person extends GameObject {
 		switch (interaction) {
 		case Discuss:
 			if (modifyEnergy(-10)) {
-				discuss(otherPeople);
+				discuss(other);
 				action = true;
 			}
 			break;
 		case Play:
 			if (modifyEnergy(-20)) {
-				playWith(otherPeople);
+				playWith(other);
 				action = true;
 			}
 
 			break;
 		case Invite:
 			if (modifyEnergy(-25)) {
-				invite(otherPeople);
+				invite(other);
 				action = true;
 			}
 			break;
