@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import Products.Book;
+
 import Products.Nourriture;
 import Products.Product;
 import Products.Toy;
@@ -361,7 +361,7 @@ public abstract class Person extends GameObject {
 	}
 
 	public void eat(Nourriture nourriture) {
-		float hungerGain = nourriture.getNutritionalValue();
+		float hungerGain =  0;//TODO nourriture.getHungerImpact();
 		hunger += (int) (hungerGain);
 		if (hunger > 100) {
 			// too much point
@@ -369,7 +369,7 @@ public abstract class Person extends GameObject {
 		}
 		
 		//TODO: Euh... Eating cost energy ???
-		modifyEnergy(-nourriture.getEnergyNeed());
+		modifyEnergy(0); //TODO
 	}
 	
 	protected void discuss(Person people) {
@@ -763,24 +763,8 @@ public abstract class Person extends GameObject {
 			// TODO ask a confirmation the player want to use
 			boolean choice = true;
 			if (choice) {
-				String type = product.getType();
-				switch (type) {
-				case ("Jeux"): {
-					modifyMood(((Toy) product).getMoodAdd());
-					modifyEnergy(-((Toy) product).getEnergyNeed());
-				}
-				case ("Nourriture"): {
-					modifyHunger(((Nourriture) product).getNutritionalValue());
-					modifyEnergy(-((Nourriture) product).getEnergyNeed());
-
-				}
-				case ("Livre"): {
-					// modifyGeneralKnowledge(((Book) product).getKnwoledgeAdd()); //TODO faire la
-					// function
-					modifyEnergy(-((Book) product).getEnergyNeed());
-
-				}
-				}
+		
+				//TODO
 				inventory.remove(product);
 			}
 		}
@@ -882,5 +866,20 @@ public abstract class Person extends GameObject {
 	
 	public boolean isLocked() {
 		return isLocked;
+	}
+
+	public void buy(Product product) {
+		if(product.getPrice()>money) {
+			addMessage("Vous n'avez pas assez d'argent!", MsgType.Warning);
+		}
+		else if(inventory.size()>=5) {
+			addMessage("Votre inventaire est plein vous devez le vider avant d'acheter.", MsgType.Warning);
+			
+		}
+		else {
+			money-= product.getPrice();
+			inventory.add(product);
+		}
+		
 	}
 }

@@ -1,13 +1,11 @@
 package Products;
 
-public class Cloth extends Product implements Wearable {
-	private int otherVisionGain;
-	public Cloth() {
-		super(2, "Vêtement", 10); //weight, name, price
-		otherVisionGain = 10;	
-		
+public class Cloth extends Product{
+	public Cloth(String name, int price, int otherImpressionImpact, int moodImpact) {
+		super(name, price);
+		this.otherImpressionImpact =otherImpressionImpact;
+		this.moodImpact =moodImpact;
 	}
-	public int getOtherVisionGain(){
-		return otherVisionGain;
-	}
+
+
 }

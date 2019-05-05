@@ -29,6 +29,7 @@ public class CatalogMenu extends JDialog {
 	private JButton toys;
 	private JButton others;
 	private Game game;
+
 	public CatalogMenu(Frame parent, Person activePerson, Game game) {
 		super(parent, "Argent:" + activePerson.getMoney(), true);
 
@@ -42,7 +43,7 @@ public class CatalogMenu extends JDialog {
 		JLabel nameLabel = new JLabel("Catalogue d'achat", JLabel.CENTER);
 		nameLabel.setFont(nameLabel.getFont().deriveFont((float) 28));
 		mainPanel.add(nameLabel);
-		ArrayList<Product> inventoryList = activePerson.getInventory();
+		
 
 		food = new JButton("Nourritures");
 		clothes = new JButton("Vêtements");
@@ -60,15 +61,39 @@ public class CatalogMenu extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Object src = e.getSource();
-				BuyableMenu productMenu = new BuyableMenu(parent, src, activePerson);
+				if(src == food) {
+				BuyableMenu productMenu = new BuyableMenu(parent, "Nourriture", activePerson);
 				productMenu.showMenu();
-				closeMenu();
+				
+				}
+				if(src == clothes) {
+					BuyableMenu productMenu = new BuyableMenu(parent, "Vêtements", activePerson);
+					productMenu.showMenu();
+					
+					}
+				if(src == toys) {
+					BuyableMenu productMenu = new BuyableMenu(parent, "Jeux", activePerson);
+					productMenu.showMenu();
+					
+					}
+				if(src == others) {
+					BuyableMenu productMenu = new BuyableMenu(parent, "Autres", activePerson);
+					productMenu.showMenu();
+					
+					}
+				
+				
+				
 			}
 
 		};
 
+		
+		food.addActionListener(buttonsAction);
+		clothes.addActionListener(buttonsAction);
+		toys.addActionListener(buttonsAction);
+		others.addActionListener(buttonsAction);
 	}
-
 
 	public void showMenu() {
 		pack();
@@ -81,8 +106,5 @@ public class CatalogMenu extends JDialog {
 		game.resumeGame();
 	}
 
-	public void showCatalogMenu() {
-		// TODO Auto-generated method stub
-		
-	}
+
 }
