@@ -2,6 +2,8 @@ package Model;
 
 import View.Window;
 import View.Map;
+import View.CatalogMenu;
+import View.PersonalMenu;
 import View.GameMenu;
 import View.InteractionMenu;
 import View.Message;
@@ -35,6 +37,7 @@ public class Game implements DeletableObserver {
 	private Status status;
 	private MessagesZone msgZone;
 	private GameMenu mainMenu;
+	private PersonalMenu personalMenu;
 	private Size mapSize;
 
 	private GameTime gameTime;
@@ -55,8 +58,15 @@ public class Game implements DeletableObserver {
 				openGameMenu();
 			}
 		});
+		
+		window.addPersonalButtonAction(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openPersonalMenu();
+			}
+		});
 
 		mainMenu = new GameMenu(window, this);
+		
 
 		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
 		Person p2 = new Adult(new Point(17, 13), "Second Player", 30, Person.Gender.Female, null, null);
@@ -66,6 +76,7 @@ public class Game implements DeletableObserver {
 		attachPersonToGame(p2);
 		attachPersonToGame(p3);
 		setActivePerson(p1);
+		personalMenu = new PersonalMenu(window, getActivePerson(), this);
 
 		// Map building
 		// A sample of room
@@ -430,7 +441,21 @@ public class Game implements DeletableObserver {
 
 	public void closeGameMenu() {
 		mainMenu.closeMenu();
+		this.resumeGame(); 
+		
 	}
+	
+
+	public void openPersonalMenu() {
+		pauseGame();
+		personalMenu.showMenu();
+	}
+
+	public void closePersonalMenu() {
+		personalMenu.closeMenu();
+	
+	}
+
 
 	public void saveGame() {
 		JFileChooser chooser = new JFileChooser();

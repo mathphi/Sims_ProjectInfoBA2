@@ -1,5 +1,7 @@
 package Products;
 
+import javax.swing.Icon;
+
 public abstract class Product {
 	private int weight;
 	private int price;
@@ -20,5 +22,10 @@ public abstract class Product {
 
 	public int getMoodImpact() {
 		return moodImpact;
+	}
+
+	public String getName() {
+		// TODO Auto-generated method stub
+		return name;
 	}
 }
