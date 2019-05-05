@@ -81,7 +81,7 @@ public abstract class GameObject implements Directable, Serializable {
 
 	public ArrayList<GameObject> getObjectsAround() {
 		// Create a rectangle a bit larger than the object
-		Rect test_rect = new Rect(getRect().getPos().add(-1, -1), getRect().getSize().add(2, 2));
+		Rect test_rect = new Rect(getRect().getPos().add(-0.5, -0.5), getRect().getSize().add(1, 1));
 
 		ArrayList<GameObject> lst = new ArrayList<GameObject>();
 

@@ -1,9 +1,12 @@
 package Model;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 
 import Tools.Point;
+import View.Message.MsgType;
 
 public class Teenager extends Person implements Worker {
 	private static final long serialVersionUID = 1012022981926904899L;
@@ -28,10 +31,10 @@ public class Teenager extends Person implements Worker {
 		return (getAge() > 21);
 	}
 
-	public void buy(TakableObject achat) {/*
-											 * if (setMoney(-achat.getPrice())) { inventory.add(achat); }
-											 */
-
+	public void buy(TakableObject achat) {
+		/*
+		 * if (setMoney(-achat.getPrice())) { inventory.add(achat); }
+		 */
 	}
 	
 	@Override
@@ -50,13 +53,27 @@ public class Teenager extends Person implements Worker {
 	}
 
 	@Override
-	public void work() {
-		// as a teenager only "little job" available
-		energy -= 20;
-		modifyMoney(10);
-		modifyMood(-8);
-		modifyOthersImpression(8);
+	public void work(int energyImpact, int moodImpact, int salary, int duration) {
+		isWorking = true;
+		setLocked(true);
+		
+		WaiterThread.wait(duration, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				isWorking = false;
+				setLocked(false);
+				resetLastWorkTime();
+				
+				useEnergy(energyImpact);
+				modifyMoney(salary);
+				modifyMood(-moodImpact);
+				modifyOthersImpression(moodImpact);
 
+				addMessage(
+						String.format("Vous venez de gagner %d pièces en travaillant", salary),
+						MsgType.Info);
+			}
+		});
 	}
 
 	private void drinkWith(Person people) {

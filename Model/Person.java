@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public abstract class Person extends GameObject {
 
 	private boolean isActivePerson;
 	private boolean isSleeping = false;
+	private boolean isLocked = false;
 
 	// general information
 	protected String name;
@@ -50,8 +52,14 @@ public abstract class Person extends GameObject {
 	protected int money;
 
 	// Use a past time as initial time
+	/*
+	 * WARNING: using this LocalDateTime method is buggy because the Real time continues
+	 * to run when the game is off. So the savegame will not keep the good intervals.
+	 * TODO: This may be good to use the GameTime instead.
+	 */
 	private LocalDateTime lastSleepTime = LocalDateTime.now().minusDays(1);
 	private LocalDateTime lastNapTime = LocalDateTime.now().minusDays(1);
+	private LocalDateTime lastToiletTime = LocalDateTime.now().minusDays(1);
 
 	// visible properties, if = 100 no need
 	protected double energy;
@@ -167,7 +175,7 @@ public abstract class Person extends GameObject {
 
 	public void move(Point delta) {
 		// Don't move if the Person sleep
-		if (isSleeping)
+		if (isLocked())
 			return;
 		
 		// moveThread is null when restored from saving file
@@ -197,7 +205,7 @@ public abstract class Person extends GameObject {
 
 	public void increaseNeeds() {
 		// Don't update the needs when sleeping...
-		if (isSleeping)
+		if (isLocked())
 			return;
 		
 		decreaseBladder(Random.range(2.0, 3.0) * bladderRandomFactor); // Random decrease
@@ -448,12 +456,35 @@ public abstract class Person extends GameObject {
 	 * just... on himself. The player will lose hygiene, and mood in the second case.
 	 */
 	public void emptyBladder(boolean isOnToilet) {
-		bladder = 100;
-
 		if (!isOnToilet) {
+			bladder = 100;
+
 			addMessage("Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale !", MsgType.Problem);
 			modifyHygiene(-50);
 			modifyMood(-20);
+		}
+		else {
+			Duration d = Duration.between(lastToiletTime, LocalDateTime.now());
+			
+			// Don't block the Person every time he pass at proximity of the Toilet...
+			if (d.getSeconds() < 20)
+				return;
+
+			lastToiletTime = LocalDateTime.now();
+			
+			setLocked(true);
+
+			addMessage(
+					"Vous êtes en train de vous soulager...",
+					MsgType.Info);
+			
+			WaiterThread.wait(5, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					bladder = 100;
+					setLocked(false);
+				}
+			});
 		}
 	}
 
@@ -791,13 +822,15 @@ public abstract class Person extends GameObject {
 	private void activateSleepState(int duration, int energyFactor) {
 		// Mark Person as sleeping (prevent movements,...)
 		isSleeping = true;
+		setLocked(true);
 		
-		SleepThread.sleep(duration, new ActionListener() {
+		WaiterThread.wait(duration, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				restoreEnergy(energyFactor);
 				
 				isSleeping = false;
+				setLocked(false);
 
 				addMessage("Vous vous êtes reposé, vous avez récupéré de l'énergie", MsgType.Info);
 			}
@@ -806,6 +839,14 @@ public abstract class Person extends GameObject {
 	
 	public boolean isSleeping() {
 		return isSleeping;
+	}
+	
+	public void setLocked(boolean locked) {
+		isLocked = locked;
+	}
+	
+	public boolean isLocked() {
+		return isLocked;
 	}
 
 	public void buy(Product product) {

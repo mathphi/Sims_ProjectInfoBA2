@@ -28,6 +28,7 @@ public class EditorMenu extends JDialog {
 		super(parent, "Menu principal", true);
 		
 		setPreferredSize(new Dimension(300, 350));
+		setUndecorated(true);
 		
 		JPanel mainPanel = new JPanel();
 		

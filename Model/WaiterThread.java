@@ -3,11 +3,11 @@ package Model;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SleepThread implements Runnable {
+public class WaiterThread implements Runnable {
 	private ActionListener endAction;
 	private int sleepDelay;
 	
-	public SleepThread(int sleepDelay, ActionListener a) {
+	public WaiterThread(int sleepDelay, ActionListener a) {
 		this.endAction = a;
 		this.sleepDelay = sleepDelay;
 	}
@@ -23,8 +23,8 @@ public class SleepThread implements Runnable {
 		endAction.actionPerformed(new ActionEvent(this, 0, "Timeout"));
 	}
 	
-	public static void sleep(int delay_seconds, ActionListener a) {
-		Thread t = new Thread(new SleepThread(delay_seconds, a));
+	public static void wait(int delay_seconds, ActionListener a) {
+		Thread t = new Thread(new WaiterThread(delay_seconds, a));
 		t.start();
 	}
 }
