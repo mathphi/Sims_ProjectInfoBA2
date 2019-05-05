@@ -68,7 +68,7 @@ public class Game implements DeletableObserver {
 		
 
 		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
-		Person p2 = new Adult(new Point(17, 13), "Second Player", 30, Person.Gender.Female, null, null);
+		Person p2 = new Teenager(new Point(17, 13), "Second Player", 18, Person.Gender.Female, null, null);
 		Person p3 = new Adult(new Point(11, 16), "Third People", 30, Person.Gender.Female, null, null);
 
 		attachPersonToGame(p1);
@@ -205,8 +205,8 @@ public class Game implements DeletableObserver {
 	}
 
 	public void sendPlayer(Point pos) {
-		// Don't act on the Person if he is sleeping
-		if (activePerson.isSleeping())
+		// Don't act on the Person if he is locked
+		if (activePerson.isLocked())
 			return;
 		
 		Rect r = new Rect(0, 0, (int)map.getSize().getWidth(), (int)map.getSize().getHeight());
@@ -233,8 +233,8 @@ public class Game implements DeletableObserver {
 	}
 
 	public void movePlayer(Person pers, Point pos) {
-		// Don't act on the Person if he is sleeping
-		if (pers.isSleeping())
+		// Don't act on the Person if he is sleeping or working
+		if (pers.isLocked())
 			return;
 		
 		Point nextPos = pers.getPos().add(pos);
@@ -641,9 +641,16 @@ public class Game implements DeletableObserver {
 	}
 	
 	public void interractWith(Person other) {
-		// Don't interact with a sleeping people...
-		if (other.isSleeping() || activePerson.isSleeping())
+		// Don't interact with a sleeping or working people...
+		if (other.isLocked() || activePerson.isLocked()) {
+			// Show a message if we try to call a locked Person
+			if (other.isLocked()) {
+				activePerson.addMessage(
+						"Cette personne est occupée. Réessayez plus tard",
+						MsgType.Problem);
+			}
 			return;
+		}
 		
 		// Rotate Persons face-to-face
 		activePerson.rotate(getDirectionToObject(activePerson, other));

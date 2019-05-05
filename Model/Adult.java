@@ -1,9 +1,12 @@
 package Model;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 
 import Tools.Point;
+import View.Message.MsgType;
 
 public class Adult extends Person implements Worker {
 	private static final long serialVersionUID = 532161543919171452L;
@@ -45,110 +48,27 @@ public class Adult extends Person implements Worker {
 	}
 
 	@Override
-	public void work() {
-		// work depends of the level of study
-		// TODO need to make the choice!
-		int levelWork = 3;
+	public void work(int energyImpact, int moodImpact, int salary, int duration) {
+		isWorking = true;
+		setLocked(true);
+		
+		WaiterThread.wait(duration, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				isWorking = false;
+				setLocked(false);
+				resetLastWorkTime();
+				
+				useEnergy(energyImpact);
+				modifyMoney(salary);
+				modifyMood(-moodImpact);
+				modifyOthersImpression(moodImpact);
 
-		if (generalKnowledge > 80) {
-			levelWork = 3;
-		} else if (generalKnowledge > 50) {
-			levelWork = 2;
-		} else if (generalKnowledge > 20) {
-			levelWork = 1;
-
-		}
-		switch (levelWork) {
-		case (0): {
-			// only 1 job availlable
-			energy -= 20;
-			modifyMoney(10);
-			modifyMood(-15);
-			modifyOthersImpression(5);
-
-		}
-		case (1): {
-			int job = 1; // TODO ask the payer wich job he wants (0,1)
-			switch (job) {
-			case (0): {
-				// basic job
-				energy -= 20;
-				modifyMoney(10);
-				modifyMood(-15);
-				modifyOthersImpression(5);
+				addMessage(
+						String.format("Vous venez de gagner %d pièces en travaillant", salary),
+						MsgType.Info);
 			}
-			case (1): {
-				energy -= 25;
-				modifyMoney(20);
-				modifyMood(-15);
-				modifyOthersImpression(8);
-
-			}
-			}
-		}
-		case (2): {
-			int job = 1; // TODO ask the payer wich job he wants (0,1,2)
-			switch (job) {
-			case (0): {
-				// basic job
-				energy -= 20;
-				modifyMoney(10);
-				modifyMood(-15);
-				modifyOthersImpression(5);
-			}
-			case (1): {
-				energy -= 25;
-				modifyMoney(20);
-				modifyMood(-15);
-				modifyOthersImpression(8);
-
-			}
-			case (2): {
-				energy -= 30;
-				modifyMoney(30);
-				modifyMood(-12);
-				modifyOthersImpression(10);
-
-			}
-			}
-		}
-
-		case (3): {
-			int job = 1; // TODO ask the payer wich job he wants (0,1,2)
-			switch (job) {
-			case (0): {
-				// basic job
-				energy -= 20;
-				modifyMoney(10);
-				modifyMood(-15);
-				modifyOthersImpression(5);
-			}
-			case (1): {
-				energy -= 25;
-				modifyMoney(20);
-				modifyMood(-15);
-				modifyOthersImpression(8);
-
-			}
-			case (2): {
-				energy -= 30;
-				modifyMoney(30);
-				modifyMood(-12);
-				modifyOthersImpression(10);
-
-			}
-
-			case (3): {
-				energy -= 35;
-				modifyMoney(50);
-				modifyMood(-10);
-				modifyOthersImpression(15);
-
-			}
-			}
-
-		}
-		}
+		});
 	}
 	
 	/**

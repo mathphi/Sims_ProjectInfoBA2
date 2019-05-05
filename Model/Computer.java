@@ -37,9 +37,12 @@ public class Computer extends GameObject {
 		if (p instanceof Worker) {
 			Worker w = (Worker) p;
 
+			// Can work again after 3 minutes
 			if (getLastTime(w) > 180) {
-				// Can work again after 3 minutes
-				w.work();
+				p.addMessage("Vous avez commencé à travailler sur l'ordinateur", MsgType.Info);
+				
+				// Work on computer cost 20 energy, 8 mood, give 30 money and take 30 seconds
+				w.work(20, 8, 30, 30);
 			}
 			else if (getLastTime(w) < 30) {
 				p.addMessage("Vous venez de travailler", MsgType.Problem);
