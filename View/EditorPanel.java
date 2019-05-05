@@ -2,6 +2,7 @@ package View;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,6 +46,8 @@ public class EditorPanel extends JPanel {
 		// Event id 1 is for « add furniture object to map » action
 		addButtonToCateg(mobCateg, "WC", "Model.WaterClosed", 1);
 		addButtonToCateg(mobCateg, "Lit", "Model.Bed", 1);
+		addButtonToCateg(mobCateg, "Fauteuil", "Model.Sofa", 1);
+		addButtonToCateg(mobCateg, "Ordinateur", "Model.Computer", 1);
 
 		JPanel persCateg = createCategory(mainPanel, "Personnages");
 
@@ -79,6 +82,9 @@ public class EditorPanel extends JPanel {
 	private void addButtonToCateg(JPanel categ, String text, String className, int id) {
 		EditorPanel that = this;
 		JButton btn = new JButton(text);
+		
+		// Avoid the bold text for the buttons
+		btn.setFont(btn.getFont().deriveFont(Font.PLAIN));
 		
     	// Disable focus to avoid the loss of focus for map, resulting in KeyListener not working
 		btn.setFocusable(false);

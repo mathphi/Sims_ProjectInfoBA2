@@ -1,11 +1,15 @@
 package Model;
 
 import java.awt.Color;
+import java.time.LocalDateTime;
 
 import Tools.Point;
 
-public class Teenager extends Person {
+public class Teenager extends Person implements Worker {
 	private static final long serialVersionUID = 1012022981926904899L;
+
+	public boolean isWorking = false;
+	public LocalDateTime lastWorkTime = LocalDateTime.now().minusDays(1);
 
 	public Teenager(Person other) {
 		super(other);
@@ -29,7 +33,23 @@ public class Teenager extends Person {
 											 */
 
 	}
+	
+	@Override
+	public void resetLastWorkTime() {
+		lastWorkTime = LocalDateTime.now();
+	}
+	
+	@Override
+	public LocalDateTime getLastWorkTime() {
+		return lastWorkTime;
+	}
 
+	@Override
+	public boolean isWorking() {
+		return isWorking;
+	}
+
+	@Override
 	public void work() {
 		// as a teenager only "little job" available
 		energy -= 20;

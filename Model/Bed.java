@@ -35,7 +35,7 @@ public class Bed extends GameObject {
 
 	@Override
 	public void clickedEvent(GameObject o) {
-		// The clicked event must comes from an object at proximity
+		// The clicked event must comes from a Person at proximity
 		if (!getObjectsAround().contains(o))
 			return;
 		

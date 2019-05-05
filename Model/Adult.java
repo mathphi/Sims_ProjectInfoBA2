@@ -1,11 +1,15 @@
 package Model;
 
 import java.awt.Color;
+import java.time.LocalDateTime;
 
 import Tools.Point;
 
-public class Adult extends Person {
+public class Adult extends Person implements Worker {
 	private static final long serialVersionUID = 532161543919171452L;
+
+	public boolean isWorking = false;
+	public LocalDateTime lastWorkTime = LocalDateTime.now().minusDays(1);
 
 	public Adult(Person other) {
 		super(other);
@@ -24,7 +28,23 @@ public class Adult extends Person {
 		// TODO: define a random maxAge for an adult after which he dies ?
 		return (getAge() > 90);
 	}
+	
+	@Override
+	public void resetLastWorkTime() {
+		lastWorkTime = LocalDateTime.now();
+	}
+	
+	@Override
+	public LocalDateTime getLastWorkTime() {
+		return lastWorkTime;
+	}
 
+	@Override
+	public boolean isWorking() {
+		return isWorking;
+	}
+
+	@Override
 	public void work() {
 		// work depends of the level of study
 		// TODO need to make the choice!
