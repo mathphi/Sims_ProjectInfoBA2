@@ -116,6 +116,9 @@ public class Game implements DeletableObserver {
 
 		Bed bed = new Bed(new Point(1, 12));
 		attachObjectToGame(bed);
+		
+		Sofa sofa = new Sofa(new Point(23, 1));
+		attachObjectToGame(sofa);
 
 		notifyView();
 	}

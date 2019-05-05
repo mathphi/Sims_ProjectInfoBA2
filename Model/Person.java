@@ -49,7 +49,9 @@ public abstract class Person extends GameObject {
 
 	protected int money;
 
-	private LocalDateTime lastBedTime = LocalDateTime.now();
+	// Use a past time as initial time
+	private LocalDateTime lastSleepTime = LocalDateTime.now().minusDays(1);
+	private LocalDateTime lastNapTime = LocalDateTime.now().minusDays(1);
 
 	// visible properties, if = 100 no need
 	protected double energy;
@@ -147,9 +149,6 @@ public abstract class Person extends GameObject {
 		othersImpression = 50;
 
 		psychologicalFactors = PsychologicalFactors.RandomFactors();
-
-		// Use a past time as initial time
-		lastBedTime = LocalDateTime.now().minusDays(1);
 	}
 
 	public void clickedEvent(GameObject o) {}
@@ -422,8 +421,8 @@ public abstract class Person extends GameObject {
 	}
 
 	/**
-	 * Decrease the bladder of the factor and check if the bladder full If the
-	 * bladder is full, call emptyBladder()
+	 * Decrease the bladder of the factor and check if the bladder full.
+	 * If the bladder is full, call emptyBladder()
 	 * 
 	 * @param factor
 	 */
@@ -446,32 +445,33 @@ public abstract class Person extends GameObject {
 
 	/**
 	 * In short, he piss... We just have to check if the person piss in a toilet or
-	 * just... on himself The player will lose hygiene,... in the second case
+	 * just... on himself. The player will lose hygiene, and mood in the second case.
 	 */
 	public void emptyBladder(boolean isOnToilet) {
 		bladder = 100;
 
 		if (!isOnToilet) {
-			addMessage("Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale", MsgType.Problem);
+			addMessage("Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale !", MsgType.Problem);
 			modifyHygiene(-50);
 			modifyMood(-20);
 		}
 	}
 
 	/**
-	 * This function take care of the hygiene and mood to compute the energy gain. A
-	 * random factor is also applied.
+	 * This function take care of the hygiene and mood to compute the energy gain.
+	 * A random factor is also applied.
 	 * 
 	 * This function is typically called when the Person sleeps.
 	 */
-	public void restoreEnergy() {
-		double gain = (getHygiene() + getMood()) / 2.0 * 80;
-		double randomFactor = Random.range(10, 20);
+	public void restoreEnergy(int energyFactor) {
+		// 4/5 of the energyFactor is a computed gain, 1/5 is a random factor
+		double gain = (getHygiene() + getMood()) / 2.0 * (energyFactor * 4.0/5.0);
+		double randomFactor = Random.range((energyFactor / 10.0), (energyFactor / 5.0));
 
 		double total = gain + randomFactor;
 
-		// Get a total gain of at least 20
-		total = Math.max(20, total);
+		// Get a total gain of at least 10
+		total = Math.max(10, total);
 
 		energy += total;
 
@@ -774,29 +774,48 @@ public abstract class Person extends GameObject {
 		return null;
 	}
 
-	private void setLastBedTime(LocalDateTime localDateTime) {
-		lastBedTime = LocalDateTime.now();
+	private void setLastSleepTime(LocalDateTime localDateTime) {
+		lastSleepTime = LocalDateTime.now();
+	}
+	
+	public LocalDateTime getLastSleepTime() {
+		return lastSleepTime;
+	}
+	
+	private void setLastNapTime(LocalDateTime localDateTime) {
+		lastNapTime = LocalDateTime.now();
 	}
 
-	public LocalDateTime getLastBedTime() {
-		return lastBedTime;
+	public LocalDateTime getLastNapTime() {
+		return lastNapTime;
 	}
 
 	public void sleep() {
 		addMessage("Bonne nuit, vous êtes maintenant endormi", MsgType.Info);
-		
+
+		setLastSleepTime(LocalDateTime.now());
+		activateSleepState(60, 100);
+	}
+	
+	public void repose() {
+		addMessage("Bonne sieste, reposez-vous bien", MsgType.Info);
+
+		setLastNapTime(LocalDateTime.now());
+		activateSleepState(20, 40);
+	}
+	
+	private void activateSleepState(int duration, int energyFactor) {
 		// Mark Person as sleeping (prevent movements,...)
 		isSleeping = true;
 		
-		SleepThread.sleep(60, new ActionListener() {
+		SleepThread.sleep(duration, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setLastBedTime(LocalDateTime.now());
-				restoreEnergy();
+				restoreEnergy(energyFactor);
 				
 				isSleeping = false;
 
-				addMessage("Vous avez dormi et récupéré de l'énergie", MsgType.Info);
+				addMessage("Vous vous êtes reposé, vous avez récupéré de l'énergie", MsgType.Info);
 			}
 		});
 	}
