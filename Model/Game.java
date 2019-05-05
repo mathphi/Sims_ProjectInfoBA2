@@ -457,8 +457,6 @@ public class Game implements DeletableObserver {
 
 	public void closeGameMenu() {
 		mainMenu.closeMenu();
-		this.resumeGame(); 
-		
 	}
 	
 

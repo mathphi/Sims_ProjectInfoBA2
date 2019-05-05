@@ -27,6 +27,7 @@ public class GameMenu extends JDialog {
 		super(parent, "Menu principal", true);
 		
 		setPreferredSize(new Dimension(300, 320));
+		setUndecorated(true); // Avoid the close method from the cross button
 		
 		JPanel mainPanel = new JPanel();
 		
