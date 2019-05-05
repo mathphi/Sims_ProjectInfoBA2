@@ -37,6 +37,14 @@ public class Point implements Serializable {
 		return new Point(x + p.getX(), y + p.getY());
 	}
 	
+	public Point remove(double x, double y) {
+		return remove(new Point(x, y));
+	}
+
+	public Point remove(Point p) {
+		return new Point(x - p.getX(), y - p.getY());
+	}
+	
 	public Point multiply(double factor) {
 		return new Point(x * factor, y * factor);
 	}

@@ -107,9 +107,6 @@ public abstract class Person extends GameObject {
 	// Refresh listeners
 	private transient ArrayList<ActionListener> refreshListeners = new ArrayList<ActionListener>();
 
-	// Thread used for smooth moving
-	private transient MoveThread moveThread;
-
 	// Constructor used when the Person evolves (ie from Kid to Teenager)
 	public Person(Person other) {
 		this(other.getPos(), other.getName(), other.getAge(), other.getGender(), other.getMother(), other.getFather());
@@ -129,6 +126,8 @@ public abstract class Person extends GameObject {
 
 		inventory = other.getInventory();
 		messagesHistory = other.getMessagesHistory();
+		
+		friendList = other.getFriendList();
 
 		rotate(other.getDirection());
 	}
@@ -172,20 +171,37 @@ public abstract class Person extends GameObject {
 	public boolean isActivePerson() {
 		return isActivePerson;
 	}
+	
+	private Direction convertOrientation(Point delta) {
+		Direction direction = Direction.EAST;
+
+		int x = delta.getXInt();
+		int y = delta.getYInt();
+
+		if (x == 0 && y == -1)
+			direction = Direction.NORTH;
+		else if (x == 0 && y == 1)
+			direction = Direction.SOUTH;
+		else if (x == 1 && y == 0)
+			direction = Direction.EAST;
+		else if (x == -1 && y == 0)
+			direction = Direction.WEST;
+
+		return direction;
+	}
+	
+	public void rotate(Point delta) {
+		super.rotate(convertOrientation(delta));
+	}
 
 	public void move(Point delta) {
 		// Don't move if the Person sleep
 		if (isLocked())
 			return;
 		
-		// moveThread is null when restored from saving file
-		if (moveThread == null) {
-			moveThread = new MoveThread(this);
-			Thread t = new Thread(moveThread);
-			t.start();
-		}
-
-		moveThread.newMovement(delta);
+		rotate(delta);
+		setPos(getPos().add(delta));
+		refresh();
 	}
 
 	public boolean isObstacle() {
@@ -483,6 +499,9 @@ public abstract class Person extends GameObject {
 				public void actionPerformed(ActionEvent e) {
 					bladder = 100;
 					setLocked(false);
+					addMessage(
+							"Terminé",
+							MsgType.Info);
 				}
 			});
 		}

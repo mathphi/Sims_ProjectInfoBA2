@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -30,6 +31,7 @@ import Model.Person.InteractionType;
 public class Game implements DeletableObserver {
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
+	private HashMap<Person,MoveThread> moveThreadsList = new HashMap<Person,MoveThread>();
 	private Person activePerson = null;
 	private Window window;
 	private Map map;
@@ -212,8 +214,7 @@ public class Game implements DeletableObserver {
 		Rect r = new Rect(0, 0, (int)map.getSize().getWidth(), (int)map.getSize().getHeight());
 		
 		if (r.contains(pos)) {
-			Thread t = new Thread(new AStarThread(this, activePerson, pos));
-			t.start();
+			getPlayerMoveThread(activePerson).setTargetPosition(pos);
 		}
 		else {
 			activePerson.setPos(pos);
@@ -224,57 +225,63 @@ public class Game implements DeletableObserver {
 		movePlayer(activePerson, x, y);
 	}
 
-	public void moveActivePlayer(Point pos) {
-		movePlayer(activePerson, pos);
+	public void moveActivePlayer(Point movement) {
+		movePlayer(activePerson, movement);
 	}
 
 	public void movePlayer(Person pers, int x, int y) {
 		movePlayer(pers, new Point(x, y));
 	}
 
-	public void movePlayer(Person pers, Point pos) {
+	public void movePlayer(Person pers, Point movement) {
 		// Don't act on the Person if he is sleeping or working
 		if (pers.isLocked())
 			return;
 		
-		Point nextPos = pers.getPos().add(pos);
+		Point nextPos = pers.getPos().add(movement);
+		
+		if (!isTargetUnreachable(pers, nextPos)) {
+			getPlayerMoveThread(pers).addMovement(movement);
+		}
+	}
+	
+	private MoveThread getPlayerMoveThread(Person p) {
+		MoveThread mt = moveThreadsList.getOrDefault(p, null);
+		
+		// If the Person hasn't any MoveThread yet, create it and run it in a new Thread
+		if (mt == null) {
+			mt = new MoveThread(this, p);
+			
+			Thread t = new Thread(mt);
+			t.start();
+			
+			moveThreadsList.put(p, mt);
+		}
+		
+		return mt;
+	}
+	
+	public boolean isTargetUnreachable(Person pers, Point pos) {
 		boolean unreachable = false;
 
 		// Check if the nextPos is in the map
 		Rect mapRect = new Rect(new Point(0, 0), mapSize);
-		unreachable = !mapRect.contains(nextPos);
+		unreachable = !mapRect.contains(pos);
 
+		// Check if the nextPos overlaps any obstacle
 		for (GameObject object : objects) {
-			if (object == (GameObject) pers) {
+			if (object == (GameObject) pers)
 				continue;
-			}
 			
-			Rect nextRect = new Rect(nextPos, pers.getSize());
+			Rect nextRect = new Rect(pos, pers.getSize());
 
-			if (object.getRect().overlaps(nextRect) && object.isObstacle()) {
+			if (object.isObstacle() && object.getRect().overlaps(nextRect)) {
 				unreachable = true;
 				break;
 			}
 		}
-
-		int x = pos.getXInt();
-		int y = pos.getYInt();
-		Direction direction = Direction.EAST;
-
-		if (x == 0 && y == -1)
-			direction = Direction.NORTH;
-		else if (x == 0 && y == 1)
-			direction = Direction.SOUTH;
-		else if (x == 1 && y == 0)
-			direction = Direction.EAST;
-		else if (x == -1 && y == 0)
-			direction = Direction.WEST;
-
-		pers.rotate(direction);
 		
-		if (!unreachable) {
-			pers.move(pos);
-		}
+		return unreachable;
 	}
 
 	public void centerViewOnPlayer() {

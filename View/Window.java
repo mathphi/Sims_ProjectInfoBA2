@@ -166,6 +166,12 @@ public class Window extends JFrame {
 
 		if (this.editorPanel.isVisible())
 			this.editorPanel.repaint();
+		
+		if (this.gameButtonPanel.isVisible())
+			this.gameButtonPanel.repaint();
+		
+		if (this.editorButtonPanel.isVisible())
+			this.editorButtonPanel.repaint();
 	}
 
 	public void addMapKeyListener(KeyListener keyboard) {

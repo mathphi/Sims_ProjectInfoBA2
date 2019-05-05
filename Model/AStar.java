@@ -29,8 +29,8 @@ public class AStar {
 	// private int DIAGONAL_COST = 100000;
 	private GameObject movedObj;
 
-	public AStar(Size map_size, Point pos_start, Point pos_end, GameObject moved_obj, ArrayList<GameObject> objects) {
-		posStart = pos_start;
+	public AStar(Size map_size, GameObject moved_obj, Point pos_end, ArrayList<GameObject> objects) {
+		posStart = moved_obj.getPos();
 		posEnd = pos_end;
 		mapSize = map_size;
 		mapRect = new Rect(new Point(0, 0), map_size);
@@ -60,6 +60,24 @@ public class AStar {
 		for (GameObject o : new ArrayList<GameObject>(objects)) {
 			if (o.isObstacle() && o != moved_obj) {
 				setBlocked(o);
+			}
+		}
+		
+		// Add contour to border of the map to allow to move object with size larger than 1x1
+		for (int x = 0 ; x < mapSize.getWidth() ; x++) {
+			for (int h = 0 ; h < movedObj.getSize().getHeight()-1 ; h++) {
+				Point pt = new Point(x, mapSize.getHeight()-1 - h);
+				if (mapRect.contains(pt)) {
+					grid[pt.getXInt()][pt.getYInt()] = null;
+				}
+			}
+		}
+		for (int y = 0 ; y < mapSize.getHeight() ; y++) {
+			for (int w = 0 ; w < movedObj.getSize().getWidth()-1 ; w++) {
+				Point pt = new Point(mapSize.getWidth()-1 - w, y);
+				if (mapRect.contains(pt)) {
+					grid[pt.getXInt()][pt.getYInt()] = null;
+				}
 			}
 		}
 
@@ -258,5 +276,26 @@ public class AStar {
 			System.out.println("No possible path");
 
 		return direction;
+	}
+	
+	public ArrayList<Point> getItinerary() {
+		ArrayList<Point> points = new ArrayList<Point>();
+		
+		if (closed[posEnd.getXInt()][posEnd.getYInt()]) {
+			// Trace back the path
+			Cell current = grid[posEnd.getXInt()][posEnd.getYInt()];
+			while (current != null && current.parent != null) {
+				Point current_pt = new Point(current.i, current.j);
+				Point parent_pt = new Point(current.parent.i, current.parent.j);
+				
+				// Add on start
+				points.add(0, current_pt.remove(parent_pt));
+				
+				current = current.parent;
+			}
+		} else
+			System.out.println("No possible path");
+
+		return points;
 	}
 }

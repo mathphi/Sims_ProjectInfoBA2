@@ -56,7 +56,7 @@ public class Bed extends GameObject {
 			p.addMessage(JUST_WOKEN_UP_MSG, MsgType.Problem);
 		}
 		else {
-			p.addMessage(COMEBACK_LATER_MSG, MsgType.Problem);
+			p.addMessage(COMEBACK_LATER_MSG, MsgType.Warning);
 		}
 	}
 	

@@ -48,7 +48,7 @@ public class Computer extends GameObject {
 				p.addMessage("Vous venez de travailler", MsgType.Problem);
 			}
 			else {
-				p.addMessage("Vous devez encore attendre avant de travailler à nouveau", MsgType.Problem);
+				p.addMessage("Vous devez encore attendre avant de travailler à nouveau", MsgType.Warning);
 			}
 		}
 		else {

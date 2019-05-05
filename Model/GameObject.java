@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public abstract class GameObject implements Directable, Serializable {
 	private static final long serialVersionUID = 5238309657819264811L;
 
-	private Direction direction = Direction.EAST;
+	private Direction direction = Direction.SOUTH;
 
 	private Rect rect;
 	private Color color;
