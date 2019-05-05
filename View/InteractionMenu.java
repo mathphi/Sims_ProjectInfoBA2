@@ -43,15 +43,13 @@ public class InteractionMenu extends JDialog {
 	{
 		super(parent, "Intéractions", true);
 
-		setPreferredSize(new Dimension(300, 320));
-
 		JPanel mainPanel = new JPanel();
 
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		mainPanel.setLayout(new GridLayout(0, 1, 0, 10));
 
 		JLabel nameLabel = new JLabel(name, JLabel.CENTER);
-		nameLabel.setFont(nameLabel.getFont().deriveFont((float) 28));
+		nameLabel.setFont(nameLabel.getFont().deriveFont((float) 20));
 		mainPanel.add(nameLabel);
 		
 		discussButton = new JButton("Discuter");
@@ -70,15 +68,18 @@ public class InteractionMenu extends JDialog {
 		 * and more (invite and drink).
 		 */
 		switch (relationship) {
-		case SeriousRelation:
+		case VerySeriousRelation:
 			if (p1_type == PersonType.Adult && p2_type == PersonType.Adult) {
-				//TODO: maybe add a condition if already married (the other person refuses for example)
 				mainPanel.add(marryButton);
+			}
+		case SeriousRelation:
+			if (p1_type == p2_type) {
+				// Don't kiss a Person of another level (Kid and Adult for example...)
+				mainPanel.add(kissButton);
 			}
 		case Parent: 
 			// This section comes after SeriousRelation because a
 			// Person cannot marry with his parents...
-			mainPanel.add(kissButton);
 		case CloseFriend:
 			mainPanel.add(inviteButton);
 			if (p1_type != PersonType.Kid && p2_type != PersonType.Kid) {
@@ -93,6 +94,9 @@ public class InteractionMenu extends JDialog {
 		}
 
 		add(mainPanel);
+		
+		// Adapt the window height to content
+		setPreferredSize(new Dimension(350, 75 + 50 * (mainPanel.getComponentCount() - 1)));
 
 		ActionListener buttonsAction = new ActionListener() {
 			@Override

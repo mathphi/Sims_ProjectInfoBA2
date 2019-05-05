@@ -8,6 +8,7 @@ import View.Message.MsgType;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public abstract class Person extends GameObject {
 	}
 	
 	public static enum Relationship {
-		Unknown, Acquaintance, CloseFriend, SeriousRelation, Parent
+		Unknown, Acquaintance, CloseFriend, SeriousRelation,VerySeriousRelation, Parent
 	}
 	
 	public static enum InteractionType {
@@ -38,6 +39,7 @@ public abstract class Person extends GameObject {
 	private static Size SIZE = new Size(2, 2);
 
 	private boolean isActivePerson;
+	private boolean isSleeping = false;
 
 	// general information
 	protected String name;
@@ -47,7 +49,9 @@ public abstract class Person extends GameObject {
 
 	protected int money;
 
-	private LocalDateTime lastBedTime = LocalDateTime.now();
+	// Use a past time as initial time
+	private LocalDateTime lastSleepTime = LocalDateTime.now().minusDays(1);
+	private LocalDateTime lastNapTime = LocalDateTime.now().minusDays(1);
 
 	// visible properties, if = 100 no need
 	protected double energy;
@@ -72,7 +76,7 @@ public abstract class Person extends GameObject {
 
 	protected ArrayList<Product> inventory = new ArrayList<Product>();
 	// relation
-	protected Map<Person, Integer> friendList = new HashMap<>();
+	protected Map<Person, Double> friendList = new HashMap<>();
 	protected Adult mother;
 	protected Adult father;
 
@@ -131,8 +135,8 @@ public abstract class Person extends GameObject {
 		this.father = father;
 
 		// Considered as the higher level of relation but CAN't propose to marry, etc
-		friendList.put(father, 20);
-		friendList.put(mother, 20);
+		friendList.put(father, 100.0);
+		friendList.put(mother, 100.0);
 
 		// Initial Person properties (maximum is 100)
 		energy = 100;
@@ -145,18 +149,11 @@ public abstract class Person extends GameObject {
 		othersImpression = 50;
 
 		psychologicalFactors = PsychologicalFactors.RandomFactors();
-
-		// Use a past time as initial time
-		lastBedTime = LocalDateTime.now().minusDays(1);
 	}
 
-	public void clickedEvent(GameObject o) {
+	public void clickedEvent(GameObject o) {}
 
-	}
-
-	public void proximityEvent(GameObject o) {
-		// TODO
-	}
+	public void proximityEvent(GameObject o) {}
 
 	public abstract boolean maxAgeReached();
 
@@ -169,6 +166,10 @@ public abstract class Person extends GameObject {
 	}
 
 	public void move(Point delta) {
+		// Don't move if the Person sleep
+		if (isSleeping)
+			return;
+		
 		// moveThread is null when restored from saving file
 		if (moveThread == null) {
 			moveThread = new MoveThread(this);
@@ -195,12 +196,16 @@ public abstract class Person extends GameObject {
 	}
 
 	public void increaseNeeds() {
+		// Don't update the needs when sleeping...
+		if (isSleeping)
+			return;
+		
 		decreaseBladder(Random.range(2.0, 3.0) * bladderRandomFactor); // Random decrease
 		modifyHunger(Random.range(-1.0, -2.0) * hungerRandomFactor); // Random decrease
 
 		// Decrease more energy if hygiene is low
 		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor);
-
+		
 		if (energy == 0) {
 			// TODO: what can we do ?
 		}
@@ -211,24 +216,25 @@ public abstract class Person extends GameObject {
 	}
 
 	/**
-	 * This function return the level of friendship by reading the friendList HashMap.
-	 * 
+	 * This function return the level of friendship by parsing the relation points.
 	 * 
 	 * @param other
 	 * @return
 	 */
 	public Relationship getRelationship(Person other) {
 		Relationship relationship = Relationship.Unknown;
-		
-		// If the Person is not in the friendList -> unknown
-		int relationPoints = friendList.getOrDefault(other, 0);
+
+		// If the Person is not in the friendList -> 0 -> Unknown
+		double relationPoints = getRelationPoints(other);
 
 		// Set the relationship level
 		if (other == mother || other == father) {
 			relationship = Relationship.Parent;
-		} else if (relationPoints > 20) {
+		} else if (relationPoints > 75) {
+			relationship = Relationship.VerySeriousRelation;
+		} else if (relationPoints > 40) {
 			relationship = Relationship.SeriousRelation;
-		} else if (relationPoints > 10) {
+		} else if (relationPoints > 15) {
 			relationship = Relationship.CloseFriend;
 		} else if (relationPoints > 0) {
 			relationship = Relationship.Acquaintance;
@@ -238,16 +244,31 @@ public abstract class Person extends GameObject {
 	}
 
 	public void modifyRelationPoints(Person friend, double factor) {
-		int value = friendList.getOrDefault(friend, 0);
+		double value = friendList.getOrDefault(friend, 0.0);
 		
 		// Apply modification factor
-		value += (int) factor;
+		value += factor;
 		
 		// Keep range between 0 and 100
 		value = Math.max(0, Math.min(value, 100));
 		
 		// Update the value in the friendList
 		friendList.put(friend, value);
+	}
+	
+	/**
+	 * Get the relation points by reading the friendList HashMap
+	 * 
+	 * @param friend
+	 * The Person to get the relation points
+	 * 
+	 * @return
+	 * The relation points of the Person or 0 if not in the HashMap
+	 */
+	public double getRelationPoints(Person friend) {
+		// If the Person is not in the friendList -> 0
+		double relationPoints = friendList.getOrDefault(friend, 0.0);
+		return relationPoints;
 	}
 
 	/**
@@ -259,50 +280,60 @@ public abstract class Person extends GameObject {
 	 * The other Person whose appreciation is calculated
 	 * 
 	 * @return
-	 * A relation factor between 0 and 1 (a number close to 1 means good agreement between
-	 * this Person and the other, a number close to 0 is the opposite).
+	 * A relation factor between -1 and 1 (a number close to 1 means good agreement between
+	 * this Person and the other, a number close to -1 is the opposite).
 	 */
-	public double automaticAnswer(Person other) {
+	public double getAppreciationOf(Person other) {
 		double relationFactor = other.getMood() * psychologicalFactors.getMood()
 				+ other.getHygiene() * psychologicalFactors.getHygiene()
 				+ other.getGeneralKnowledge() * psychologicalFactors.getGeneralKnowledge()
 				+ other.getOthersImpression() * psychologicalFactors.getOthersImpression();
 		
-		// The sum of psychological factors is always 1
-		// So we are sure that the relation factor is between 0 and 1
+		/*
+		 * The sum of psychological factors is always 1.
+		 * So we are sure that the relation factor is between 0 and 1, and let convert
+		 * it to a factor between -1 and 1 (for applications to mood, relationship, ...).
+		 * Therefore if the relationFactor can be directly used to increase or decrease
+		 * the mood or the relationship.
+		 */
 		
-		// TODO: move these messages in a specific function that contains
-		//		 appropriate answers for the corresponding action
-		if (relationFactor > 0.8) {
+		relationFactor = relationFactor * 2 - 1;
+		
+		return relationFactor;
+
+	}
+	
+	public void automaticAnswer(Person other, double relationFactor) {
+		
+		// TODO: how to make a function that contains appropriate
+		// 		 answers for the corresponding action
+		if (relationFactor > 0.6) {
 			other.addMessageFrom(
 					this,
 					"C'était vraiment un chouette moment! "
 					+ "Tu es hyper sympathique et incroyable merci pour tout!",
 					MsgType.Info);
-		} else if (relationFactor > 0.6) {
+		} else if (relationFactor > 0.3) {
 			other.addMessageFrom(
 					this,
 					"C'était vraiment cool d'être avec toi",
 					MsgType.Info);
-		} else if (relationFactor > 0.4) {
+		} else if (relationFactor > 0.0) {
 			other.addMessageFrom(
 					this,
 					"Je n'avais rien d'autre à faire mais bon... Content de t'avoir vu",
 					MsgType.Info);
-		} else if (relationFactor > 0.2) {
+		} else if (relationFactor > -0.5) {
 			other.addMessageFrom(
 					this,
 					"Je me suis ennuyé j'aurais pas du venir",
-					MsgType.Info);
+					MsgType.Warning);
 		} else {
 			other.addMessageFrom(
 					this,
 					"T'es vraiment pas sympathique, ne me recontacte plus jamais!",
-					MsgType.Info);
+					MsgType.Problem);
 		}
-
-		return relationFactor;
-
 	}
 
 	public void eat(Nourriture nourriture) {
@@ -316,51 +347,57 @@ public abstract class Person extends GameObject {
 		//TODO: Euh... Eating cost energy ???
 		modifyEnergy(-nourriture.getEnergyNeed());
 	}
+	
+	protected void discuss(Person people) {
+		if (!useEnergy(10))
+			return;
 
-	public boolean discuss(Person people) {
-		if (!modifyEnergy(-10))
-			return false;
-
-		applyInteractionEffect(people, 1, 15);
-
-		return true;
+		applyInteractionEffect(people, 6, 15);
 	}
 
-	public boolean playWith(Person people) {
-		if (!modifyEnergy(-20))
-			return false;
+	protected void playWith(Person people) {
+		if (!useEnergy(20))
+			return;
 
-		applyInteractionEffect(people, 2, 20);
-
-		return true;
+		applyInteractionEffect(people, 12, 20);
 	}
 
-	public boolean invite(Person people) {
-		if (!modifyEnergy(-25))
-			return false;
+	protected void invite(Person people) {
+		if (!useEnergy(25))
+			return;
 
-		applyInteractionEffect(people, 3, 30);
+		applyInteractionEffect(people, 15, 25);
 
 		// TODO bringing the people at house!
-		
-		return true;
 	}
-	
+
 	protected void applyInteractionEffect(Person people, double relationWeight, double moodWeight) {
-		double relationFactor = automaticAnswer(people);
+		double relationFactor = getAppreciationOf(people);
 		
 		modifyRelationPoints(people, relationWeight * relationFactor);
-		people.modifyRelationPoints(this, relationWeight * people.automaticAnswer(this));
+		people.modifyRelationPoints(this, relationWeight * people.getAppreciationOf(this));
 		modifyMood(moodWeight * relationFactor);
+
+		automaticAnswer(people, relationFactor);
+		people.automaticAnswer(this, people.getAppreciationOf(this));
+		
+		System.out.println(friendList.getOrDefault(people, 0.0));
+	}
+	
+	protected void applyRejectedEffect(Person people, double relationWeight, double moodWeight) {
+		modifyRelationPoints(people, -relationWeight);
+		people.modifyRelationPoints(this, -relationWeight);
+		modifyMood(-moodWeight);
+		
+		//TODO: adapted answers for this
+		//automaticAnswer(people, getAppreciationOf(people));
+		
+		System.out.println(friendList.getOrDefault(people, 0.0));
 	}
 
 	/**
-	 * Function that allows the people to interact with another one. need to be
-	 * overwrite in adult and teenager class for interaction with level 3 friends
-	 * (thing like kiss, marry,...)
-	 * 
-	 * TODO: NOOO implement the level 3 here (just not used if this is a Kid,...)
-	 * Else we have to overwrite this big function uselessly
+	 * Function that allows the people to interact with another one.
+	 * Overwritten in Adult and Teenager classes for interaction more types of interactions
 	 * 
 	 * @param other
 	 * The other people with which to interact
@@ -384,8 +421,8 @@ public abstract class Person extends GameObject {
 	}
 
 	/**
-	 * Decrease the bladder of the factor and check if the bladder full If the
-	 * bladder is full, call emptyBladder()
+	 * Decrease the bladder of the factor and check if the bladder full.
+	 * If the bladder is full, call emptyBladder()
 	 * 
 	 * @param factor
 	 */
@@ -408,32 +445,33 @@ public abstract class Person extends GameObject {
 
 	/**
 	 * In short, he piss... We just have to check if the person piss in a toilet or
-	 * just... on himself The player will lose hygiene,... in the second case
+	 * just... on himself. The player will lose hygiene, and mood in the second case.
 	 */
 	public void emptyBladder(boolean isOnToilet) {
 		bladder = 100;
 
 		if (!isOnToilet) {
-			addMessage("Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale", MsgType.Problem);
+			addMessage("Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale !", MsgType.Problem);
 			modifyHygiene(-50);
 			modifyMood(-20);
 		}
 	}
 
 	/**
-	 * This function take care of the hygiene and mood to compute the energy gain. A
-	 * random factor is also applied.
+	 * This function take care of the hygiene and mood to compute the energy gain.
+	 * A random factor is also applied.
 	 * 
 	 * This function is typically called when the Person sleeps.
 	 */
-	public void restoreEnergy() {
-		double gain = (getHygiene() + getMood()) / 2.0 * 80;
-		double randomFactor = Random.range(10, 20);
+	public void restoreEnergy(int energyFactor) {
+		// 4/5 of the energyFactor is a computed gain, 1/5 is a random factor
+		double gain = (getHygiene() + getMood()) / 2.0 * (energyFactor * 4.0/5.0);
+		double randomFactor = Random.range((energyFactor / 10.0), (energyFactor / 5.0));
 
 		double total = gain + randomFactor;
 
-		// Get a total gain of at least 20
-		total = Math.max(20, total);
+		// Get a total gain of at least 10
+		total = Math.max(10, total);
 
 		energy += total;
 
@@ -442,7 +480,7 @@ public abstract class Person extends GameObject {
 	}
 
 	/**
-	 * Modify the hygiene of a factor If the hygiene is too low... (?) TODO
+	 * Modify the hygiene of a factor
 	 * 
 	 * @param factor
 	 */
@@ -459,21 +497,29 @@ public abstract class Person extends GameObject {
 
 		// TODO: conditional consequences
 		if (hunger <= 0) {
-			modifyHygiene(-10);
+			modifyHygiene(-5);
 			modifyMood(-10);
 		}
 	}
 
-	public boolean modifyEnergy(double factor) {
-		// Check if enough energy
-		if (factor < 0 && -factor > energy) {
-			addMessage("Vous n'avez plus assez d'énergie!", MsgType.Warning);
-			return false;
-		}
-
+	public void modifyEnergy(double factor) {
 		energy += factor;
 		energy = Math.max(0, Math.min(energy, 100));
-
+	}
+	
+	/**
+	 * This function check if we have enough energy to use it and
+	 * modifies the energy if all is ok, else return false and print a message
+	 */
+	public boolean useEnergy(double quantity) {
+		// Check if enough energy
+		if (quantity > 0 && quantity > energy) {
+			addMessage("Vous n'avez plus assez d'énergie!", MsgType.Problem);
+			return false;
+		}
+		
+		modifyEnergy(-quantity);
+		
 		return true;
 	}
 
@@ -484,24 +530,11 @@ public abstract class Person extends GameObject {
 	}
 
 	public void modifyMood(double value) {
-
-		// fonction that increase the mood after the activity like going out,...
-		double maxMood = 100 - mood; // number of max point
-		if (value > 0) {
-			if (maxMood < value) {
-				// check that the gain of mood is < max
-				value = maxMood;
-			}
-			double moodFactor = Math.pow(Math.E, -mood / 100.0);
-			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
-			value = randomFactor * value * moodFactor;
-		} else if (-value > mood) {
-			// check the reduction isn't bigger of the amount of mood available
-			value = -mood;
-		}
-
-		mood += value;
+		// Add a random factor to add unpredictable behaviours in the game
+		mood += value + Random.range(0, value / 2.0);
+		
+		// Don't exceed limits
+		mood = Math.max(0, Math.min(mood, 100));
 	}
 
 	public void modifyOthersImpression(double value) {
@@ -577,7 +610,7 @@ public abstract class Person extends GameObject {
 		return othersImpression / 100.0;
 	}
 
-	public Map<Person, Integer> getFriendList() {
+	public Map<Person, Double> getFriendList() {
 		return friendList;
 	}
 
@@ -628,7 +661,7 @@ public abstract class Person extends GameObject {
 	 */
 	public void addMessageFrom(Person other, String text, MsgType type) {
 		addMessage(
-				String.format("<b>%s:</b> %s", other.getName(), text),
+				String.format("<b>%s :</b> %s", other.getName(), text),
 				type);
 	}
 
@@ -706,7 +739,6 @@ public abstract class Person extends GameObject {
 	public void paint(Graphics g, int BLOC_SIZE) {
 		super.paint(g, BLOC_SIZE);
 
-		// TODO: the yellow border is temporary
 		if (isActivePerson()) {
 			g.setColor(Color.YELLOW);
 			g.drawRect((int) (getPos().getX() * BLOC_SIZE), (int) (getPos().getY() * BLOC_SIZE),
@@ -742,21 +774,53 @@ public abstract class Person extends GameObject {
 		return null;
 	}
 
-	private void setLastBedTime(LocalDateTime localDateTime) {
-		lastBedTime = LocalDateTime.now();
+	private void setLastSleepTime(LocalDateTime localDateTime) {
+		lastSleepTime = LocalDateTime.now();
+	}
+	
+	public LocalDateTime getLastSleepTime() {
+		return lastSleepTime;
+	}
+	
+	private void setLastNapTime(LocalDateTime localDateTime) {
+		lastNapTime = LocalDateTime.now();
 	}
 
-	public LocalDateTime getLastBedTime() {
-		return lastBedTime;
+	public LocalDateTime getLastNapTime() {
+		return lastNapTime;
 	}
 
 	public void sleep() {
-		// TODO disable movement when sleeping !
+		addMessage("Bonne nuit, vous êtes maintenant endormi", MsgType.Info);
 
-		setLastBedTime(LocalDateTime.now());
-		restoreEnergy();
+		setLastSleepTime(LocalDateTime.now());
+		activateSleepState(60, 100);
+	}
+	
+	public void repose() {
+		addMessage("Bonne sieste, reposez-vous bien", MsgType.Info);
 
-		// TODO plusieurs messages en fonction du gain d'énergie
-		addMessage("Vous avez dormi et récupéré de l'énergie", MsgType.Info);
+		setLastNapTime(LocalDateTime.now());
+		activateSleepState(20, 40);
+	}
+	
+	private void activateSleepState(int duration, int energyFactor) {
+		// Mark Person as sleeping (prevent movements,...)
+		isSleeping = true;
+		
+		SleepThread.sleep(duration, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				restoreEnergy(energyFactor);
+				
+				isSleeping = false;
+
+				addMessage("Vous vous êtes reposé, vous avez récupéré de l'énergie", MsgType.Info);
+			}
+		});
+	}
+	
+	public boolean isSleeping() {
+		return isSleeping;
 	}
 }

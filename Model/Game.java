@@ -28,7 +28,6 @@ import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
 public class Game implements DeletableObserver {
-
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
 	private Person activePerson = null;
@@ -129,6 +128,13 @@ public class Game implements DeletableObserver {
 		Bed bed = new Bed(new Point(1, 12));
 		attachObjectToGame(bed);
 
+		Sofa sofa = new Sofa(new Point(23, 1));
+		attachObjectToGame(sofa);
+		
+		Computer computer = new Computer(new Point(32, 6));
+		computer.rotate(Direction.SOUTH);
+		attachObjectToGame(computer);
+
 		notifyView();
 	}
 
@@ -150,19 +156,20 @@ public class Game implements DeletableObserver {
 
 	public void mouseLeftClickEvent(Point pos) {
 		GameObject object = getObjectAtPosition(pos);
-
+		
 		if (object == null || !object.isObstacle()) {
 			sendPlayer(pos);
+			return;
 		}
 		
-		else if (activePerson.getObjectsAround().contains(object)) {
-			object.clickedEvent(activePerson);
-			
+		if (activePerson.getObjectsAround().contains(object)) {
 			if (object instanceof Person && object != activePerson) {
 				Person other = (Person) object;
 				interractWith(other);
 			}
 		}
+		
+		object.clickedEvent(activePerson);
 	}
 
 	public void mouseRightClickEvent(Point pos) {
@@ -179,6 +186,7 @@ public class Game implements DeletableObserver {
 
 		for (GameObject o : objects) {
 			if (o.isAtPosition(pos)) {
+				// Get important object before any GroundObject
 				if (obj == null || (obj instanceof GroundObject)) {
 					obj = o;
 				}
@@ -197,6 +205,10 @@ public class Game implements DeletableObserver {
 	}
 
 	public void sendPlayer(Point pos) {
+		// Don't act on the Person if he is sleeping
+		if (activePerson.isSleeping())
+			return;
+		
 		Rect r = new Rect(0, 0, (int)map.getSize().getWidth(), (int)map.getSize().getHeight());
 		
 		if (r.contains(pos)) {
@@ -221,6 +233,10 @@ public class Game implements DeletableObserver {
 	}
 
 	public void movePlayer(Person pers, Point pos) {
+		// Don't act on the Person if he is sleeping
+		if (pers.isSleeping())
+			return;
+		
 		Point nextPos = pers.getPos().add(pos);
 		boolean unreachable = false;
 
@@ -599,7 +615,44 @@ public class Game implements DeletableObserver {
 		mainMenu.setCreatorAction(a);
 	}
 	
+	public Direction getDirectionToObject(GameObject from, GameObject to) {
+		Point from_pos = from.getPos();
+		Point to_pos = to.getPos();
+
+		double dx = to_pos.getX() - from_pos.getX();
+		double dy = to_pos.getY() - from_pos.getY();
+		
+		Direction d = Direction.EAST;
+		
+		// Get the main direction
+		if (Math.abs(dx) > Math.abs(dy)) {
+			if (dx > 0) {
+				d = Direction.EAST;
+			} else {
+				d = Direction.WEST;
+			}
+		} else {
+			if (dy > 0) {
+				d = Direction.SOUTH;
+			} else {
+				d = Direction.NORTH;
+			}
+		}
+		
+		return d;
+	}
+	
 	public void interractWith(Person other) {
+		// Don't interact with a sleeping people...
+		if (other.isSleeping() || activePerson.isSleeping())
+			return;
+		
+		// Rotate Persons face-to-face
+		activePerson.rotate(getDirectionToObject(activePerson, other));
+		other.rotate(getDirectionToObject(other, activePerson));
+		
+		notifyView();
+		
 		InteractionType interract_type = InteractionMenu.showInterractionMenu(
 				window, other.getName(),
 				activePerson.getRelationship(other),

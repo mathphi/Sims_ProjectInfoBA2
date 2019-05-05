@@ -227,8 +227,8 @@ public class Editor {
 		if (currentPlacing != null) {
 			Rect r = new Rect(pos, currentPlacing.getSize());
 			
-			// Accept only free places (or any place if GroundObject)
-			if (currentPlacing instanceof GroundObject || rectIsPlacable(r)) {
+			// Accept only free places (or any place if not an obstacle)
+			if (!currentPlacing.isObstacle() || rectIsPlacable(r)) {
 				currentPlacing.setPos(pos);
 				notifyView();
 			}

@@ -3,6 +3,7 @@ package View;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -58,8 +59,17 @@ public class MessagesZone extends JPanel {
 		// Use the html + css to word-wrap
 		JLabel l = new JLabel(String.format(
 				"<html>"
-				+ "<body style='width: 250px; text-align: justify;'>%s</body>"
+				+ "<body style='width: 225px; text-align: justify;'>%s</body>"
 				+ "</html>", msg.getMessage()));
+		
+		boolean containsHTMLTag = msg.getMessage().matches(".*\\<[^>]+>.*");
+		
+		// Default text bold except if the message contains HTML values
+		if (containsHTMLTag) {
+			l.setFont(l.getFont().deriveFont(Font.PLAIN));
+		} else {
+			l.setFont(l.getFont().deriveFont(Font.BOLD));
+		}
 		
 		l.setOpaque(true);
 		l.setBorder(new EmptyBorder(10, 10, 10, 10));
