@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import Model.Person.ActionType;
 import Tools.Point;
 import Tools.Size;
 
@@ -45,7 +46,7 @@ public class Bed extends UsableStructure {
 	 */
 	@Override
 	protected long getLastTime(Person p) {
-		Duration d = Duration.between(p.getLastSleepTime(), LocalDateTime.now());
+		Duration d = Duration.between(p.getLastActionTime(ActionType.Sleep), LocalDateTime.now());
 		return d.getSeconds();
 	}
 	

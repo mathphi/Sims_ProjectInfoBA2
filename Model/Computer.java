@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import Model.Person.ActionType;
 import Tools.Point;
 import Tools.Size;
 import View.Message.MsgType;
@@ -37,16 +38,8 @@ public class Computer extends UsableStructure {
 
 	@Override
 	protected long getLastTime(Person p) {
-		long lastTime = 0;
-		
-		if (p instanceof Worker) {
-			Worker w = (Worker) p;
-			
-			Duration d = Duration.between(w.getLastWorkTime(), LocalDateTime.now());
-			lastTime = d.getSeconds();
-		}
-		
-		return lastTime;
+		Duration d = Duration.between(p.getLastActionTime(ActionType.Work), LocalDateTime.now());
+		return d.getSeconds();
 	}
 
 	@Override

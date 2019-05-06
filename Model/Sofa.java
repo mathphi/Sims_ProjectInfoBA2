@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import Model.Person.ActionType;
 import Tools.Point;
 import Tools.Size;
 
@@ -31,7 +32,7 @@ public class Sofa extends UsableStructure {
 	
 	@Override
 	protected long getLastTime(Person p) {
-		Duration d = Duration.between(p.getLastNapTime(), LocalDateTime.now());
+		Duration d = Duration.between(p.getLastActionTime(ActionType.Nap), LocalDateTime.now());
 		return d.getSeconds();
 	}
 	

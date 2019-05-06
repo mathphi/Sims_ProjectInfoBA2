@@ -3,7 +3,6 @@ package Model;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDateTime;
 
 import Tools.Point;
 import View.Message.MsgType;
@@ -12,7 +11,6 @@ public class Teenager extends Person implements Worker {
 	private static final long serialVersionUID = 1012022981926904899L;
 
 	public boolean isWorking = false;
-	public LocalDateTime lastWorkTime = LocalDateTime.now().minusDays(1);
 
 	public Teenager(Person other) {
 		super(other);
@@ -36,16 +34,6 @@ public class Teenager extends Person implements Worker {
 		 * if (setMoney(-achat.getPrice())) { inventory.add(achat); }
 		 */
 	}
-	
-	@Override
-	public void resetLastWorkTime() {
-		lastWorkTime = LocalDateTime.now();
-	}
-	
-	@Override
-	public LocalDateTime getLastWorkTime() {
-		return lastWorkTime;
-	}
 
 	@Override
 	public boolean isWorking() {
@@ -62,7 +50,7 @@ public class Teenager extends Person implements Worker {
 			public void actionPerformed(ActionEvent e) {
 				isWorking = false;
 				setLocked(false);
-				resetLastWorkTime();
+				resetLastActionTime(ActionType.Work);
 				
 				useEnergy(energyImpact);
 				modifyMoney(salary);
