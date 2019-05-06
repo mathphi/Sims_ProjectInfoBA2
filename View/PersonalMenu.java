@@ -68,6 +68,7 @@ public class PersonalMenu extends JDialog {
 					catalogMenu = new CatalogMenu(parent, activePerson, game);
 					catalogMenu.showMenu();
 				}
+			
 				closeMenu();
 
 			}

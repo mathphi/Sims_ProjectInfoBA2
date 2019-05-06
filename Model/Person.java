@@ -482,7 +482,7 @@ public abstract class Person extends GameObject {
 				public void actionPerformed(ActionEvent e) {
 					bladder = 100;
 					setLocked(false);
-					addMessage("Terminé", MsgType.Info);
+					addMessage("*bruit de chasse d'eau*", MsgType.Info);
 				}
 			});
 		}
@@ -742,6 +742,8 @@ public abstract class Person extends GameObject {
 
 		} else {
 
+			
+			//TODO faire controle manuellement pour être sur qu'il peut utiliser + changer energy en use!!
 			inventory.remove(product);
 			modifyMood(product.getMoodImpact());
 			modifyEnergy(product.getEnergyImpact());
