@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Model.Directable.Direction;
@@ -567,7 +568,10 @@ public class Game implements DeletableObserver {
 		restorer.closeSaveFile();
 		
 		if (mapPacket == null) {
-			
+			JOptionPane.showMessageDialog(window,
+				    "Impossible de charger le fichier sélectionné",
+				    "Erreur",
+				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 

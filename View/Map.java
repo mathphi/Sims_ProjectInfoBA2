@@ -24,6 +24,7 @@ public class Map extends JPanel {
     private final Size MAP_SIZE = new Size(80, 80); //TODO: this may be a setting in editor !!!
     private final int BLOC_SIZE = 20;
     
+    private boolean isGridVisible = false;
     private Point viewOffset = new Point(0, 0);
 
     public Map() {
@@ -79,12 +80,12 @@ public class Map extends JPanel {
     public Point getViewOffset() {
     	return viewOffset;
     }
-
-    public void paint(Graphics g) {
-    	g.translate(-viewOffset.getXInt(), -viewOffset.getYInt());
-    	
-		super.paintComponent(g);
-		
+    
+    public void setGridVisible(boolean visible) {
+    	isGridVisible = visible;
+    }
+    
+    public void paintGrid(Graphics g) {
         for (int i = 0; i < MAP_SIZE.getWidth(); i++) { 
             for (int j = 0; j < MAP_SIZE.getHeight(); j++) {
                 int x = i;
@@ -95,6 +96,16 @@ public class Map extends JPanel {
                 g.drawRect(x * BLOC_SIZE, y * BLOC_SIZE, BLOC_SIZE - 2, BLOC_SIZE - 2);
             }
         }
+    }
+
+    public void paint(Graphics g) {
+    	g.translate(-viewOffset.getXInt(), -viewOffset.getYInt());
+    	
+		super.paintComponent(g);
+		
+		if (isGridVisible) {
+			paintGrid(g);
+		}
 
         // Separate GroundObject from others to avoid to paint ground objects over the other objects
         ArrayList<GameObject> groundObjects = new ArrayList<GameObject>();

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Model.Directable.Direction;
@@ -348,6 +349,14 @@ public class Editor {
 		GameMapPacket mapPacket = (GameMapPacket)(restorer.readNextObjectFromSave());
 		
 		restorer.closeSaveFile();
+
+		if (mapPacket == null) {
+			JOptionPane.showMessageDialog(window,
+				    "Impossible de charger le fichier sélectionné",
+				    "Erreur",
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		
 		objects = mapPacket.getObjects();
 		population = mapPacket.getPopulation();

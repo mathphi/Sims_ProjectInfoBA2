@@ -126,10 +126,12 @@ public class Window extends JFrame {
 
 	public void switchEditorMode() {
 		setupEditorBorderPanel();
+		map.setGridVisible(true);
 	}
 
 	public void switchGameMode() {
 		setupGameBorderPanel();
+		map.setGridVisible(false);
 	}
 
 	public void switchNeutralMode() {
