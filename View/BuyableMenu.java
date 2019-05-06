@@ -42,38 +42,35 @@ public class BuyableMenu extends JDialog {
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		mainPanel.setLayout(new GridLayout(0, 1, 0, 10));
 
-		
-		
 		ActionListener buttonsAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object src = e.getSource();
 				if (src == item1) {
-					//TODO sera remplacé par la création de l'objet -> buy recevra objet directement
-					activePerson.buy(new Nourriture("café", 3,5,10,5));
+
+					activePerson.buy(new Nourriture("café", 3, 5, 10, 5));
 
 				}
 				if (src == item2) {
-					activePerson.buy(new Nourriture("Collation", 4,7,15,5));
+					activePerson.buy(new Nourriture("Collation", 4, 7, 15, 5));
 				}
 				if (src == item3) {
-					activePerson.buy(new Nourriture("Salade", 5,10,17,10));
+					activePerson.buy(new Nourriture("Salade", 5, 10, 17, 10));
 
 				}
 				if (src == item4) {
-					activePerson.buy(new Nourriture("Burger", 7,12,17,15));
+					activePerson.buy(new Nourriture("Burger", 7, 12, 17, 15));
 
 				}
 				if (src == item5) {
-					activePerson.buy(new Nourriture("Repas complet", 10,15,20,20));
+					activePerson.buy(new Nourriture("Repas complet", 10, 15, 20, 20));
 
 				}
-			
 
+				closeMenu();
 			}
 
 		};
-		
-		
+
 		switch (objectType) {
 		case ("Nourriture"): {
 			nameLabel = new JLabel("Nourriture", JLabel.CENTER);
@@ -83,8 +80,6 @@ public class BuyableMenu extends JDialog {
 			item3 = new JButton("Salade (restore  l'énergie, nourrit et coute 5€)");
 			item4 = new JButton("Burger (restore l'énergie, nourrit bien et coute 7€)"); // TODO réduire santé
 			item5 = new JButton("Repas complet (restore bien l'énergie, nourrit bien et coute 10€)");
-
-			
 
 			break;
 		}
@@ -96,30 +91,30 @@ public class BuyableMenu extends JDialog {
 			item4 = new JButton("Télévision (vous amusera vraiment! Coute 100€)");
 			item5 = new JButton("PS4 (vous amusera définitivement! Coute 250€)");
 
-			 buttonsAction = new ActionListener() {
+			buttonsAction = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Object src = e.getSource();
 					if (src == item1) {
-						activePerson.buy(new Toy("Jeu de carte",5, 10, -5));
+						activePerson.buy(new Toy("Jeu de carte", 5, 10, -5));
 
 					}
 					if (src == item2) {
-						activePerson.buy(new Toy("Ballon de foot", 6,17, -15));
+						activePerson.buy(new Toy("Ballon de foot", 6, 17, -15));
 
 					}
 					if (src == item3) {
-						activePerson.buy(new Toy("Jeux de société",10, 20, -8));
+						activePerson.buy(new Toy("Jeux de société", 10, 20, -8));
 
 					}
 					if (src == item4) {
-						activePerson.buy(new Toy("Télévision",100, 25,-5));
+						activePerson.buy(new Toy("Télévision", 100, 25, -5));
 					}
 					if (src == item5) {
-						activePerson.buy(new Toy("PS4",200, 50, -10));
+						activePerson.buy(new Toy("PS4", 200, 50, -10));
 
 					}
-			
 
+					closeMenu();
 				}
 
 			};
@@ -133,29 +128,28 @@ public class BuyableMenu extends JDialog {
 			item3 = new JButton("Médicaments (permet de vous soigner en cas de maladie 10€)");
 			item4 = new JButton("Déodorant (remonte votre hygiène et vous fait sentir bon 5€)");
 			item5 = new JButton("Somnifère (permet de récupérer de l'énergie 15€)");
-buttonsAction = new ActionListener() {
+			buttonsAction = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Object src = e.getSource();
 					if (src == item1) {
-						activePerson.buy(new Other("Livres", 12, -5, -5,0, 0,5,5));
+						activePerson.buy(new Other("Livres", 12, -5, -5, 0, 0, 5, 5));
 
 					}
 					if (src == item2) {
-						activePerson.buy(new Other("Like sur instagram", 30, 10,0, 0, 0,-1, 15));
+						activePerson.buy(new Other("Like sur instagram", 30, 10, 0, 0, 0, -1, 15));
 					}
 					if (src == item3) {
-						activePerson.buy(new Other("Médicament", 10, 0, 0,0, 5,0, 20));
+						activePerson.buy(new Other("Médicament", 10, 0, 0, 0, 5, 0, 20));
 					}
 					if (src == item4) {
-						activePerson.buy(new Other("Déodorant", 5,5, 0, 0, 15,0,0));
+						activePerson.buy(new Other("Déodorant", 5, 5, 0, 0, 15, 0, 0));
 
 					}
 					if (src == item5) {
-						activePerson.buy(new Other("Somnifère", 15, -5, 15, 0,-5,0,-5));
+						activePerson.buy(new Other("Somnifère", 15, -5, 15, 0, -5, 0, -5));
 
 					}
-			
-
+					closeMenu();
 				}
 
 			};
@@ -173,7 +167,7 @@ buttonsAction = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Object src = e.getSource();
 					if (src == item1) {
-						activePerson.buy(new Cloth("T-shirt", 5, 10,10) );
+						activePerson.buy(new Cloth("T-shirt", 5, 10, 10));
 
 					}
 					if (src == item2) {
@@ -188,10 +182,9 @@ buttonsAction = new ActionListener() {
 
 					}
 					if (src == item5) {
-						activePerson.buy(new Cloth("Smoking", 300,50, 50));
+						activePerson.buy(new Cloth("Smoking", 300, 50, 50));
 					}
-		
-
+					closeMenu();
 				}
 
 			};
@@ -207,13 +200,11 @@ buttonsAction = new ActionListener() {
 		mainPanel.add(item4);
 		mainPanel.add(item5);
 
-
 		item1.addActionListener(buttonsAction);
 		item2.addActionListener(buttonsAction);
 		item3.addActionListener(buttonsAction);
 		item4.addActionListener(buttonsAction);
 		item5.addActionListener(buttonsAction);
-	
 
 		add(mainPanel);
 

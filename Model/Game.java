@@ -77,7 +77,7 @@ public class Game implements DeletableObserver {
 		attachPersonToGame(p2);
 		attachPersonToGame(p3);
 		setActivePerson(p1);
-		personalMenu = new PersonalMenu(window, getActivePerson(), this);
+		
 
 		// Map building
 		// A sample of room
@@ -469,6 +469,7 @@ public class Game implements DeletableObserver {
 
 	public void openPersonalMenu() {
 		pauseGame();
+		personalMenu = new PersonalMenu(window, getActivePerson(), this);
 		personalMenu.showMenu();
 	}
 

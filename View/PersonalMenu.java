@@ -29,9 +29,8 @@ public class PersonalMenu extends JDialog {
 	private InventoryMenu inventoryMenu;
 	private CatalogMenu catalogMenu;
 	private Game game;
-	public
 
-	PersonalMenu(Frame parent, Person activePerson, Game game) {
+	public PersonalMenu(Frame parent, Person activePerson, Game game) {
 		super(parent, "Argent:" + activePerson.getMoney(), true);
 
 		setPreferredSize(new Dimension(300, 320));
@@ -63,7 +62,7 @@ public class PersonalMenu extends JDialog {
 				if (src == bank) {
 					// eventualy TODO: open bank
 				} else if (src == inventory) {
-					 inventoryMenu = new InventoryMenu(parent, activePerson, game);
+					inventoryMenu = new InventoryMenu(parent, activePerson, game);
 					inventoryMenu.showMenu();
 				} else if (src == catalog) {
 					catalogMenu = new CatalogMenu(parent, activePerson, game);
