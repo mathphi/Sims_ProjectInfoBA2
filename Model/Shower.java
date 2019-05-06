@@ -40,5 +40,4 @@ public class Shower extends UsableStructure {
 	public GameObject clone() {
 		return (GameObject) new Shower(getPos());
 	}
-
 }

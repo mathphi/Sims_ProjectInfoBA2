@@ -57,8 +57,27 @@ public class EditorPanel extends JPanel {
 		addButtonToCateg(persCateg, "Adulte", "Model.Adult", 2);
 
 		mainPanel.add(Box.createVerticalStrut(2000));
-		
+
 		add(mainPanel, BorderLayout.CENTER);
+		
+		JPanel infoPanel = new JPanel();
+
+		infoPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
+		infoPanel.setLayout(new BorderLayout());
+		
+		JLabel infoLabel = new JLabel(
+				"<html>" +
+				"<b>Clic gauche :</b> Placer l'objet<br>" +
+				"<b>Clic droit :</b> Supprimer l'objet<br>" +
+				"<b>Bouton R :</b> Tourner l'objet<br>" + 
+				"<b>Flèches :</b> Naviguer sur la carte" +
+				"</html>"
+				);
+		infoLabel.setFont(infoLabel.getFont().deriveFont(Font.PLAIN));
+		
+		infoPanel.add(infoLabel, BorderLayout.CENTER);
+		
+		add(infoPanel, BorderLayout.SOUTH);
 	}
 	
 	private JPanel createCategory(JPanel containerPanel, String title) {
