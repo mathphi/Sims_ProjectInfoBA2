@@ -55,7 +55,7 @@ public class Teenager extends Person implements Worker {
 				useEnergy(energyImpact);
 				modifyMoney(salary);
 				modifyMood(-moodImpact);
-				modifyOthersImpression(moodImpact);
+				modifyOthersImpression(Math.abs(moodImpact * 1.5));
 
 				addMessage(
 						String.format("Vous venez de gagner %d€ en travaillant", salary),

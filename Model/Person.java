@@ -482,6 +482,7 @@ public abstract class Person extends GameObject {
 			bladder = 100;
 			modifyHygiene(-50);
 			modifyMood(-20);
+			modifyOthersImpression(-35);
 
 			addMessage(
 					"Vous n'avez pas été aux toilettes à temps... "
@@ -606,31 +607,18 @@ public abstract class Person extends GameObject {
 
 	public void modifyMood(double value) {
 		// Add a random factor to add unpredictable behaviours in the game
-		mood += value + Random.range(0, value / 2.0);
+		mood += value + Random.range(0, value / 5.0);
 
 		// Don't exceed limits
 		mood = Math.max(0, Math.min(mood, 100));
 	}
 
 	public void modifyOthersImpression(double value) {
+		// Add a random factor to add unpredictable behaviours in the game
+		othersImpression += value + Random.range(-value / 10.0, value / 10.0);
 
-		// function that modify the vision of the character
-		double maxVision = 100 - othersImpression; // number of max point
-		if (value > 0) {
-			if (maxVision < value) {
-				// check that the gain of mood is < max
-				value = maxVision;
-			}
-
-			double randomFactor = (Random.range(1, (int) Math.round(Math.log(80))));
-			randomFactor = (1 - Math.pow(Math.E, randomFactor) / 80.0);
-			value = randomFactor * value;
-		} else if (-value > othersImpression) {
-			// check the reduction isn't bigger of the amount of mood available
-			value = -othersImpression;
-		}
-		othersImpression += value;
-
+		// Don't exceed limits
+		othersImpression = Math.max(0, Math.min(othersImpression, 100));
 	}
 
 	public String getName() {
