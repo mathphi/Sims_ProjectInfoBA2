@@ -53,8 +53,9 @@ public abstract class Person extends GameObject {
 	// Use a past time as initial time
 	/*
 	 * WARNING: using this LocalDateTime method is buggy because the Real time
-	 * continues to run when the game is off. So the savegame will not keep the good
-	 * intervals. TODO: This may be good to use the GameTime instead.
+	 * continues to run when the game is off.
+	 * So the savegame will not keep the good intervals.
+	 * TODO: This may be good to use the GameTime instead.
 	 */
 	private LocalDateTime lastSleepTime = LocalDateTime.now().minusDays(1);
 	private LocalDateTime lastNapTime = LocalDateTime.now().minusDays(1);
@@ -331,17 +332,29 @@ public abstract class Person extends GameObject {
 		// answers for the corresponding action
 		if (relationFactor > 0.6) {
 			other.addMessageFrom(this,
-					"C'était vraiment un chouette moment! " + "Tu es hyper sympathique et incroyable merci pour tout!",
+					"C'était vraiment un chouette moment! " +
+					"Tu es hyper sympathique et incroyable merci pour tout!",
 					MsgType.Info);
-		} else if (relationFactor > 0.3) {
-			other.addMessageFrom(this, "C'était vraiment cool d'être avec toi", MsgType.Info);
-		} else if (relationFactor > 0.0) {
-			other.addMessageFrom(this, "Je n'avais rien d'autre à faire mais bon... Content de t'avoir vu",
+		}
+		else if (relationFactor > 0.3) {
+			other.addMessageFrom(this, 
+					"C'était vraiment cool d'être avec toi",
 					MsgType.Info);
-		} else if (relationFactor > -0.5) {
-			other.addMessageFrom(this, "Je me suis ennuyé j'aurais pas du venir", MsgType.Warning);
-		} else {
-			other.addMessageFrom(this, "T'es vraiment pas sympathique, ne me recontacte plus jamais!", MsgType.Problem);
+		}
+		else if (relationFactor > 0.0) {
+			other.addMessageFrom(this,
+					"Je n'avais rien d'autre à faire mais bon... Content de t'avoir vu",
+					MsgType.Info);
+		}
+		else if (relationFactor > -0.5) {
+			other.addMessageFrom(this,
+					"Je me suis ennuyé j'aurais pas du venir",
+					MsgType.Warning);
+		}
+		else {
+			other.addMessageFrom(this,
+					"T'es vraiment pas sympathique, ne me recontacte plus jamais!",
+					MsgType.Problem);
 		}
 	}
 
@@ -399,7 +412,8 @@ public abstract class Person extends GameObject {
 		modifyMood(-moodWeight);
 
 		// TODO: adapted answers for this
-		// automaticAnswer(people, getAppreciationOf(people));
+		addMessage(people.getName() + " n'a pas accepté votre demande", MsgType.Problem);
+		people.addMessage("Vous avez refusé la demande de " + getName(), MsgType.Problem);
 
 		System.out.println(friendList.getOrDefault(people, 0.0));
 	}
@@ -453,8 +467,7 @@ public abstract class Person extends GameObject {
 
 	/**
 	 * In short, he piss... We just have to check if the person piss in a toilet or
-	 * just... on himself. The player will lose hygiene, and mood in the second
-	 * case.
+	 * just... on himself. The player will lose hygiene, and mood in the second case.
 	 */
 	public void emptyBladder(boolean isOnToilet) {
 		if (!isOnToilet) {
