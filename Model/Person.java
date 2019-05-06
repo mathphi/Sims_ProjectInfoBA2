@@ -111,7 +111,12 @@ public abstract class Person extends GameObject {
 
 	// Constructor used when the Person evolves (ie from Kid to Teenager)
 	public Person(Person other) {
-		this(other.getPos(), other.getName(), other.getAge(), other.getGender(), other.getMother(), other.getFather());
+		this(other.getPos(),
+			 other.getName(),
+			 other.getAge(),
+			 other.getGender(),
+			 other.getMother(),
+			 other.getFather());
 
 		money = other.getMoney();
 
@@ -468,7 +473,7 @@ public abstract class Person extends GameObject {
 	}
 
 	/**
-	 * In short, he piss... We just have to check if the person piss in a toilet or
+	 * In short, he pisses... We just have to check if the person pisses in a toilet or
 	 * just... on himself. The player will lose hygiene, and mood in the second case.
 	 */
 	public void emptyBladder(boolean isOnToilet) {
@@ -881,6 +886,13 @@ public abstract class Person extends GameObject {
 		if (useEnergy(10)) {
 			addMessage("Vous avez commencé à prendre une douche", MsgType.Info);
 			activateWashingState(20, 50, ActionType.Shower);
+		}
+	}
+	
+	public void takeBath() {
+		if (useEnergy(15)) {
+			addMessage("Vous êtes en train de prendre un bain", MsgType.Info);
+			activateWashingState(50, 100, ActionType.Shower);
 		}
 	}
 	

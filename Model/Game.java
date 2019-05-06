@@ -149,6 +149,9 @@ public class Game implements DeletableObserver {
 		
 		Shower shower = new Shower(new Point(1, 1));
 		attachObjectToGame(shower);
+		
+		Bath bath = new Bath(new Point(7, 1));
+		attachObjectToGame(bath);
 
 		notifyView();
 	}
@@ -563,8 +566,10 @@ public class Game implements DeletableObserver {
 
 		restorer.closeSaveFile();
 		
-		if (mapPacket == null)
+		if (mapPacket == null) {
+			
 			return;
+		}
 
 		loadGameMapPacket(mapPacket);
 
