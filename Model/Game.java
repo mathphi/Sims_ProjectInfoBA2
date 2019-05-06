@@ -498,8 +498,7 @@ public class Game implements DeletableObserver {
 
 		ObjectSaver saver = new ObjectSaver(path);
 
-		// WARNING: The order is very important and must be the same as the restoring
-		// order !
+		// WARNING: The order is very important and must be the same as the restoring order !
 		saver.addObjectToSave(getGameMapPack());
 		saver.writeSaveToFile();
 	}
@@ -515,16 +514,36 @@ public class Game implements DeletableObserver {
 			return;
 		}
 
+		restoreFromFile(chooser.getSelectedFile().getPath());
+	}
+
+	public void openGame() {
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichier de carte de jeu", "map");
+		chooser.setFileFilter(filter);
+		chooser.setDialogTitle("Ouvrir un fichier de carte de jeu");
+		int returnVal = chooser.showOpenDialog(window);
+
+		if (returnVal != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+
+		restoreFromFile(chooser.getSelectedFile().getPath());
+	}
+	
+	private void restoreFromFile(String filepath) {
 		gameTime.stop();
 		gameTime.cancel();
 
-		ObjectRestorer restorer = new ObjectRestorer(chooser.getSelectedFile().getPath());
+		ObjectRestorer restorer = new ObjectRestorer(filepath);
 
-		// WARNING: The order is very important and must be the same as the saving order
-		// !
+		// WARNING: The order is very important and must be the same as the saving order !
 		GameMapPacket mapPacket = (GameMapPacket) (restorer.readNextObjectFromSave());
 
 		restorer.closeSaveFile();
+		
+		if (mapPacket == null)
+			return;
 
 		loadGameMapPacket(mapPacket);
 

@@ -19,6 +19,7 @@ public class GameMenu extends JDialog {
 	
 	private JButton continueButton;
 	private JButton creatorButton;
+	private JButton openButton;
 	private JButton saveButton;
 	private JButton restoreButton;
 	private JButton exitButton;
@@ -26,7 +27,7 @@ public class GameMenu extends JDialog {
 	public GameMenu(Frame parent, Game game) {
 		super(parent, "Menu principal", true);
 		
-		setPreferredSize(new Dimension(300, 320));
+		setPreferredSize(new Dimension(300, 350));
 		setUndecorated(true); // Avoid the close method from the cross button
 		
 		JPanel mainPanel = new JPanel();
@@ -36,7 +37,8 @@ public class GameMenu extends JDialog {
 		
 		JLabel pausedLabel = new JLabel("Jeu en pause", JLabel.CENTER);
 		continueButton = new JButton("Continuer la partie");
-		creatorButton = new JButton("Créer une partie");
+		creatorButton = new JButton("Créer une carte");
+		openButton = new JButton("Ouvrir une carte");
 		saveButton = new JButton("Enregistrer la partie");
 		restoreButton = new JButton("Charger une partie");
 		exitButton = new JButton("Quitter");
@@ -44,6 +46,7 @@ public class GameMenu extends JDialog {
 		mainPanel.add(pausedLabel);
 		mainPanel.add(continueButton);
 		mainPanel.add(creatorButton);
+		mainPanel.add(openButton);
 		mainPanel.add(saveButton);
 		mainPanel.add(restoreButton);
 		mainPanel.add(exitButton);
@@ -56,6 +59,11 @@ public class GameMenu extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				closeMenu();
 				game.resumeGame();
+			}
+		});
+		openButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				game.openGame();
 			}
 		});
 		saveButton.addActionListener(new ActionListener() {
