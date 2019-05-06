@@ -83,7 +83,7 @@ public class CatalogMenu extends JDialog {
 					}
 				
 				
-				
+				closeMenu();
 			}
 
 		};

@@ -45,11 +45,34 @@ public class InventoryMenu extends JDialog {
 		mainPanel.add(nameLabel);
 		ArrayList<Product> inventoryList = activePerson.getInventory();
 
-		item1 = new JButton("je réfléchis");
-		item2 = new JButton("donc je pense");
+		item1 = new JButton("Vide");
+		item2 = new JButton("Vide");
+		item3 = new JButton("Vide");
+		item4 = new JButton("Vide");
+		item5 = new JButton("Vide");
+
+		int inventorySize = inventoryList.size();
+		if (inventorySize >= 1) {
+			item1 = new JButton(inventoryList.get(0).getName());
+		}
+		if (inventorySize >= 2) {
+			item2 = new JButton(inventoryList.get(1).getName());
+		}
+		if (inventorySize >= 3) {
+			item3 = new JButton(inventoryList.get(2).getName());
+		}
+		if (inventorySize >= 4) {
+			item4 = new JButton(inventoryList.get(3).getName());
+		}
+		if (inventorySize >= 5) {
+			item5 = new JButton(inventoryList.get(4).getName());
+		}
 
 		mainPanel.add(item1);
 		mainPanel.add(item2);
+		mainPanel.add(item3);
+		mainPanel.add(item4);
+		mainPanel.add(item5);
 
 		add(mainPanel);
 
@@ -58,10 +81,16 @@ public class InventoryMenu extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				Object src = e.getSource();
 
-				if (src == item1) {
-					// envoyé au joueur
-				} else if (src == item2) {
-
+				if (src == item1 && inventorySize >= 1) {
+					activePerson.useInventory(inventoryList.get(0));
+				} else if (src == item2 && inventorySize >= 2) {
+					activePerson.useInventory(inventoryList.get(1));
+				} else if (src == item3 && inventorySize >= 3) {
+					activePerson.useInventory(inventoryList.get(2));
+				} else if (src == item4 && inventorySize >= 4) {
+					activePerson.useInventory(inventoryList.get(3));
+				} else if (src == item5 && inventorySize >= 5) {
+					activePerson.useInventory(inventoryList.get(4));
 				}
 
 				closeMenu();
@@ -71,10 +100,11 @@ public class InventoryMenu extends JDialog {
 
 		item1.addActionListener(buttonsAction);
 		item2.addActionListener(buttonsAction);
+		item3.addActionListener(buttonsAction);
+		item4.addActionListener(buttonsAction);
+		item5.addActionListener(buttonsAction);
 
 	}
-
-
 
 	void showMenu() {
 		pack();
