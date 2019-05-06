@@ -48,6 +48,8 @@ public class EditorPanel extends JPanel {
 		addButtonToCateg(mobCateg, "Lit", "Model.Bed", 1);
 		addButtonToCateg(mobCateg, "Fauteuil", "Model.Sofa", 1);
 		addButtonToCateg(mobCateg, "Ordinateur", "Model.Computer", 1);
+		addButtonToCateg(mobCateg, "Douche", "Model.Shower", 1);
+		addButtonToCateg(mobCateg, "Baignoire", "Model.Bath", 1);
 
 		JPanel persCateg = createCategory(mainPanel, "Personnages");
 
@@ -68,12 +70,13 @@ public class EditorPanel extends JPanel {
 		JLabel infoLabel = new JLabel(
 				"<html>" +
 				"<b>Clic gauche :</b> Placer l'objet<br>" +
-				"<b>Clic droit :</b> Supprimer l'objet<br>" +
-				"<b>Bouton R :</b> Tourner l'objet<br>" + 
+				"<b>Clic droit :</b> Supprimer un objet<br>" +
+				"<b>Ctrl+Clic :</b> Placement multiple<br>" +
+				"<b>Bouton R :</b> Faire pivoter l'objet<br>" + 
 				"<b>Flèches :</b> Naviguer sur la carte" +
 				"</html>"
 				);
-		infoLabel.setFont(infoLabel.getFont().deriveFont(Font.PLAIN));
+		infoLabel.setFont(infoLabel.getFont().deriveFont(Font.PLAIN, (float) 14.0));
 		
 		infoPanel.add(infoLabel, BorderLayout.CENTER);
 		
@@ -82,16 +85,16 @@ public class EditorPanel extends JPanel {
 	
 	private JPanel createCategory(JPanel containerPanel, String title) {
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(0, 1, 0, 0));
-		
+		panel.setLayout(new BorderLayout());
+
 		JLabel categLabel = new JLabel(title);
 		categLabel.setBorder(new EmptyBorder(20, 0, 10, 0));
 		categLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		panel.add(categLabel);
+		panel.add(categLabel, BorderLayout.NORTH);
 		
 		JPanel categButtons = new JPanel();
 		categButtons.setLayout(new GridLayout(0, 3, 10, 10));
-		panel.add(categButtons);
+		panel.add(categButtons, BorderLayout.CENTER);
 
 		containerPanel.add(panel);
 		
