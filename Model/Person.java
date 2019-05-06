@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import Model.Directable.Direction;
 import Products.Nourriture;
 import Products.Product;
 import Products.Toy;
@@ -479,12 +480,15 @@ public abstract class Person extends GameObject {
 	public void emptyBladder(boolean isOnToilet) {
 		if (!isOnToilet) {
 			bladder = 100;
-
-			addMessage("Vous n'avez pas été aux toilettes à temps... Vous êtes maintenant très sale !",
-					MsgType.Problem);
 			modifyHygiene(-50);
 			modifyMood(-20);
-		} else {
+
+			addMessage(
+					"Vous n'avez pas été aux toilettes à temps... "
+					+ "Vous êtes maintenant très sale !",
+					MsgType.Problem);
+		}
+		else {
 			Duration d = Duration.between(getLastActionTime(ActionType.Toilet), LocalDateTime.now());
 
 			// Don't block the Person every time he pass at proximity of the Toilet...
@@ -945,5 +949,36 @@ public abstract class Person extends GameObject {
 			}
 		}
 
+	}
+	
+	public void rotateToObjectDirection(GameObject dest) {
+		Point from_pos = this.getPos();
+		Point to_pos = dest.getPos();
+		
+		// Compute with the position of the middle of the object
+		from_pos = from_pos.add(getSize().getWidth()/2.0, getSize().getHeight()/2.0);
+		to_pos = to_pos.add(dest.getSize().getWidth()/2.0, dest.getSize().getHeight()/2.0);
+
+		double dx = to_pos.getX() - from_pos.getX();
+		double dy = to_pos.getY() - from_pos.getY();
+		
+		Direction d = Direction.EAST;
+		
+		// Get the main direction
+		if (Math.abs(dx) > Math.abs(dy)) {
+			if (dx > 0) {
+				d = Direction.EAST;
+			} else {
+				d = Direction.WEST;
+			}
+		} else {
+			if (dy > 0) {
+				d = Direction.SOUTH;
+			} else {
+				d = Direction.NORTH;
+			}
+		}
+		
+		rotate(d);
 	}
 }

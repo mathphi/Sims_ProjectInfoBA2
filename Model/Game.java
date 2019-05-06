@@ -669,33 +669,6 @@ public class Game implements DeletableObserver {
 		mainMenu.setCreatorAction(a);
 	}
 	
-	public Direction getDirectionToObject(GameObject from, GameObject to) {
-		Point from_pos = from.getPos();
-		Point to_pos = to.getPos();
-
-		double dx = to_pos.getX() - from_pos.getX();
-		double dy = to_pos.getY() - from_pos.getY();
-		
-		Direction d = Direction.EAST;
-		
-		// Get the main direction
-		if (Math.abs(dx) > Math.abs(dy)) {
-			if (dx > 0) {
-				d = Direction.EAST;
-			} else {
-				d = Direction.WEST;
-			}
-		} else {
-			if (dy > 0) {
-				d = Direction.SOUTH;
-			} else {
-				d = Direction.NORTH;
-			}
-		}
-		
-		return d;
-	}
-	
 	public void interractWith(Person other) {
 		// Don't interact with a sleeping or working people...
 		if (other.isLocked() || activePerson.isLocked()) {
@@ -709,8 +682,8 @@ public class Game implements DeletableObserver {
 		}
 		
 		// Rotate Persons face-to-face
-		activePerson.rotate(getDirectionToObject(activePerson, other));
-		other.rotate(getDirectionToObject(other, activePerson));
+		activePerson.rotateToObjectDirection(other);
+		other.rotateToObjectDirection(activePerson);
 		
 		notifyView();
 		

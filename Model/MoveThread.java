@@ -76,7 +76,8 @@ public class MoveThread implements Runnable {
 						p.setPos(subPos);
 						p.refresh();
 							
-						standby(180 / STEPS);
+						// The speed varies with the energy of the player
+						standby((int)(200 - 75 * p.getEnergy()) / STEPS );
 					}
 					
 					// Set an integer endPos to ensure the Person is aligned with the grid

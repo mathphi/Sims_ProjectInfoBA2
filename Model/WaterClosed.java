@@ -27,7 +27,9 @@ public class WaterClosed extends GameObject{
 	public void proximityEvent(GameObject o) {
 		// Empty bladder of incoming person
 		if (o instanceof Person) {
-			((Person)o).emptyBladder(true);
+			Person p = (Person) o;
+			p.rotateToObjectDirection(this);
+			p.emptyBladder(true);
 		}
 	}
 	

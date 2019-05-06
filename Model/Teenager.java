@@ -58,7 +58,7 @@ public class Teenager extends Person implements Worker {
 				modifyOthersImpression(moodImpact);
 
 				addMessage(
-						String.format("Vous venez de gagner %d pièces en travaillant", salary),
+						String.format("Vous venez de gagner %d€ en travaillant", salary),
 						MsgType.Info);
 			}
 		});

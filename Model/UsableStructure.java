@@ -31,6 +31,9 @@ public abstract class UsableStructure extends GameObject {
 			return;
 		
 		Person p = (Person) o;
+		p.rotateToObjectDirection(this);
+		p.refresh();
+		
 		boolean occupied = checkOccupied();
 		
 		// The bed is already occupied by another Person
