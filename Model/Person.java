@@ -35,11 +35,14 @@ public abstract class Person extends GameObject {
 	public static enum InteractionType {
 		None, Discuss, Play, Invite, Drink, Kiss, Marry
 	}
+	
+	public static enum ActionType {
+		Sleep, Nap, Toilet, Shower, Bath, Work
+	}
 
 	private static Size SIZE = new Size(2, 2);
 
 	private boolean isActivePerson;
-	private boolean isSleeping = false;
 	private boolean isLocked = false;
 
 	// general information
@@ -53,12 +56,12 @@ public abstract class Person extends GameObject {
 	// Use a past time as initial time
 	/*
 	 * WARNING: using this LocalDateTime method is buggy because the Real time
-	 * continues to run when the game is off. So the savegame will not keep the good
-	 * intervals. TODO: This may be good to use the GameTime instead.
+	 * continues to run when the game is off.
+	 * So the savegame will not keep the good intervals.
+	 * TODO: This may be good to use the GameTime instead.
 	 */
-	private LocalDateTime lastSleepTime = LocalDateTime.now().minusDays(1);
-	private LocalDateTime lastNapTime = LocalDateTime.now().minusDays(1);
-	private LocalDateTime lastToiletTime = LocalDateTime.now().minusDays(1);
+	private HashMap<ActionType,LocalDateTime> lastActionsTime = 
+			new HashMap<Person.ActionType,LocalDateTime>();
 
 	// visible properties, if = 100 no need
 	protected double energy;
@@ -331,17 +334,29 @@ public abstract class Person extends GameObject {
 		// answers for the corresponding action
 		if (relationFactor > 0.6) {
 			other.addMessageFrom(this,
-					"C'était vraiment un chouette moment! " + "Tu es hyper sympathique et incroyable merci pour tout!",
+					"C'était vraiment un chouette moment! " +
+					"Tu es hyper sympathique et incroyable merci pour tout!",
 					MsgType.Info);
-		} else if (relationFactor > 0.3) {
-			other.addMessageFrom(this, "C'était vraiment cool d'être avec toi", MsgType.Info);
-		} else if (relationFactor > 0.0) {
-			other.addMessageFrom(this, "Je n'avais rien d'autre à faire mais bon... Content de t'avoir vu",
+		}
+		else if (relationFactor > 0.3) {
+			other.addMessageFrom(this, 
+					"C'était vraiment cool d'être avec toi",
 					MsgType.Info);
-		} else if (relationFactor > -0.5) {
-			other.addMessageFrom(this, "Je me suis ennuyé j'aurais pas du venir", MsgType.Warning);
-		} else {
-			other.addMessageFrom(this, "T'es vraiment pas sympathique, ne me recontacte plus jamais!", MsgType.Problem);
+		}
+		else if (relationFactor > 0.0) {
+			other.addMessageFrom(this,
+					"Je n'avais rien d'autre à faire mais bon... Content de t'avoir vu",
+					MsgType.Info);
+		}
+		else if (relationFactor > -0.5) {
+			other.addMessageFrom(this,
+					"Je me suis ennuyé j'aurais pas du venir",
+					MsgType.Warning);
+		}
+		else {
+			other.addMessageFrom(this,
+					"T'es vraiment pas sympathique, ne me recontacte plus jamais!",
+					MsgType.Problem);
 		}
 	}
 
@@ -399,7 +414,8 @@ public abstract class Person extends GameObject {
 		modifyMood(-moodWeight);
 
 		// TODO: adapted answers for this
-		// automaticAnswer(people, getAppreciationOf(people));
+		addMessage(people.getName() + " n'a pas accepté votre demande", MsgType.Problem);
+		people.addMessage("Vous avez refusé la demande de " + getName(), MsgType.Problem);
 
 		System.out.println(friendList.getOrDefault(people, 0.0));
 	}
@@ -453,8 +469,7 @@ public abstract class Person extends GameObject {
 
 	/**
 	 * In short, he piss... We just have to check if the person piss in a toilet or
-	 * just... on himself. The player will lose hygiene, and mood in the second
-	 * case.
+	 * just... on himself. The player will lose hygiene, and mood in the second case.
 	 */
 	public void emptyBladder(boolean isOnToilet) {
 		if (!isOnToilet) {
@@ -465,13 +480,13 @@ public abstract class Person extends GameObject {
 			modifyHygiene(-50);
 			modifyMood(-20);
 		} else {
-			Duration d = Duration.between(lastToiletTime, LocalDateTime.now());
+			Duration d = Duration.between(getLastActionTime(ActionType.Toilet), LocalDateTime.now());
 
 			// Don't block the Person every time he pass at proximity of the Toilet...
 			if (d.getSeconds() < 20)
 				return;
 
-			lastToiletTime = LocalDateTime.now();
+			resetLastActionTime(ActionType.Toilet);
 
 			setLocked(true);
 
@@ -508,6 +523,26 @@ public abstract class Person extends GameObject {
 
 		// Don't exceed 100 pts of energy
 		energy = Math.min(100, energy);
+	}
+
+	/**
+	 * This function take care of the energy to compute the hygiene.
+	 * A random factor is also applied.
+	 */
+	public void restoreHygiene(int hygieneFactor) {
+		// 4/5 of the energyFactor is a computed gain, 1/5 is a random factor
+		double gain = getEnergy() * (hygieneFactor * 4.0 / 5.0);
+		double randomFactor = Random.range((hygieneFactor / 10.0), (hygieneFactor / 5.0));
+
+		double total = gain + randomFactor;
+
+		// Get a total gain of at least 10
+		total = Math.max(10, total);
+
+		hygiene += total;
+
+		// Don't exceed 100 pts of hygiene
+		hygiene = Math.min(100, hygiene);
 	}
 
 	/**
@@ -801,56 +836,73 @@ public abstract class Person extends GameObject {
 		return null;
 	}
 
-	private void setLastSleepTime(LocalDateTime localDateTime) {
-		lastSleepTime = LocalDateTime.now();
+	public void resetLastActionTime(ActionType a) {
+		lastActionsTime.put(a, LocalDateTime.now());
 	}
-
-	public LocalDateTime getLastSleepTime() {
-		return lastSleepTime;
+	
+	public LocalDateTime getLastActionTime(ActionType a) {
+		return lastActionsTime.getOrDefault(a, LocalDateTime.now().minusDays(1));
 	}
-
-	private void setLastNapTime(LocalDateTime localDateTime) {
-		lastNapTime = LocalDateTime.now();
-	}
-
-	public LocalDateTime getLastNapTime() {
-		return lastNapTime;
-	}
-
+	
 	public void sleep() {
 		addMessage("Bonne nuit, vous êtes maintenant endormi", MsgType.Info);
 
-		setLastSleepTime(LocalDateTime.now());
-		activateSleepState(60, 100);
+		activateSleepState(60, 100, ActionType.Sleep);
 	}
 
 	public void repose() {
 		addMessage("Bonne sieste, reposez-vous bien", MsgType.Info);
 
-		setLastNapTime(LocalDateTime.now());
-		activateSleepState(20, 40);
+		activateSleepState(20, 40, ActionType.Nap);
 	}
 
-	private void activateSleepState(int duration, int energyFactor) {
-		// Mark Person as sleeping (prevent movements,...)
-		isSleeping = true;
+	private void activateSleepState(int duration, int energyFactor, ActionType type) {
+		if (type != ActionType.Nap && type != ActionType.Sleep) {
+			throw new IllegalArgumentException("Bad sleep state type");
+		}
+		
+		// Mark Person as locked (prevent movements,...)
 		setLocked(true);
 
 		WaiterThread.wait(duration, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				restoreEnergy(energyFactor);
+				resetLastActionTime(type);
 
-				isSleeping = false;
 				setLocked(false);
 
 				addMessage("Vous vous êtes reposé, vous avez récupéré de l'énergie", MsgType.Info);
 			}
 		});
 	}
+	
+	public void takeShower() {
+		if (useEnergy(10)) {
+			addMessage("Vous avez commencé à prendre une douche", MsgType.Info);
+			activateWashingState(20, 50, ActionType.Shower);
+		}
+	}
+	
+	private void activateWashingState(int duration, int hygieneFactor, ActionType type) {
+		if (type != ActionType.Shower && type != ActionType.Bath) {
+			throw new IllegalArgumentException("Bad washing state type");
+		}
+		
+		// Mark Person as locked (prevent movements,...)
+		setLocked(true);
+		
+		WaiterThread.wait(duration, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				restoreHygiene(hygieneFactor);
+				resetLastActionTime(type);
 
-	public boolean isSleeping() {
-		return isSleeping;
+				setLocked(false);
+
+				addMessage("Vous vous êtes lavé, vous avez récupéré de l'hygiène", MsgType.Info);
+			}
+		});
 	}
 
 	public void setLocked(boolean locked) {

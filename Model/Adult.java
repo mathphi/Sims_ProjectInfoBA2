@@ -31,16 +31,6 @@ public class Adult extends Person implements Worker {
 		// TODO: define a random maxAge for an adult after which he dies ?
 		return (getAge() > 90);
 	}
-	
-	@Override
-	public void resetLastWorkTime() {
-		lastWorkTime = LocalDateTime.now();
-	}
-	
-	@Override
-	public LocalDateTime getLastWorkTime() {
-		return lastWorkTime;
-	}
 
 	@Override
 	public boolean isWorking() {
@@ -57,7 +47,7 @@ public class Adult extends Person implements Worker {
 			public void actionPerformed(ActionEvent e) {
 				isWorking = false;
 				setLocked(false);
-				resetLastWorkTime();
+				resetLastActionTime(ActionType.Work);
 				
 				useEnergy(energyImpact);
 				modifyMoney(salary);

@@ -38,7 +38,7 @@ public abstract class GameObject implements Directable, Serializable {
 	public Size getSize() {
 		Size s = rect.getSize();
 
-		if (direction == Direction.NORTH || direction == Direction.SOUTH) {
+		if (direction == Direction.EAST || direction == Direction.WEST) {
 			s = s.permuted();
 		}
 
@@ -48,7 +48,7 @@ public abstract class GameObject implements Directable, Serializable {
 	public Rect getRect() {
 		Rect r = rect;
 
-		if (direction == Direction.NORTH || direction == Direction.SOUTH) {
+		if (direction == Direction.EAST || direction == Direction.WEST) {
 			r = r.permuted();
 		}
 
@@ -68,7 +68,7 @@ public abstract class GameObject implements Directable, Serializable {
 	}
 
 	public void setSize(Size sz) {
-		if (direction == Direction.NORTH || direction == Direction.SOUTH) {
+		if (direction == Direction.EAST || direction == Direction.WEST) {
 			sz = sz.permuted();
 		}
 

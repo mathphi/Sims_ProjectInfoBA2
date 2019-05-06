@@ -142,10 +142,13 @@ public class Game implements DeletableObserver {
 
 		Sofa sofa = new Sofa(new Point(23, 1));
 		attachObjectToGame(sofa);
-		
+
 		Computer computer = new Computer(new Point(32, 6));
-		computer.rotate(Direction.SOUTH);
+		computer.rotate(Direction.WEST);
 		attachObjectToGame(computer);
+		
+		Shower shower = new Shower(new Point(1, 1));
+		attachObjectToGame(shower);
 
 		notifyView();
 	}
@@ -402,6 +405,7 @@ public class Game implements DeletableObserver {
 			people.setActivePerson(people == p);
 		}
 
+		centerViewOnPlayer();
 		notifyView();
 	}
 
