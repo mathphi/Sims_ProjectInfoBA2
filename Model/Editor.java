@@ -119,8 +119,40 @@ public class Editor {
 				}
 			}
 		});
+
+		addMinimapObstacleArtefact();
 		
 		notifyView();
+	}
+
+	/**
+	 *  This function adds an invisible obstacle at the position of the bottom left
+	 *  corner of the map to avoid to move objects under the minimap.
+	 */
+	private void addMinimapObstacleArtefact() {
+		Rect minimapRect = map.getMinimapRect();
+
+		// Compute the size and the position of the minimap in the map limit
+		int wm = minimapRect.getWidth() / map.getBlockSize().getWidth();
+		int hm = minimapRect.getHeight() / map.getBlockSize().getHeight();
+		
+		double xm = 0 ;
+		double ym = map.getMapSize().getHeight() - hm ;
+		
+		// Add the invisible obstacle to the game
+		addObject(new InvisibleObstacle(new Point(xm, ym), new Size(wm, hm)));
+	}
+	
+	public Size getMapBlockSize() {
+		return map.getBlockSize();
+	}
+	
+	public Point getMapViewOffset() {
+		return map.getViewOffset();
+	}
+
+	public Rect getMinimapRect() {
+		return map.getMinimapRect();
 	}
 
 	private void notifyView() {
@@ -144,8 +176,9 @@ public class Editor {
 		population = new ArrayList<Person>();
 		activePerson = null;
 		
-		map.setObjects(objects);
+		addMinimapObstacleArtefact();
 		
+		map.setObjects(objects);
 		map.resetViewOffset();
 		
 		notifyView();
@@ -163,14 +196,10 @@ public class Editor {
 		this.isActive = false;
 	}
 	
-	public Size getMapBlockSize() {
-		return map.getBlockSize();
-	}
-	
 	public void mouseLeftClickEvent(Point pos) {
 		if (currentPlacing != null) {
 			if (currentPlacing.getPos().getDistance(pos) > 2.0 ||
-				!map.getRect().contains(currentPlacing.getPos()))
+				!map.getViewRect().contains(currentPlacing.getPos()))
 			{
 				// Don't place the object if it is far the mouse pointer
 				return;
@@ -379,7 +408,7 @@ public class Editor {
 		for (int i = 0 ; i < objects.size() ; i++) {
 			GameObject o = objects.get(i);
 			
-			if (!map.getRect().contains(o.getPos())) {
+			if (!map.getViewRect().contains(o.getPos())) {
 				objects.remove(i);
 				i--;
 			}

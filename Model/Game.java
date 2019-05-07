@@ -56,6 +56,22 @@ public class Game implements DeletableObserver {
 
 		gameTime = new GameTime(this, 0);
 
+		/*
+		 *  Add an invisible obstacle at the position of the bottom left corner of
+		 *  the map to avoid to move objects under the minimap.
+		 */
+		Rect minimapRect = map.getMinimapRect();
+
+		// Compute the size and the position of the minimap in the map limit
+		int wm = minimapRect.getWidth() / map.getBlockSize().getWidth();
+		int hm = minimapRect.getHeight() / map.getBlockSize().getHeight();
+		
+		double xm = 0 ;
+		double ym = mapSize.getHeight() - hm ;
+		
+		// Add the invisible obstacle to the game
+		attachObjectToGame(new InvisibleObstacle(new Point(xm, ym), new Size(wm, hm)));
+		
 		window.addGameMenuButtonAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				openGameMenu();
@@ -165,6 +181,10 @@ public class Game implements DeletableObserver {
 		return map.getViewOffset();
 	}
 
+	public Rect getMinimapRect() {
+		return map.getMinimapRect();
+	}
+	
 	public void playerMoveEvent(Person p) {
 		ArrayList<GameObject> obj_lst = p.getObjectsAround();
 
@@ -283,14 +303,14 @@ public class Game implements DeletableObserver {
 
 		// Check if the nextPos is in the map
 		Rect mapRect = new Rect(new Point(0, 0), mapSize);
-		unreachable = !mapRect.contains(pos);
+		Rect nextRect = new Rect(pos, pers.getSize());
+		
+		unreachable = !mapRect.contains(nextRect);
 
 		// Check if the nextPos overlaps any obstacle
 		for (GameObject object : objects) {
 			if (object == (GameObject) pers)
 				continue;
-			
-			Rect nextRect = new Rect(pos, pers.getSize());
 
 			if (object.isObstacle() && object.getRect().overlaps(nextRect)) {
 				unreachable = true;

@@ -39,6 +39,9 @@ public class Adult extends Person implements Worker {
 
 	@Override
 	public void work(int energyImpact, int moodImpact, int salary, int duration) {
+		if (useEnergy(energyImpact))
+			return;
+		
 		isWorking = true;
 		setLocked(true);
 		
@@ -49,7 +52,6 @@ public class Adult extends Person implements Worker {
 				setLocked(false);
 				resetLastActionTime(ActionType.Work);
 				
-				useEnergy(energyImpact);
 				modifyMoney(salary);
 				modifyMood(-moodImpact);
 				modifyOthersImpression(Math.abs(moodImpact * 1.5));

@@ -15,19 +15,22 @@ public class GameMouse extends MouseController implements MouseListener, MouseMo
     public GameMouse(Game game) {
         this.game = game;
     }
-    
     private Point getMapEventPos(MouseEvent e) {
     	Size blocSize = game.getMapBlockSize();
     	Point offset = game.getMapViewOffset();
     	return new Point(
-    			(e.getX() + offset.getX()) / blocSize.getWidth(), 
-    			(e.getY() + offset.getY()) / blocSize.getHeight());
+    			(int)((e.getX() + offset.getX()) / blocSize.getWidth()), 
+    			(int)((e.getY() + offset.getY()) / blocSize.getHeight()));
     }
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		synchronized(game) {
 			if (!game.isRunning())
+				return;
+			
+			//TODO: we don't care of any mouseEvent from the minimap for now
+			if (game.getMinimapRect().contains(e.getX(), e.getY()))
 				return;
 			
 			// Left click

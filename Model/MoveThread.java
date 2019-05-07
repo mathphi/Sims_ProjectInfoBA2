@@ -61,11 +61,17 @@ public class MoveThread implements Runnable {
 					Point deltaPos = itinerary.get(0);
 					Point nextPos = initPos.add(deltaPos);
 					
-					if (targetPos != null && g.isTargetUnreachable(p, nextPos)) {
-						// Recompute the itinerary if the next position is blocked.
-						// This can happen if another object move also on the map.
-						itinerary = (new AStar(g.getMapSize(), p, targetPos, g.getGameObjects())).getItinerary();
-						continue;
+					if (g.isTargetUnreachable(p, nextPos)) {
+						if (targetPos != null) {
+							// Recompute the itinerary if the next position is blocked.
+							// This can happen if another object move also on the map.
+							itinerary = (new AStar(g.getMapSize(), p, targetPos, g.getGameObjects())).getItinerary();
+							continue;
+						}
+						else {
+							// If we are not in itinerary mode -> don't go to the next point
+							break;
+						}
 					}
 					
 					p.rotate(deltaPos);

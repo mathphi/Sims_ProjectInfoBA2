@@ -24,6 +24,22 @@ public class Rect implements Serializable {
 	public Size getSize() {
 		return size;
 	}
+
+	public double getX() {
+		return point.getX();
+	}
+	
+	public double getY() {
+		return point.getY();
+	}
+
+	public int getWidth() {
+		return size.getWidth();
+	}
+
+	public int getHeight() {
+		return size.getHeight();
+	}
 	
 	public void setPos(Point p) {
 		point = p;
@@ -51,6 +67,19 @@ public class Rect implements Serializable {
 	}
 	
 	/**
+	 * Return true if the given coordinates are in the Rect
+	 * 
+	 * @param x
+	 * @param y
+	 * The coordinates of the point to check the presence
+	 * @return
+	 */
+	public boolean contains(double x, double y) {
+		return (x >= topLeft().getX() && x < bottomRight().getX() &&
+				y >= topLeft().getY() && y < bottomRight().getY());
+	}
+	
+	/**
 	 * Return true if the given point is in the Rect
 	 * 
 	 * @param p
@@ -71,9 +100,9 @@ public class Rect implements Serializable {
 	 */
 	public boolean contains(Rect r) {
 		return (r.topLeft().getX()     >= topLeft().getX()     &&
-				r.bottomRight().getX() <  bottomRight().getX() &&
+				r.bottomRight().getX() <=  bottomRight().getX() &&
 				r.topLeft().getY() 	   >= topLeft().getY()     &&
-				r.bottomRight().getY() <  bottomRight().getY());
+				r.bottomRight().getY() <=  bottomRight().getY());
 	}
 	
 	/**
@@ -91,7 +120,7 @@ public class Rect implements Serializable {
 	}
 
 	public String toString() {
-		return String.format("Rect(%d, %d, %dx%d)",
+		return String.format("Rect(%.2f, %.2f, %dx%d)",
 				point.getX(), point.getY(), size.getWidth(), size.getHeight());
 	}
 }

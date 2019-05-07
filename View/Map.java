@@ -6,9 +6,12 @@ import Tools.Point;
 import Tools.Rect;
 import Tools.Size;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
@@ -21,7 +24,9 @@ public class Map extends JPanel {
 	private static final long serialVersionUID = 1282569928891942835L;
 	
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
-    private final Size MAP_SIZE = new Size(80, 80); //TODO: this may be a setting in editor !!!
+	private final Size MINIMAP_SIZE = new Size(250, 250);
+	private final int MINIMAP_MARGIN = 5;
+    private final Size MAP_SIZE = new Size(80, 80); //TODO: this MUST be a setting in editor !!!
     private final int BLOC_SIZE = 20;
     
     private boolean isGridVisible = false;
@@ -33,7 +38,7 @@ public class Map extends JPanel {
         this.setPreferredSize(new Dimension(MAP_SIZE.getWidth()*BLOC_SIZE, MAP_SIZE.getHeight()*BLOC_SIZE));
     }
     
-    public Rect getRect() {
+    public Rect getViewRect() {
     	return new Rect(0, 0, (int)getSize().getWidth(), (int)getSize().getHeight());
     }
     
@@ -80,6 +85,35 @@ public class Map extends JPanel {
     public Point getViewOffset() {
     	return viewOffset;
     }
+
+    public Point getMinimapOffset() {
+    	// Position for the minimap
+    	double minimapOffsetX = MINIMAP_MARGIN;
+    	double minimapOffsetY = getVisibleRect().getHeight() - MINIMAP_SIZE.getHeight() - MINIMAP_MARGIN;
+    	
+    	return new Point(minimapOffsetX, minimapOffsetY);
+    }
+    
+    public Rect getMinimapRect() {
+    	Point pos = getMinimapOffset().add(new Point(-MINIMAP_MARGIN,-MINIMAP_MARGIN));
+    	
+    	return new Rect(pos, MINIMAP_SIZE.add(2*MINIMAP_MARGIN, 2*MINIMAP_MARGIN));
+    }
+    
+    private double getMinimapScale() {
+		// Get map total size
+		int w = getMapSize().getWidth() * getBlockSize().getWidth();
+		int h = getMapSize().getHeight() * getBlockSize().getHeight();
+		
+		// Compute scale
+    	double hscale = (double) MINIMAP_SIZE.getWidth() / w;
+    	double vscale = (double) MINIMAP_SIZE.getHeight() / h;
+
+    	// Use the same scale h&v to keep aspect ratio
+    	double scale = Math.min(hscale, vscale);
+
+    	return scale;
+    }
     
     public void setGridVisible(boolean visible) {
     	isGridVisible = visible;
@@ -97,16 +131,8 @@ public class Map extends JPanel {
             }
         }
     }
-
-    public void paint(Graphics g) {
-    	g.translate(-viewOffset.getXInt(), -viewOffset.getYInt());
-    	
-		super.paintComponent(g);
-		
-		if (isGridVisible) {
-			paintGrid(g);
-		}
-
+    
+    public void generateMap(Graphics g) {
         // Separate GroundObject from others to avoid to paint ground objects over the other objects
         ArrayList<GameObject> groundObjects = new ArrayList<GameObject>();
         ArrayList<GameObject> otherObjects = new ArrayList<GameObject>();
@@ -129,6 +155,50 @@ public class Map extends JPanel {
         for (GameObject o : ordered) {
         	o.paint(g, BLOC_SIZE);
         }
+    }
+
+    public void paint(Graphics g) {
+    	Graphics2D g2d = (Graphics2D) g;
+    	
+    	// Translate the map to simulate a scrolling
+    	g2d.translate(-viewOffset.getXInt(), -viewOffset.getYInt());
+    	
+    	// Paint the map at full size
+    	super.paintComponent(g2d);
+    	
+    	// Paint the grid if needed (for editor)
+		if (isGridVisible) {
+			paintGrid(g);
+		}
+		
+		// Paint the objects
+		generateMap(g2d);
+
+		double scale = getMinimapScale();
+		
+    	// Position for the minimap
+    	double minimapOffsetX = getMinimapOffset().getX();
+    	double minimapOffsetY = getMinimapOffset().getY();
+    	
+    	Rect r = getMinimapRect();
+
+    	g2d.translate(viewOffset.getXInt(), viewOffset.getYInt());
+    	
+    	Stroke oldStroke = g2d.getStroke();
+    	g2d.setStroke(new BasicStroke(2));
+    	
+    	// Paint the minimap rectangle
+    	g2d.setColor(Color.LIGHT_GRAY);
+    	g2d.fillRect((int)r.getX(), (int)r.getY(), r.getWidth(), r.getHeight());
+    	g2d.setColor(Color.BLACK);
+    	g2d.drawRect((int)r.getX(), (int)r.getY(), r.getWidth(), r.getHeight());
+    	
+    	g2d.setStroke(oldStroke);
+
+    	// Paint the minimap
+    	g2d.translate(minimapOffsetX, minimapOffsetY);
+    	g2d.scale(scale, scale);
+		generateMap(g2d);
     }
 
     public void setObjects(ArrayList<GameObject> objects) {
