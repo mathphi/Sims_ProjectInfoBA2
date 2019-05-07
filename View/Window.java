@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -28,7 +30,6 @@ public class Window extends JFrame {
 	private JPanel borderPanel;
 	private JPanel gameButtonPanel;
 	private JPanel editorButtonPanel;
-
 	
 	private JButton gameMenuButton;
 	private JButton friendListButton;
@@ -90,8 +91,10 @@ public class Window extends JFrame {
 		editorMenuButton = new JButton("Menu");
 		editorButtonPanel.add(editorMenuButton);
 
-		// Disable focus to avoid the loss of focus for map, resulting in KeyListener
-		// not working
+		/*
+		 *  Disable focus to avoid the loss of focus for map,
+		 *  resulting in KeyListener not working.
+		 */
 		gameMenuButton.setFocusable(false);
 		editorMenuButton.setFocusable(false);
 		friendListButton.setFocusable(false);
@@ -105,6 +108,14 @@ public class Window extends JFrame {
 		setLayout(new BorderLayout());
 		add(mapView, BorderLayout.CENTER);
 		add(borderPanel, BorderLayout.EAST);
+		
+		editorPanel.addGridCheckboxActionListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				map.setGridVisible(e.getStateChange() == ItemEvent.SELECTED);
+				map.redraw();
+			}
+		});
 
 		setVisible(true);
 	}
@@ -166,8 +177,10 @@ public class Window extends JFrame {
 		if (this.msgZone.isVisible())
 			this.msgZone.repaint();
 
-		if (this.editorPanel.isVisible())
+		if (this.editorPanel.isVisible()) {
 			this.editorPanel.repaint();
+			this.editorPanel.setMapSizeLabel(map.getMapSize());
+		}
 		
 		if (this.gameButtonPanel.isVisible())
 			this.gameButtonPanel.repaint();

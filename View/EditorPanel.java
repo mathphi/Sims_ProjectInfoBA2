@@ -6,19 +6,27 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import Tools.Size;
 
 public class EditorPanel extends JPanel {
 	private static final long serialVersionUID = -1396817768662844134L;
 	
 	private ArrayList<ActionListener> actionListeners = new ArrayList<ActionListener>();
+	private JLabel mapSizeLabel;
+	private JCheckBox gridCheckbox;
 	
 	public EditorPanel() {
 		setLayout(new BorderLayout());
@@ -27,7 +35,17 @@ public class EditorPanel extends JPanel {
 
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
+		
+		JPanel labelPanel = new JPanel();
+		labelPanel.setLayout(new BorderLayout());
+		
+		mapSizeLabel = new JLabel("Taille de la carte : 0x0");
+		mapSizeLabel.setBorder(new EmptyBorder(20, 0, 10, 0));
+		mapSizeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		labelPanel.add(mapSizeLabel, BorderLayout.NORTH);
+		
+		mainPanel.add(labelPanel);
+		
 		JPanel mapCateg = createCategory(mainPanel, "Éléments de terrain");
 
 		// Event id 0 is for « add ground object to map » action
@@ -58,6 +76,18 @@ public class EditorPanel extends JPanel {
 		addButtonToCateg(persCateg, "Ado", "Model.Teenager", 2);
 		addButtonToCateg(persCateg, "Adulte", "Model.Adult", 2);
 
+		JPanel checkboxPanel = new JPanel();
+		checkboxPanel.setBorder(new EmptyBorder(20, 0, 10, 0));
+		checkboxPanel.setLayout(new BorderLayout());
+
+		gridCheckbox = new JCheckBox("Afficher la grille");
+		gridCheckbox.setSelected(true);
+		gridCheckbox.setBorder(new EmptyBorder(20, 0, 10, 0));
+
+		checkboxPanel.add(new JSeparator(SwingConstants.HORIZONTAL), BorderLayout.NORTH);
+		checkboxPanel.add(gridCheckbox, BorderLayout.CENTER);
+
+		mainPanel.add(checkboxPanel);
 		mainPanel.add(Box.createVerticalStrut(2000));
 
 		add(mainPanel, BorderLayout.CENTER);
@@ -127,5 +157,16 @@ public class EditorPanel extends JPanel {
 	
 	public void addPlacementActionListener(ActionListener a) {
 		actionListeners.add(a);
+	}
+	
+	public void addGridCheckboxActionListener(ItemListener l) {
+		gridCheckbox.addItemListener(l);
+	}
+	
+	public void setMapSizeLabel(Size mapSize) {
+		mapSizeLabel.setText(
+				String.format("Taille de la carte : %dx%d",
+						mapSize.getWidth(),
+						mapSize.getHeight()));
 	}
 }

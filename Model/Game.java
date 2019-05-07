@@ -41,7 +41,6 @@ public class Game implements DeletableObserver {
 	private GameMenu mainMenu;
 	private PersonalMenu personalMenu;
 	private FriendListMenu friendListMenu;
-	private Size mapSize;
 
 	private GameTime gameTime;
 
@@ -52,7 +51,6 @@ public class Game implements DeletableObserver {
 		map = window.getMap();
 		status = window.getStatus();
 		msgZone = window.getMsgZone();
-		mapSize = map.getMapSize();
 
 		gameTime = new GameTime(this, 0);
 
@@ -67,7 +65,7 @@ public class Game implements DeletableObserver {
 		int hm = minimapRect.getHeight() / map.getBlockSize().getHeight();
 		
 		double xm = 0 ;
-		double ym = mapSize.getHeight() - hm ;
+		double ym = map.getMapSize().getHeight() - hm ;
 		
 		// Add the invisible obstacle to the game
 		attachObjectToGame(new InvisibleObstacle(new Point(xm, ym), new Size(wm, hm)));
@@ -240,7 +238,7 @@ public class Game implements DeletableObserver {
 	}
 
 	public Size getMapSize() {
-		return mapSize;
+		return map.getMapSize();
 	}
 
 	public void sendPlayer(Point pos) {
@@ -302,7 +300,7 @@ public class Game implements DeletableObserver {
 		boolean unreachable = false;
 
 		// Check if the nextPos is in the map
-		Rect mapRect = new Rect(new Point(0, 0), mapSize);
+		Rect mapRect = new Rect(new Point(0, 0), map.getMapSize());
 		Rect nextRect = new Rect(pos, pers.getSize());
 		
 		unreachable = !mapRect.contains(nextRect);
@@ -434,6 +432,8 @@ public class Game implements DeletableObserver {
 	}
 
 	public void loadGameMapPacket(GameMapPacket gmp) {
+		map.setMapSize(gmp.getMapSize());
+		
 		objects = gmp.getObjects();
 		population = gmp.getPopulation();
 		activePerson = gmp.getActivePerson();
@@ -602,7 +602,11 @@ public class Game implements DeletableObserver {
 	}
 
 	public GameMapPacket getGameMapPack() {
-		return new GameMapPacket(objects, population, activePerson, gameTime.getTimeFromStart());
+		return new GameMapPacket(
+				map.getMapSize(),
+				objects, population,
+				activePerson,
+				gameTime.getTimeFromStart());
 	}
 
 	private void attachObjectsToGame(ArrayList<GameObject> lst) {

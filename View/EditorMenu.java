@@ -62,8 +62,8 @@ public class EditorMenu extends JDialog {
 		});
 		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				editor.resetEditor();
 				closeMenu();
+				editor.resetEditor();
 			}
 		});
 		saveButton.addActionListener(new ActionListener() {

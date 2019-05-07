@@ -3,6 +3,7 @@ package Model;
 import View.EditorMenu;
 import View.EditorPanel;
 import View.Map;
+import View.MapSizeDialog;
 import View.NewPersonForm;
 import View.Window;
 
@@ -176,10 +177,17 @@ public class Editor {
 		population = new ArrayList<Person>();
 		activePerson = null;
 		
-		addMinimapObstacleArtefact();
-		
 		map.setObjects(objects);
 		map.resetViewOffset();
+		
+		notifyView();
+		
+		MapSizeDialog sizeDialog = new MapSizeDialog(window, map.getMapSize());
+		sizeDialog.showForm();
+		
+		map.setMapSize(sizeDialog.getMapSize());
+		
+		addMinimapObstacleArtefact();
 		
 		notifyView();
 	}
@@ -256,6 +264,11 @@ public class Editor {
 	public void mouseMoveEvent(Point pos) {
 		if (currentPlacing != null) {
 			Rect r = new Rect(pos, currentPlacing.getSize());
+
+			Rect mapRect = new Rect(new Point(0, 0), map.getMapSize());
+			
+			if (!mapRect.contains(r))
+				return;
 			
 			// Accept only free places (or any place if not an obstacle)
 			if (!currentPlacing.isObstacle() || rectIsPlacable(r)) {
@@ -319,7 +332,8 @@ public class Editor {
 	}
 	
 	public boolean rectIsPlacable(Rect r) {
-		boolean isPlacable = true;
+		Rect mapRect = new Rect(new Point(0, 0), map.getMapSize());
+		boolean isPlacable = mapRect.contains(r);
 		
 		for (GameObject o : objects) {
 			if (o != currentPlacing && o.isObstacle() && r.overlaps(o.getRect())) {
@@ -387,6 +401,7 @@ public class Editor {
 			return;
 		}
 		
+		map.setMapSize(mapPacket.getMapSize());
 		objects = mapPacket.getObjects();
 		population = mapPacket.getPopulation();
 		activePerson = mapPacket.getActivePerson();
@@ -414,7 +429,7 @@ public class Editor {
 			}
 		}
 		
-		return new GameMapPacket(objects, population, activePerson);
+		return new GameMapPacket(map.getMapSize(), objects, population, activePerson);
 	}
 
 	public void setActivePerson(Person p) {

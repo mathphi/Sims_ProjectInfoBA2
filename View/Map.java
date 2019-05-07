@@ -8,7 +8,6 @@ import Tools.Size;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
@@ -26,8 +25,9 @@ public class Map extends JPanel {
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private final Size MINIMAP_SIZE = new Size(250, 250);
 	private final int MINIMAP_MARGIN = 5;
-    private final Size MAP_SIZE = new Size(80, 80); //TODO: this MUST be a setting in editor !!!
     private final int BLOC_SIZE = 20;
+    
+    private Size mapSize = new Size(80, 80);
     
     private boolean isGridVisible = false;
     private Point viewOffset = new Point(0, 0);
@@ -35,7 +35,11 @@ public class Map extends JPanel {
     public Map() {
         this.setFocusable(true);
         this.requestFocusInWindow();
-        this.setPreferredSize(new Dimension(MAP_SIZE.getWidth()*BLOC_SIZE, MAP_SIZE.getHeight()*BLOC_SIZE));
+        //this.setPreferredSize(new Dimension(mapSize.getWidth()*BLOC_SIZE, mapSize.getHeight()*BLOC_SIZE));
+    }
+    
+    public void setMapSize(Size sz) {
+    	mapSize = sz;
     }
     
     public Rect getViewRect() {
@@ -65,8 +69,8 @@ public class Map extends JPanel {
     
     private void setViewOffset(Point offset) {
     	// Don't exceed the map's view with the offset
-    	double maxX = MAP_SIZE.getWidth() * BLOC_SIZE - this.getVisibleRect().getWidth();
-    	double maxY = MAP_SIZE.getHeight() * BLOC_SIZE - this.getVisibleRect().getHeight();
+    	double maxX = mapSize.getWidth() * BLOC_SIZE - this.getVisibleRect().getWidth();
+    	double maxY = mapSize.getHeight() * BLOC_SIZE - this.getVisibleRect().getHeight();
 
     	maxX = (maxX < 0 ? 0 : maxX);
     	maxY = (maxY < 0 ? 0 : maxY);
@@ -120,8 +124,8 @@ public class Map extends JPanel {
     }
     
     public void paintGrid(Graphics g) {
-        for (int i = 0; i < MAP_SIZE.getWidth(); i++) { 
-            for (int j = 0; j < MAP_SIZE.getHeight(); j++) {
+        for (int i = 0; i < mapSize.getWidth(); i++) { 
+            for (int j = 0; j < mapSize.getHeight(); j++) {
                 int x = i;
                 int y = j;
                 g.setColor(Color.LIGHT_GRAY);
@@ -215,7 +219,7 @@ public class Map extends JPanel {
 	}
 	
 	public Size getMapSize() {
-		return MAP_SIZE;
+		return mapSize;
 	}
 	
 	public Size getBlockSize() {
