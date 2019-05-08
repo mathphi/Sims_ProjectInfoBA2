@@ -83,6 +83,7 @@ public class EditorPanel extends JPanel {
 		gridCheckbox = new JCheckBox("Afficher la grille");
 		gridCheckbox.setSelected(true);
 		gridCheckbox.setBorder(new EmptyBorder(20, 0, 10, 0));
+		gridCheckbox.setFocusable(false);
 
 		checkboxPanel.add(new JSeparator(SwingConstants.HORIZONTAL), BorderLayout.NORTH);
 		checkboxPanel.add(gridCheckbox, BorderLayout.CENTER);

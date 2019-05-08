@@ -164,18 +164,17 @@ public class Map extends JPanel {
     public void paint(Graphics g) {
     	Graphics2D g2d = (Graphics2D) g;
     	
+    	super.paintComponent(g2d);
+    	
     	// Translate the map to simulate a scrolling
     	g2d.translate(-viewOffset.getXInt(), -viewOffset.getYInt());
-    	
-    	// Paint the map at full size
-    	super.paintComponent(g2d);
     	
     	// Paint the grid if needed (for editor)
 		if (isGridVisible) {
 			paintGrid(g);
 		}
 		
-		// Paint the objects
+    	// Paint the map at full size
 		generateMap(g2d);
 
 		double scale = getMinimapScale();
@@ -184,7 +183,7 @@ public class Map extends JPanel {
     	double minimapOffsetX = getMinimapOffset().getX();
     	double minimapOffsetY = getMinimapOffset().getY();
     	
-    	Rect r = getMinimapRect();
+    	Rect rm = getMinimapRect();
 
     	g2d.translate(viewOffset.getXInt(), viewOffset.getYInt());
     	
@@ -193,9 +192,9 @@ public class Map extends JPanel {
     	
     	// Paint the minimap rectangle
     	g2d.setColor(Color.LIGHT_GRAY);
-    	g2d.fillRect((int)r.getX(), (int)r.getY(), r.getWidth(), r.getHeight());
+    	g2d.fillRect((int)rm.getX(), (int)rm.getY(), rm.getWidth(), rm.getHeight());
     	g2d.setColor(Color.BLACK);
-    	g2d.drawRect((int)r.getX(), (int)r.getY(), r.getWidth(), r.getHeight());
+    	g2d.drawRect((int)rm.getX(), (int)rm.getY(), rm.getWidth(), rm.getHeight());
     	
     	g2d.setStroke(oldStroke);
 
@@ -203,6 +202,14 @@ public class Map extends JPanel {
     	g2d.translate(minimapOffsetX, minimapOffsetY);
     	g2d.scale(scale, scale);
 		generateMap(g2d);
+		
+		// Paint the view rectangle
+		Point vo = getViewOffset();
+		Size vs = new Size((int)getVisibleRect().getWidth(), (int)getVisibleRect().getHeight());
+		vs.setWidth(Math.min(vs.getWidth(), mapSize.getWidth() * BLOC_SIZE));
+		vs.setHeight(Math.min(vs.getHeight(), mapSize.getWidth() * BLOC_SIZE));
+    	g2d.setColor(Color.BLUE);
+    	g2d.drawRect((int)vo.getX(), (int)vo.getY(), vs.getWidth(), vs.getHeight());
     }
 
     public void setObjects(ArrayList<GameObject> objects) {

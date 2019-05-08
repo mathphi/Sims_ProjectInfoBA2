@@ -1,10 +1,6 @@
 package View;
 
-import Model.Adult;
 import Model.Person;
-import Model.Person.InteractionType;
-import Model.Person.Relationship;
-import Model.Teenager;
 
 import java.awt.Dimension;
 import java.awt.Frame;

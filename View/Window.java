@@ -33,7 +33,7 @@ public class Window extends JFrame {
 	
 	private JButton gameMenuButton;
 	private JButton friendListButton;
-	private JButton personalButton;
+	private JButton inventoryButton;
 	private JButton editorMenuButton;
 
 	@SuppressWarnings("serial")
@@ -78,11 +78,11 @@ public class Window extends JFrame {
 
 		gameMenuButton = new JButton("Menu");
 		friendListButton = new JButton("Liste d'amis");
-		personalButton = new JButton("Menu personnel");
+		inventoryButton = new JButton("Inventaire");
 
 		gameButtonPanel.add(gameMenuButton);
 		gameButtonPanel.add(friendListButton);
-		gameButtonPanel.add(personalButton);
+		gameButtonPanel.add(inventoryButton);
 
 		editorButtonPanel = new JPanel();
 		editorButtonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -98,7 +98,7 @@ public class Window extends JFrame {
 		gameMenuButton.setFocusable(false);
 		editorMenuButton.setFocusable(false);
 		friendListButton.setFocusable(false);
-		personalButton.setFocusable(false);
+		inventoryButton.setFocusable(false);
 
 		borderPanel = new JPanel();
 		borderPanel.setPreferredSize(new Dimension(350, 600));
@@ -164,7 +164,7 @@ public class Window extends JFrame {
 
 	public void addPersonalButtonAction(ActionListener a) {
 
-		personalButton.addActionListener(a);
+		inventoryButton.addActionListener(a);
 
 	}
 

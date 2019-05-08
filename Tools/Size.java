@@ -2,6 +2,8 @@ package Tools;
 
 import java.io.Serializable;
 
+//TODO: add exceptions for negative sizes
+
 public class Size implements Serializable {
 	private static final long serialVersionUID = -3166065755771234670L;
 	
@@ -19,6 +21,14 @@ public class Size implements Serializable {
 	
 	public int getHeight() {
 		return height;
+	}
+
+	public void setWidth(int w) {
+		this.width = w;
+	}
+
+	public void setHeight(int h) {
+		this.height = h;
 	}
 	
 	public Size add(Size s) {

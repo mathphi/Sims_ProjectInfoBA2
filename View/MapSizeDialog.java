@@ -40,7 +40,7 @@ public class MapSizeDialog extends JDialog {
 		JLabel label = new JLabel("Taille de la carte");
 
 		SpinnerNumberModel widthSpinnerModel = 
-				new SpinnerNumberModel(actualSize.getHeight(), 20, 200, 5);
+				new SpinnerNumberModel(actualSize.getWidth(), 20, 200, 5);
 		widthField = new JSpinner(widthSpinnerModel);
 		SpinnerNumberModel heightSpinnerModel = 
 				new SpinnerNumberModel(actualSize.getHeight(), 20, 200, 5);

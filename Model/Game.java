@@ -502,7 +502,7 @@ public class Game implements DeletableObserver {
 	
 	private void openFriendListMenu() {
 		pauseGame();
-		friendListMenu = new FriendListDialog(window,  getActivePerson(), this);
+		friendListMenu = new FriendListDialog(window, getActivePerson());
 		friendListMenu.showDialog();
 		resumeGame();
 	}

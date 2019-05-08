@@ -4,19 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,7 +22,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import Model.Game;
 import Model.Person;
 import Model.Person.Gender;
 import Model.Person.Relationship;
@@ -36,9 +31,8 @@ public class FriendListDialog extends JDialog {
 
 	private Map<Person, Double> friendList;
 	private Person activePerson;
-	private Game game;
 
-	public FriendListDialog(Frame parent, Person activePerson, Game game) {
+	public FriendListDialog(Frame parent, Person activePerson) {
 		super(parent, "Liste d'amis", true);
 
 		this.friendList = activePerson.getFriendList();
