@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
 import javax.swing.JComboBox;
@@ -51,7 +52,7 @@ public class FriendListDialog extends JDialog {
 		mainPanel.setLayout(new BorderLayout());
 		
 		JPanel scrollPanel = new JPanel();
-		scrollPanel.setLayout(new GridLayout(0, 1, 0, 5));
+		scrollPanel.setLayout(new BoxLayout(scrollPanel, BoxLayout.Y_AXIS));
 		
 		// Set scrollable panel
 		JScrollPane scrollView = new JScrollPane(scrollPanel);
@@ -63,9 +64,12 @@ public class FriendListDialog extends JDialog {
 			
 			for (Person friend : friendList.keySet()) {
 				scrollPanel.add(createFriendRow(friend));
+
+				scrollPanel.add(new Box.Filler(
+						new Dimension(0, 10), 
+		                new Dimension(0, 10), 
+		                new Dimension(0, 10)));
 			}
-			
-			scrollPanel.add(Box.createVerticalStrut(20));
 		}
 		else {
 			JPanel panel = new JPanel();
@@ -149,6 +153,10 @@ public class FriendListDialog extends JDialog {
 		panel.add(genderLabel);
 		panel.add(ageLabel);
 		panel.add(realtionLabel);
+		
+		// Constrain the height of the row to his minimum
+		Dimension d = new Dimension(Integer.MAX_VALUE, (int)panel.getMinimumSize().getHeight());
+		panel.setMaximumSize(d);
 		
 		return panel;
 	}
