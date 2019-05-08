@@ -39,7 +39,7 @@ public class Adult extends Person implements Worker {
 
 	@Override
 	public void work(int energyImpact, int moodImpact, int salary, int duration) {
-		if (useEnergy(energyImpact))
+		if (!useEnergy(energyImpact))
 			return;
 		
 		isWorking = true;
