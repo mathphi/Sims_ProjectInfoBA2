@@ -2,7 +2,7 @@ package Model;
 
 import View.Window;
 import View.Map;
-import View.FriendListMenu;
+import View.FriendListDialog;
 import View.PersonalMenu;
 import View.GameMenu;
 import View.InteractionMenu;
@@ -40,7 +40,7 @@ public class Game implements DeletableObserver {
 	private MessagesZone msgZone;
 	private GameMenu mainMenu;
 	private PersonalMenu personalMenu;
-	private FriendListMenu friendListMenu;
+	private FriendListDialog friendListMenu;
 
 	private GameTime gameTime;
 
@@ -502,8 +502,9 @@ public class Game implements DeletableObserver {
 	
 	private void openFriendListMenu() {
 		pauseGame();
-		friendListMenu = new FriendListMenu(window,  getActivePerson(), this);
-		friendListMenu.showMenu();
+		friendListMenu = new FriendListDialog(window,  getActivePerson(), this);
+		friendListMenu.showDialog();
+		resumeGame();
 	}
 
 	public void closeGameMenu() {

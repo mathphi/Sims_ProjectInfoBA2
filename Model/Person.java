@@ -87,7 +87,7 @@ public abstract class Person extends GameObject {
 
 	protected ArrayList<Product> inventory = new ArrayList<Product>();
 	// relation
-	protected Map<Person, Double> friendList = new HashMap<>();
+	protected Map<Person, Double> friendList = new HashMap<Person, Double>();
 	protected Adult mother;
 	protected Adult father;
 
@@ -150,8 +150,8 @@ public abstract class Person extends GameObject {
 		this.father = father;
 
 		// Considered as the higher level of relation but CAN't propose to marry, etc
-		friendList.put(father, 100.0);
-		friendList.put(mother, 100.0);
+		if (father != null) friendList.put(father, 100.0);
+		if (mother != null) friendList.put(mother, 100.0);
 
 		// Initial Person properties (maximum is 100)
 		energy = 100;
@@ -262,7 +262,8 @@ public abstract class Person extends GameObject {
 		double relationPoints = getRelationPoints(other);
 
 		// Set the relationship level
-		if (other == mother || other == father) {
+		if (other == mother || other == father ||	// Other is my parent ?
+			other.getMother() == this || other.getFather() == this) { // Other is my child ? //TODO: use a children list in Adult ?
 			relationship = Relationship.Parent;
 		} else if (relationPoints > 75) {
 			relationship = Relationship.VerySeriousRelation;
