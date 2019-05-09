@@ -47,8 +47,8 @@ public class Main {
 				game.startGame();
 			}
 		});
-		
-		// TODO: we start on what ?
+
 		game.startGame();
+		game.openGameMenu();
 	}
 }

@@ -18,9 +18,20 @@ public class GameMouse extends MouseController implements MouseListener, MouseMo
     private Point getMapEventPos(MouseEvent e) {
     	Size blocSize = game.getMapBlockSize();
     	Point offset = game.getMapViewOffset();
+    	
     	return new Point(
     			(int)((e.getX() + offset.getX()) / blocSize.getWidth()), 
     			(int)((e.getY() + offset.getY()) / blocSize.getHeight()));
+    }
+    
+    public Point getMinimapEventPos(MouseEvent e) {
+    	Size blocSize = game.getMapBlockSize();
+    	Point delta = game.getMinimapOffset();
+    	double scale = game.getMinimapScale();
+    	
+    	return new Point(
+    			(int)((e.getX() - delta.getX()) / scale / blocSize.getWidth()),
+    			(int)((e.getY() - delta.getY()) / scale / blocSize.getHeight()));
     }
 
 	@Override
@@ -29,9 +40,15 @@ public class GameMouse extends MouseController implements MouseListener, MouseMo
 			if (!game.isRunning())
 				return;
 			
-			//TODO: we don't care of any mouseEvent from the minimap for now
-			if (game.getMinimapRect().contains(e.getX(), e.getY()))
+			// If the click is done on the minimap -> get the pos on the real map
+			if (game.getMinimapRect().contains(e.getX(), e.getY())) {
+				// Left click
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					game.mouseLeftClickEvent(getMinimapEventPos(e));
+				}
+				
 				return;
+			}
 			
 			// Left click
 			if (e.getButton() == MouseEvent.BUTTON1) {

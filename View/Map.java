@@ -104,7 +104,7 @@ public class Map extends JPanel {
     	return new Rect(pos, MINIMAP_SIZE.add(2*MINIMAP_MARGIN, 2*MINIMAP_MARGIN));
     }
     
-    private double getMinimapScale() {
+    public double getMinimapScale() {
 		// Get map total size
 		int w = getMapSize().getWidth() * getBlockSize().getWidth();
 		int h = getMapSize().getHeight() * getBlockSize().getHeight();

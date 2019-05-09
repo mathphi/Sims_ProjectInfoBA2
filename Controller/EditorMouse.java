@@ -23,14 +23,14 @@ public class EditorMouse extends MouseController implements MouseListener, Mouse
     			(int)((e.getX() + offset.getX()) / blocSize.getWidth()), 
     			(int)((e.getY() + offset.getY()) / blocSize.getHeight()));
     }
-
+    
 	@Override
 	public void mousePressed(MouseEvent e) {
 		synchronized(editor) {
 			if (!editor.isActive())
 				return;
 
-			//TODO: we don't care of any mouseEvent from the minimap for now
+			// We don't care of any mouseEvent from the minimap
 			if (editor.getMinimapRect().contains(e.getX(), e.getY()))
 				return;
 			
@@ -60,7 +60,7 @@ public class EditorMouse extends MouseController implements MouseListener, Mouse
 			if (!editor.isActive())
 				return;
 			
-			//TODO: we don't care of any mouseEvent from the minimap for now
+			// We don't care of any mouseEvent from the minimap
 			if (editor.getMinimapRect().contains(e.getX(), e.getY()))
 				return;
 			
@@ -77,7 +77,7 @@ public class EditorMouse extends MouseController implements MouseListener, Mouse
 			if (!editor.isActive())
 				return;
 
-			//TODO: we don't care of any mouseEvent from the minimap for now
+			// We don't care of any mouseEvent from the minimap
 			if (editor.getMinimapRect().contains(e.getX(), e.getY()))
 				return;
 			

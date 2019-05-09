@@ -7,6 +7,10 @@ import Tools.Random;
 public class PsychologicalFactors implements Serializable {
 	private static final long serialVersionUID = 4526519314985078559L;
 	
+	public enum CharacterTraits {
+		Mood, Hygiene, GeneralKnowledge, OthersImpression
+	}
+	
 	private double mood;
 	private double hygiene;
 	private double generalKnowledge;
@@ -59,5 +63,24 @@ public class PsychologicalFactors implements Serializable {
 
 	public double getOthersImpression() {
 		return othersImpression;
+	}
+	
+	public CharacterTraits getPrincipleCharacterTrait() {
+		CharacterTraits ct = CharacterTraits.GeneralKnowledge;
+		
+		if (mood > hygiene && mood > generalKnowledge && mood > othersImpression) {
+			ct = CharacterTraits.Mood;
+		}
+		else if (hygiene > generalKnowledge && hygiene > othersImpression) {
+			ct = CharacterTraits.Hygiene;
+		}
+		else if (generalKnowledge > othersImpression) {
+			ct = CharacterTraits.GeneralKnowledge;
+		}
+		else {
+			ct = CharacterTraits.OthersImpression;
+		}
+		
+		return ct;
 	}
 }

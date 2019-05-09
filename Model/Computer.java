@@ -30,7 +30,7 @@ public class Computer extends UsableStructure {
 			p.addMessage("Vous avez commencé à travailler sur l'ordinateur", MsgType.Info);
 			
 			Worker w = (Worker) p;
-			w.work(20, 8, 30, 30);
+			w.work(20, -8, 40, 30);
 		} else {
 			p.addMessage("Vous ne pouvez pas travailler...", MsgType.Warning);
 		}

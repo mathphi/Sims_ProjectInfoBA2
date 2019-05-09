@@ -140,8 +140,6 @@ public class AutomaticAnswers implements Serializable {
 		 * Second pass: get all the messages corresponding to the found level
 		 */
 
-		System.out.println(foundLevel);
-		
 		for (AutomaticMessage am : messagesList) {
 			if (am.getLevel() == foundLevel) {
 				filteredMsgs.add(am);

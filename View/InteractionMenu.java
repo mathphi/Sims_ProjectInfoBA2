@@ -6,6 +6,7 @@ import Model.Person.InteractionType;
 import Model.Person.Relationship;
 import Model.Teenager;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -24,12 +25,6 @@ public class InteractionMenu extends JDialog {
 	private static enum PersonType {
 		Kid, Teenager, Adult
 	}
-
-	private JButton discussButton;
-	private JButton playButton;
-	private JButton drinkButton;
-	private JButton kissButton;
-	private JButton marryButton;
 	
 	private InteractionType selectedInterraction = InteractionType.None;
 
@@ -41,6 +36,7 @@ public class InteractionMenu extends JDialog {
 			Person p2)
 	{
 		super(parent, "Intéractions", true);
+		setUndecorated(true);
 
 		JPanel mainPanel = new JPanel();
 
@@ -51,11 +47,18 @@ public class InteractionMenu extends JDialog {
 		nameLabel.setFont(nameLabel.getFont().deriveFont((float) 20));
 		mainPanel.add(nameLabel);
 		
-		discussButton = new JButton("Discuter");
-		playButton = new JButton("Jouer");
-		drinkButton = new JButton("Aller boire un verre");
-		kissButton = new JButton("Embrasser");
-		marryButton = new JButton("Se marier");
+		JButton discussButton = new JButton("Discuter");
+		JButton playButton = new JButton("Jouer");
+		JButton drinkButton = new JButton("Aller boire un verre");
+		JButton kissButton = new JButton("Embrasser");
+		JButton marryButton = new JButton("Se marier");
+		
+		JPanel controlPanel = new JPanel();
+		controlPanel.setLayout(new BorderLayout());
+		controlPanel.setBorder(new EmptyBorder(10, 80, 10, 80));
+		
+		JButton cancelButton = new JButton("Annuler");
+		controlPanel.add(cancelButton, BorderLayout.CENTER);
 
 		PersonType p1_type = getPersonType(p1);
 		PersonType p2_type = getPersonType(p2);
@@ -77,7 +80,7 @@ public class InteractionMenu extends JDialog {
 			}
 		case Parent: 
 			// This section comes after SeriousRelation because a
-			// Person cannot marry with his parents...
+			// Person cannot marry or kiss his parents...
 		case CloseFriend:
 			if (p1_type != PersonType.Kid && p2_type != PersonType.Kid) {
 				// A Kid cannot drink
@@ -89,6 +92,8 @@ public class InteractionMenu extends JDialog {
 			mainPanel.add(discussButton);
 			break;
 		}
+
+		mainPanel.add(controlPanel);
 
 		add(mainPanel);
 		
@@ -121,6 +126,7 @@ public class InteractionMenu extends JDialog {
 		kissButton.addActionListener(buttonsAction);
 		drinkButton.addActionListener(buttonsAction);
 		marryButton.addActionListener(buttonsAction);
+		cancelButton.addActionListener(buttonsAction);
 	}
 	
 	public static InteractionType showInterractionMenu(

@@ -2,8 +2,6 @@ package Tools;
 
 import java.io.Serializable;
 
-//TODO: add exceptions for negative sizes
-
 public class Size implements Serializable {
 	private static final long serialVersionUID = -3166065755771234670L;
 	
@@ -11,6 +9,9 @@ public class Size implements Serializable {
 	private int height;
 	
 	public Size(int w, int h) {
+		if (w < 0 || h < 0)
+			throw new IllegalArgumentException("Invalid size, parameters cannot be negative");
+		
 		this.width = w;
 		this.height = h;
 	}
@@ -24,10 +25,16 @@ public class Size implements Serializable {
 	}
 
 	public void setWidth(int w) {
+		if (w < 0)
+			throw new IllegalArgumentException("Invalid size, parameters cannot be negative");
+		
 		this.width = w;
 	}
 
 	public void setHeight(int h) {
+		if (h < 0)
+			throw new IllegalArgumentException("Invalid size, parameters cannot be negative");
+		
 		this.height = h;
 	}
 	

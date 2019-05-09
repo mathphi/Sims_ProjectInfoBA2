@@ -180,6 +180,14 @@ public class Game implements DeletableObserver {
 	public Rect getMinimapRect() {
 		return map.getMinimapRect();
 	}
+
+	public double getMinimapScale() {
+		return map.getMinimapScale();
+	}
+
+	public Point getMinimapOffset() {
+		return map.getMinimapOffset();
+	}
 	
 	public void playerMoveEvent(Person p) {
 		ArrayList<GameObject> obj_lst = p.getObjectsAround();
@@ -204,7 +212,9 @@ public class Game implements DeletableObserver {
 			}
 		}
 		
-		object.clickedEvent(activePerson);
+		if (!activePerson.isLocked()) {
+			object.clickedEvent(activePerson);
+		}
 	}
 
 	public void mouseRightClickEvent(Point pos) {

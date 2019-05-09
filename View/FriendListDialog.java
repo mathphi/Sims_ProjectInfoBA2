@@ -25,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import Model.Person;
 import Model.Person.Gender;
 import Model.Person.Relationship;
+import Model.PsychologicalFactors.CharacterTraits;
 
 public class FriendListDialog extends JDialog {
 	private static final long serialVersionUID = -6014304203322845327L;
@@ -117,16 +118,19 @@ public class FriendListDialog extends JDialog {
 		JLabel genderLabel = new JLabel("Sexe");
 		JLabel ageLabel = new JLabel("Age");
 		JLabel realtionLabel = new JLabel("Relation");
+		JLabel characterLabel = new JLabel("Caractère");
 
 		nameLabel.setFont(nameLabel.getFont().deriveFont(Font.ITALIC + Font.BOLD));
 		genderLabel.setFont(genderLabel.getFont().deriveFont(Font.ITALIC + Font.BOLD));
 		ageLabel.setFont(ageLabel.getFont().deriveFont(Font.ITALIC + Font.BOLD));
 		realtionLabel.setFont(realtionLabel.getFont().deriveFont(Font.ITALIC + Font.BOLD));
+		characterLabel.setFont(realtionLabel.getFont().deriveFont(Font.ITALIC + Font.BOLD));
 
 		hPanel.add(nameLabel);
 		hPanel.add(genderLabel);
 		hPanel.add(ageLabel);
 		hPanel.add(realtionLabel);
+		hPanel.add(characterLabel);
 		
 		panel.add(hPanel, BorderLayout.CENTER);
 		panel.add(new JSeparator(SwingConstants.HORIZONTAL), BorderLayout.SOUTH);
@@ -143,31 +147,49 @@ public class FriendListDialog extends JDialog {
 		JLabel genderLabel = new JLabel(friend.getGender() == Gender.Male ? "Homme" : "Femme");
 		JLabel ageLabel = new JLabel(String.format("%d ans", friend.getAge()));
 		JLabel realtionLabel = new JLabel(getRelationToStr(friend));
+		JLabel characterLabel = new JLabel(getCharacterToStr(friend));
 		
 		nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
 		genderLabel.setFont(genderLabel.getFont().deriveFont(Font.PLAIN));
 		ageLabel.setFont(ageLabel.getFont().deriveFont(Font.PLAIN));
 		realtionLabel.setFont(realtionLabel.getFont().deriveFont(Font.PLAIN));
-		
-		/*
-		 * TODO: caractéristique PsychologicalFactor
-		 * 
-		 * - Intellectuel
-		 * - Extraverti
-		 * - Sensible
-		 * - Hypocondriaque
-		 */
+		characterLabel.setFont(realtionLabel.getFont().deriveFont(Font.PLAIN));
 
 		panel.add(nameLabel);
 		panel.add(genderLabel);
 		panel.add(ageLabel);
 		panel.add(realtionLabel);
+		panel.add(characterLabel);
 		
 		// Constrain the height of the row to his minimum
 		Dimension d = new Dimension(Integer.MAX_VALUE, (int)panel.getMinimumSize().getHeight());
 		panel.setMaximumSize(d);
 		
 		return panel;
+	}
+	
+	private String getCharacterToStr(Person p) {
+		CharacterTraits ct = p.getPsychologicalFactor().getPrincipleCharacterTrait();
+		String char_str = "/";
+		
+		switch (ct) {
+		case Mood:
+			char_str = "Sensible";
+			break;
+		case Hygiene:
+			char_str = "Hypocondriaque";
+			break;
+		case GeneralKnowledge:
+			char_str = "Intellectuel";
+			break;
+		case OthersImpression:
+			char_str = "Extraverti";
+			break;
+		default:
+			break;
+		}
+		
+		return char_str;
 	}
 	
 	private String getRelationToStr(Person p) {

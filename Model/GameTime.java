@@ -33,7 +33,7 @@ public class GameTime {
 					game.updateGame();
 				}
 			}
-		}, 1000, TIMER_PERIOD/2); //TODO: the /2 is just for testing
+		}, 1000, TIMER_PERIOD/2);
 	}
 	
 	public void start() {

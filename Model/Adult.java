@@ -6,10 +6,14 @@ import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 
 import Tools.Point;
+import Tools.Random;
 import View.Message.MsgType;
 
 public class Adult extends Person implements Worker {
 	private static final long serialVersionUID = 532161543919171452L;
+	
+	// Random maxAge between 80 and 100
+	private int maxAge = 80 + Random.rangeInt(0, 20);
 
 	public boolean isWorking = false;
 	public LocalDateTime lastWorkTime = LocalDateTime.now().minusDays(1);
@@ -28,8 +32,7 @@ public class Adult extends Person implements Worker {
 
 	@Override
 	public boolean maxAgeReached() {
-		// TODO: define a random maxAge for an adult after which he dies ?
-		return (getAge() > 90);
+		return (getAge() > maxAge);
 	}
 
 	@Override
@@ -52,12 +55,17 @@ public class Adult extends Person implements Worker {
 				setLocked(false);
 				resetLastActionTime(ActionType.Work);
 				
-				modifyMoney(salary);
-				modifyMood(-moodImpact);
+				// Salary factor between 1 and 4, function of the general knowledge
+				// More for an adult than a teenager
+				double salaryFactor = 1.0 + getGeneralKnowledge() * 3.0;
+				int scaledSalary = (int)(salary * salaryFactor); 
+				
+				modifyMoney(scaledSalary);
+				modifyMood(moodImpact);
 				modifyOthersImpression(Math.abs(moodImpact * 1.5));
 
 				addMessage(
-						String.format("Vous venez de gagner %d€ en travaillant", salary),
+						String.format("Vous venez de gagner %d€ en travaillant", scaledSalary),
 						MsgType.Info);
 			}
 		});
@@ -91,30 +99,24 @@ public class Adult extends Person implements Worker {
 		
 		//TODO: add a condition if already married (the other person refuses)
 
-		if (people.getAppreciationOf(this) >= 0.9) {
-			if (!useEnergy(15))
-				return;
+		if (!useEnergy(15))
+			return;
 		
-			applyInteractionEffect(people, InteractionType.Marry, 40, 50);
-		}
+		applyInteractionEffect(people, InteractionType.Marry, 40, 50);
 	}
 
 	private void drinkWith(Person people) {
-		if (people.getAppreciationOf(this) >= 0.5) {
-			if (!useEnergy(40))
-				return;
+		if (!useEnergy(40))
+			return;
 		
-			applyInteractionEffect(people, InteractionType.Drink, 20, 30);
-		}
+		applyInteractionEffect(people, InteractionType.Drink, 20, 30);
 	}
 
 	private void kiss(Person people) {	
-		if (people.getAppreciationOf(this) >= 0.7) {
-			if (!useEnergy(5))
-				return;
+		if (!useEnergy(5))
+			return;
 		
-			applyInteractionEffect(people, InteractionType.Kiss, 30, 40);
-		}
+		applyInteractionEffect(people, InteractionType.Kiss, 30, 40);
 	}
 
 	/**

@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Products.Cloth;
-import Products.Food;
 import Products.Product;
 
 public abstract class Person extends GameObject {
@@ -52,13 +51,12 @@ public abstract class Person extends GameObject {
 	protected Gender gender;
 	protected boolean isPlayable = true;
 
-	protected int money = 100000000;
+	protected int money;
 
 	// Use a past time as initial time
 	/*
 	 * WARNING: using this LocalDateTime method is buggy because the Real time
-	 * continues to run when the game is off.
-	 * So the savegame will not keep the good intervals.
+	 * continues to run when the game is paused !
 	 * TODO: This may be good to use the GameTime instead.
 	 */
 	private HashMap<ActionType,LocalDateTime> lastActionsTime = 
@@ -91,11 +89,15 @@ public abstract class Person extends GameObject {
 	protected Adult mother;
 	protected Adult father;
 
-	// Random factors to differentiate the evolution of each person (one is hungry
-	// more often,...)
+	/*
+	 *  Random factors to differentiate the evolution of each
+	 *  person (one is hungry more often,...)
+	 */
 	private double bladderRandomFactor = Random.range(0.6, 1.2);
 	private double hungerRandomFactor = Random.range(0.6, 1.2);
 	private double energyRandomFactor = Random.range(0.6, 1.2);
+	private double moodRandomFactor = Random.range(0.6, 1.2);
+	private double hygieneRandomFactor = Random.range(0.6, 1.2);
 
 	/*
 	 * WARNING: Use of transient keyword to avoid to save these attributes in the
@@ -162,6 +164,9 @@ public abstract class Person extends GameObject {
 
 		generalKnowledge = 50;
 		othersImpression = 50;
+		
+		// Initial money
+		money = 200;
 
 		psychologicalFactors = PsychologicalFactors.RandomFactors();
 	}
@@ -238,7 +243,10 @@ public abstract class Person extends GameObject {
 		modifyHunger(Random.range(-1.0, -2.0) * hungerRandomFactor); // Random decrease
 
 		// Decrease more energy if hygiene is low
-		modifyEnergy((hygiene >= 20 ? -1 : -3) * energyRandomFactor);
+		modifyEnergy((hygiene >= 20 ? -1.0 : -3.0) * energyRandomFactor);
+
+		modifyMood(-0.5 * moodRandomFactor);
+		modifyHygiene(-0.8 * hygieneRandomFactor);
 
 		if (energy == 0) {
 			// TODO: what can we do ?
@@ -265,7 +273,8 @@ public abstract class Person extends GameObject {
 		if (other == mother || other == father ||	// Other is my parent ?
 			other.getMother() == this || other.getFather() == this) { // Other is my child ? //TODO: use a children list in Adult ?
 			relationship = Relationship.Parent;
-		} else if (relationPoints > 75) {
+		} else if (relationPoints > 75 && this.getClass() == other.getClass()) {
+			// Don't enter in a very serious relation if the Person are not on the same level
 			relationship = Relationship.VerySeriousRelation;
 		} else if (relationPoints > 40) {
 			relationship = Relationship.SeriousRelation;
@@ -352,18 +361,6 @@ public abstract class Person extends GameObject {
 		other.addMessageFrom(this, message, msgType);
 	}
 
-	public void eat(Food nourriture) {
-		float hungerGain = 0;// TODO nourriture.getHungerImpact();
-		hunger += (int) (hungerGain);
-		if (hunger > 100) {
-			// too much point
-			hunger = 100;
-		}
-
-		// TODO: Euh... Eating cost energy ???
-		modifyEnergy(0); // TODO
-	}
-
 	protected void discuss(Person people) {
 		if (!useEnergy(10))
 			return;
@@ -387,8 +384,6 @@ public abstract class Person extends GameObject {
 
 		automaticAnswer(people, type, appreciationFactor);
 		people.automaticAnswer(this, type, people.getAppreciationOf(this));
-
-		System.out.println(friendList.getOrDefault(people, 0.0));
 	}
 
 	/**
@@ -528,15 +523,12 @@ public abstract class Person extends GameObject {
 	public void modifyHygiene(double factor) {
 		hygiene += factor;
 		hygiene = Math.max(0, Math.min(hygiene, 100));
-
-		// TODO: consequence if hygiene <= 0
 	}
 
 	public void modifyHunger(double factor) {
 		hunger += factor;
 		hunger = Math.max(0, Math.min(hunger, 100));
 
-		// TODO: conditional consequences
 		if (hunger <= 0) {
 			modifyHygiene(-5);
 			modifyMood(-10);
@@ -555,7 +547,7 @@ public abstract class Person extends GameObject {
 	public boolean useEnergy(double quantity) {
 		// Check if enough energy
 		if (quantity > 0 && quantity > energy) {
-			addMessage("Vous n'avez plus assez d'énergie!", MsgType.Problem);
+			addMessage("Vous n'avez plus assez d'énergie !", MsgType.Problem);
 			return false;
 		}
 
@@ -564,9 +556,13 @@ public abstract class Person extends GameObject {
 		return true;
 	}
 
+	/**
+	 * If need to pay -> amount < 0
+	 * If it's a gain -> amount > 0
+	 * 
+	 * @param amount
+	 */
 	public void modifyMoney(int amount) {
-		// if need to pay -> amount <0
-		// if it's a gain -> amount >0
 		money += amount;
 	}
 

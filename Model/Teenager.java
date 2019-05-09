@@ -29,12 +29,6 @@ public class Teenager extends Person implements Worker {
 		return (getAge() > 21);
 	}
 
-	public void buy(TakableObject achat) {
-		/*
-		 * if (setMoney(-achat.getPrice())) { inventory.add(achat); }
-		 */
-	}
-
 	@Override
 	public boolean isWorking() {
 		return isWorking;
@@ -54,34 +48,34 @@ public class Teenager extends Person implements Worker {
 				isWorking = false;
 				setLocked(false);
 				resetLastActionTime(ActionType.Work);
+
+				// Salary factor between 1 and 2, function of the general knowledge
+				double salaryFactor = 1.0 + getGeneralKnowledge();
+				int scaledSalary = (int)(salary * salaryFactor); 
 				
-				modifyMoney(salary);
-				modifyMood(-moodImpact);
+				modifyMoney(scaledSalary);
+				modifyMood(moodImpact);
 				modifyOthersImpression(Math.abs(moodImpact * 1.5));
 
 				addMessage(
-						String.format("Vous venez de gagner %d€ en travaillant", salary),
+						String.format("Vous venez de gagner %d€ en travaillant", scaledSalary),
 						MsgType.Info);
 			}
 		});
 	}
 
 	private void drinkWith(Person people) {
-		if (people.getAppreciationOf(this) >= 0.3) {
-			if (!useEnergy(40))
-				return;
+		if (!useEnergy(40))
+			return;
 		
-			applyInteractionEffect(people, InteractionType.Drink, 20, 30);
-		}
+		applyInteractionEffect(people, InteractionType.Drink, 20, 30);
 	}
 
 	private void kiss(Person people) {
-		if (people.getAppreciationOf(this) >= 0.6) {
-			if (!useEnergy(5))
-				return;
+		if (!useEnergy(5))
+			return;
 			
-			applyInteractionEffect(people, InteractionType.Kiss, 30, 40);
-		}
+		applyInteractionEffect(people, InteractionType.Kiss, 30, 40);
 	}
 	
 	/**

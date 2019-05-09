@@ -57,5 +57,4 @@ public class Bed extends UsableStructure {
 	public GameObject clone() {
 		return (GameObject) new Bed(getPos());
 	}
-
 }
