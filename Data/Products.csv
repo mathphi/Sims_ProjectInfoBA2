@@ -1,0 +1,22 @@
+// Type	// Name	// Price	// MinAge	// Gender (F/M)	// MoodImpact	// EnergyImpact	// HungerImpact	// HygieneImpact	// GKImpact	// VisibleImpact	// Description
+Food	Café	3			5	20	5	0	0	0	Apporte de l'énergie mais nourrit très peu
+Food	Collation	4			7	15	5	0	0	0	Restaure un peu d'énergie et nourrit peu
+Food	Salade	5			10	17	10	0	0	0	Restaure de l'énergie et apporte des nutriments
+Food	Burger	7			12	17	20	0	0	0	Restaure de l'énergie et nourrit bien
+Food	Repas complet	10			15	20	30	0	0	0	Restaure beaucoup d'énergie et rassasie
+Toy	Jeu de carte	5			10	-5	0	0	0	0	Vous amusera un peu
+Toy	Ballon de foot	6			17	-15	0	0	0	0	Vous amusera un peu plus
+Toy	Jeu de société	10			20	-8	0	0	0	0	Vous amusera bien
+Toy	Smartphone	100			35	-7	0	0	0	0	Vous amusera vraiment !
+Toy	PS4	200			50	-10	0	0	0	0	Vous amusera définitivement !
+Other	Livre	12			0	-5	0	0	20	10	Permet d'augmenter vos connaissances intellectuelles
+Other	Likes sur instagram	30	14		10	0	0	0	-5	25	Vous permettra d'augmenter l'image que les autres ont de vous !
+Other	Médicament	10	12		0	0	0	10	0	10	Permet de vous soigner contre les maladies
+Other	Déodorant	5			5	0	0	15	0	15	Remonte votre hygiène et vous fait sentir bon
+Other	Somnifère	15	17		-5	25	0	-5	0	-5	Permet de récupérer de l'énergie
+Cloth	T-shirt	5			10	0	0	0	0	10	Améliore un peu votre image ainsi que votre moral
+Cloth	Pull	15			15	0	0	0	0	15	Améliore votre image et votre moral
+Cloth	Chemise	30			17	0	0	0	0	25	Améliore bien votre image et peu votre moral
+Cloth	Veste	60			20	0	0	0	0	30	Améliore beaucoup votre image ainsi que votre moral
+Cloth	Smoking	300		M	50	0	0	0	0	50	Améliore énormément et votre image et votre moral
+Cloth	Tailleur	300		F	50	0	0	0	0	50	Améliore énormément et votre image et votre moral

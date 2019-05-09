@@ -18,7 +18,8 @@ public class ObjectRestorer {
 
     public Object readNextObjectFromSave() {
     	try {
-        	return objectStream.readObject();
+        	Object o = objectStream.readObject();
+        	return o;
     	}
 	    catch (Exception ex) {
 	        ex.printStackTrace();

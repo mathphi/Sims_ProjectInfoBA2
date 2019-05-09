@@ -1,10 +1,9 @@
 package Products;
 
-import javax.swing.Icon;
-
 public abstract class Product {
 	private int price;
 	private String name;
+	private String description;
 
 	protected int moodImpact = 0;
 	protected int energyImpact = 0;
@@ -13,41 +12,45 @@ public abstract class Product {
 	protected int generalKnowledgeImpact = 0;
 	protected int otherImpressionImpact = 0;
 
-	public Product(String name, int price) {
+	public Product(String name, String description, int price) {
 		this.name = name;
 		this.price = price;
-
+		this.description = description;
 	}
 
 	public int getMoodImpact() {
 		return moodImpact;
 	}
+	
 	public int getEnergyImpact() {
 		return energyImpact;
 	}
+	
 	public int getHungerImpact() {
 		return hungerImpact;
 	}
+	
 	public int getHygieneImpact() {
 		return hygieneImpact;
 	}
+	
 	public int getGeneralKnowledgeImpact() {
 		return generalKnowledgeImpact;
 	}
+	
 	public int getOtherImpressionImpact() {
 		return otherImpressionImpact;
 	}
 	
-
 	public String getName() {
 		return name;
 	}
 
 	public int getPrice() {
-
 		return price;
 	}
-
-
 	
+	public String getDescription() {
+		return description;
+	}
 }

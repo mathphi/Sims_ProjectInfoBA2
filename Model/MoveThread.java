@@ -77,6 +77,11 @@ public class MoveThread implements Runnable {
 					p.rotate(deltaPos);
 					
 					for (int i = 0 ; i < STEPS ; i++) {
+						// Standby the personage moving when the game is paused
+						while (!g.isRunning() || p.isLocked()) {
+							standby(100);
+						}
+						
 						// Move of deltaPos divided by the number of steps
 						Point subPos = p.getPos().add(deltaPos.multiply(1.0/STEPS));
 						p.setPos(subPos);

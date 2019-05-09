@@ -162,10 +162,8 @@ public class Window extends JFrame {
 		friendListButton.addActionListener(a);
 	}
 
-	public void addPersonalButtonAction(ActionListener a) {
-
+	public void addInventoryButtonAction(ActionListener a) {
 		inventoryButton.addActionListener(a);
-
 	}
 
 	public void update() {

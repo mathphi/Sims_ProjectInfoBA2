@@ -32,14 +32,20 @@ public class FriendListDialog extends JDialog {
 	private Map<Person, Double> friendList;
 	private Person activePerson;
 
-	public FriendListDialog(Frame parent, Person activePerson) {
+	public FriendListDialog(Frame parent, Person person) {
 		super(parent, "Liste d'amis", true);
 
-		this.friendList = activePerson.getFriendList();
-		this.activePerson = activePerson;
+		this.friendList = person.getFriendList();
+		this.activePerson = person;
 		
-		setPreferredSize(new Dimension(700, 250));
+		setPreferredSize(new Dimension(700, 275));
+		setUndecorated(true);
 		setLayout(new BorderLayout());
+		
+		JLabel titleLabel = new JLabel("Liste d'amis de " + person.getName(), JLabel.CENTER);
+		titleLabel.setFont(titleLabel.getFont().deriveFont((float) 20));
+		titleLabel.setBorder(new EmptyBorder(10, 10, 20, 10));
+		add(titleLabel, BorderLayout.NORTH);
 
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -142,6 +148,15 @@ public class FriendListDialog extends JDialog {
 		genderLabel.setFont(genderLabel.getFont().deriveFont(Font.PLAIN));
 		ageLabel.setFont(ageLabel.getFont().deriveFont(Font.PLAIN));
 		realtionLabel.setFont(realtionLabel.getFont().deriveFont(Font.PLAIN));
+		
+		/*
+		 * TODO: caractéristique PsychologicalFactor
+		 * 
+		 * - Intellectuel
+		 * - Extraverti
+		 * - Sensible
+		 * - Hypocondriaque
+		 */
 
 		panel.add(nameLabel);
 		panel.add(genderLabel);
@@ -172,6 +187,7 @@ public class FriendListDialog extends JDialog {
 		case VerySeriousRelation:
 			rel_str = "Relation très sérieuse";
 			break;
+		//TODO: what if married ???
 		case Parent:
 			if (activePerson.getFather() == p)
 				rel_str = "Père";

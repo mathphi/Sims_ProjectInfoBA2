@@ -16,14 +16,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import Model.Directable.Direction;
-import Products.Nourriture;
+import Products.Cloth;
+import Products.Food;
 import Products.Product;
-import Products.Toy;
-import Products.Wearable;
 
 public abstract class Person extends GameObject {
 	private static final long serialVersionUID = 8476495059211784395L;
+	private static final int INVENTORY_MAX_SIZE = 5;
 
 	public static enum Gender {
 		Male, Female
@@ -367,7 +366,7 @@ public abstract class Person extends GameObject {
 		}
 	}
 
-	public void eat(Nourriture nourriture) {
+	public void eat(Food nourriture) {
 		float hungerGain = 0;// TODO nourriture.getHungerImpact();
 		hunger += (int) (hungerGain);
 		if (hunger > 100) {
@@ -497,8 +496,6 @@ public abstract class Person extends GameObject {
 			if (d.getSeconds() < 20)
 				return;
 
-			resetLastActionTime(ActionType.Toilet);
-
 			setLocked(true);
 
 			addMessage("Vous êtes en train de vous soulager...", MsgType.Info);
@@ -509,6 +506,8 @@ public abstract class Person extends GameObject {
 					bladder = 100;
 					setLocked(false);
 					addMessage("*bruit de chasse d'eau*", MsgType.Info);
+
+					resetLastActionTime(ActionType.Toilet);
 				}
 			});
 		}
@@ -745,51 +744,66 @@ public abstract class Person extends GameObject {
 		}
 	}
 
-	public void addInventory(Product newProduct) {
-		inventory.add(newProduct);
-		if (newProduct instanceof Wearable) {
-			// need to modify othersImpression immediatly for the time the player wear it
-			modifyOthersImpression(((Wearable) newProduct).getOthersImpressionGain());
-
-		}
-	}
-
 	public void useInventory(Product product) {
-		if (product instanceof Wearable) {
-
-			// TODO remove mettre le produit sur le sol à l'endroit où est le joueur
-			if (((Wearable) product).getOthersImpressionGain() > othersImpression) {
-				addMessage(new Message(
-						"Vous ne pouvez pas retirer ce vêtement. "
-								+ "La vision que les autres personnes ont de vous est déjà trop basse!",
-						MsgType.Problem));
-			}
-
-			else {
-				inventory.remove(product);
-				modifyMood(product.getMoodImpact());
-				modifyOthersImpression(product.getOtherImpressionImpact());
-				addMessage(new Message("Vous venez de retirer votre " + product.getName(), MsgType.Info));
-
-			}
-
-		} else {
-
+		// Check if we have enough energy
+		if (energy + product.getEnergyImpact() < 0) {
+			addMessage(
+					"Vous n'avez pas assez d'énergie pour utiliser ce produit !",
+					MsgType.Warning);
+			return;
+		}
+		
+		// Remove product from inventory
+		inventory.remove(product);
+		
+		// Apply impact
+		modifyMood(product.getMoodImpact());
+		modifyEnergy(product.getEnergyImpact());
+		modifyHunger(product.getHungerImpact());
+		modifyHygiene(product.getHygieneImpact());
+		modifyGeneralKnowledge(product.getGeneralKnowledgeImpact());
+		modifyOthersImpression(product.getOtherImpressionImpact());
+		
+		addMessage("Vous venez d'utiliser votre " + product.getName().toLowerCase(), MsgType.Info);
+	}
+	
+	public void buyProduct(Product product) {
+		if (product.getPrice() > money) {
+			addMessage("Vous n'avez pas assez d'argent pour acheter ce produit !", MsgType.Warning);
+		}
+		else if (inventory.size() >= INVENTORY_MAX_SIZE) {
+			addMessage("Votre inventaire est plein ! Vous devez le vider avant d'acheter autre chose.", MsgType.Warning);
+		}
+		else {
+			modifyMoney(-product.getPrice());
 			
-			//TODO faire controle manuellement pour être sur qu'il peut utiliser + changer energy en use!!
-			inventory.remove(product);
-			modifyMood(product.getMoodImpact());
-			modifyEnergy(product.getEnergyImpact());
-			modifyOthersImpression(product.getOtherImpressionImpact());
-			modifyHunger(product.getHungerImpact());
-			modifyHygiene(product.getHygieneImpact());
-			modifygeneralKnowledge(product.getGeneralKnowledgeImpact());
-			addMessage(new Message("Vous venez d'utiliser " + product.getName(), MsgType.Info));
-
+			if (product instanceof Cloth) {
+				// Clothes have immediate effect
+				modifyOthersImpression(product.getOtherImpressionImpact());
+				addMessage(new Message(
+						String.format(
+								"Vous venez d'enfiler votre %s", 
+								product.getName().toLowerCase()),
+						MsgType.Info));
+			}
+			else {
+				// Add product to inventory
+				inventory.add(product);
+				
+				addMessage(
+						String.format(
+								"Vous venez d'acheter un(e) %s. Il se trouve dans votre inventaire.",
+								product.getName().toLowerCase()),
+						MsgType.Info);
+			}
 		}
 	}
+	
+	public boolean isInventoryFull() {
+		return inventory.size() >= INVENTORY_MAX_SIZE;
+	}
 
-	private void modifygeneralKnowledge(int generalKnowledgeImpact) {
+	private void modifyGeneralKnowledge(int generalKnowledgeImpact) {
 
 		generalKnowledge += generalKnowledgeImpact;
 		generalKnowledge = Math.max(0, Math.min(generalKnowledge, 100));
@@ -916,28 +930,6 @@ public abstract class Person extends GameObject {
 
 	public boolean isLocked() {
 		return isLocked;
-	}
-
-	public void buy(Product product) {
-
-		if (product.getPrice() > money) {
-			addMessage("Vous n'avez pas assez d'argent!", MsgType.Warning);
-		} else if (inventory.size() >= 5) {
-			addMessage("Votre inventaire est plein vous devez le vider avant d'acheter.", MsgType.Warning);
-
-		} else {
-			money -= product.getPrice();
-			inventory.add(product);
-			addMessage(
-					"Félicitation, vous venez d'acheter: " + product.getName() + ".Il se trouve dans votre inventaire.",
-					MsgType.Info);
-			if (product instanceof Wearable) {
-				modifyOthersImpression(product.getOtherImpressionImpact());
-				// Clothes have immediate effect.
-				addMessage(new Message("Vous venez d'enfiler votre " + product.getName(), MsgType.Info));
-			}
-		}
-
 	}
 	
 	public void rotateToObjectDirection(GameObject dest) {

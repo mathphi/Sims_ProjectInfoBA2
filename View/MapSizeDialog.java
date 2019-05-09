@@ -29,6 +29,7 @@ public class MapSizeDialog extends JDialog {
 	public MapSizeDialog(Frame parent, Size actualSize) {
 		super(parent, "Taille de la carte", true);
 		
+		setUndecorated(true);
 		setPreferredSize(new Dimension(250, 150));
 		setLayout(new BorderLayout());
 

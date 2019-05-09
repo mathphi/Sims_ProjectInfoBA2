@@ -35,6 +35,15 @@ public class GameKeyboard implements KeyListener {
 		case KeyEvent.VK_ESCAPE:
 			game.openGameMenu();
 			break;
+		case KeyEvent.VK_I:
+			game.openInventoryDialog();
+			break;
+		case KeyEvent.VK_F:
+			game.openFriendListDialog();
+			break;
+		case KeyEvent.VK_C:
+			game.openCatalogDialog();
+			break;
 		case KeyEvent.VK_S:
 			if (event.isControlDown()) {
 				game.pauseGame();

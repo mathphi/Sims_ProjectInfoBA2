@@ -2,10 +2,11 @@ package Model;
 
 import View.Window;
 import View.Map;
+import View.CatalogDialog;
 import View.FriendListDialog;
-import View.PersonalMenu;
 import View.GameMenu;
 import View.InteractionMenu;
+import View.InventoryDialog;
 import View.Message;
 import View.Message.MsgType;
 import View.MessagesZone;
@@ -29,6 +30,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
+//TODO: OPENGAMEART
+
 public class Game implements DeletableObserver {
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
@@ -39,8 +42,6 @@ public class Game implements DeletableObserver {
 	private Status status;
 	private MessagesZone msgZone;
 	private GameMenu mainMenu;
-	private PersonalMenu personalMenu;
-	private FriendListDialog friendListMenu;
 
 	private GameTime gameTime;
 
@@ -76,19 +77,16 @@ public class Game implements DeletableObserver {
 			}
 		});
 		
-		window.addPersonalButtonAction(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				openPersonalMenu();
-			}
-		});
 		window.addFriendListButtonAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				openFriendListMenu();
+				openFriendListDialog();
 			}
-
+		});
 		
-
-			
+		window.addInventoryButtonAction(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openInventoryDialog();
+			}
 		});
 
 		mainMenu = new GameMenu(window, this);
@@ -500,29 +498,30 @@ public class Game implements DeletableObserver {
 		mainMenu.showMenu();
 	}
 	
-	private void openFriendListMenu() {
-		pauseGame();
-		friendListMenu = new FriendListDialog(window, getActivePerson());
-		friendListMenu.showDialog();
-		resumeGame();
-	}
-
 	public void closeGameMenu() {
 		mainMenu.closeMenu();
 	}
 	
-
-	public void openPersonalMenu() {
+	public void openFriendListDialog() {
 		pauseGame();
-		personalMenu = new PersonalMenu(window, getActivePerson(), this);
-		personalMenu.showMenu();
+		FriendListDialog friendListDialog = new FriendListDialog(window, getActivePerson());
+		friendListDialog.showDialog();
+		resumeGame();
 	}
 
-	public void closePersonalMenu() {
-		personalMenu.closeMenu();
+	public void openInventoryDialog() {
+		pauseGame();
+		InventoryDialog inventoryDialog = new InventoryDialog(window, getActivePerson(), this);
+		inventoryDialog.showDialog();
+		resumeGame();
+	}
 	
+	public void openCatalogDialog() {
+		pauseGame();
+		CatalogDialog catalogDialog = new CatalogDialog(window, getActivePerson());
+		catalogDialog.showDialog();
+		resumeGame();
 	}
-
 
 	public void saveGame() {
 		JFileChooser chooser = new JFileChooser();
