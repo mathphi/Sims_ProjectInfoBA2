@@ -3,6 +3,7 @@ package Model;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
+import View.AutomaticAnswers;
 import View.Message;
 import View.Message.MsgType;
 
@@ -33,7 +34,7 @@ public abstract class Person extends GameObject {
 	}
 
 	public static enum InteractionType {
-		None, Discuss, Play, Invite, Drink, Kiss, Marry
+		None, Discuss, Play, Drink, Kiss, Marry
 	}
 	
 	public static enum ActionType {
@@ -45,7 +46,7 @@ public abstract class Person extends GameObject {
 	private boolean isActivePerson;
 	private boolean isLocked = false;
 
-	// general information
+	// General informations
 	protected String name;
 	protected int age;
 	protected Gender gender;
@@ -334,36 +335,21 @@ public abstract class Person extends GameObject {
 
 	}
 
-	public void automaticAnswer(Person other, double relationFactor) {
-
-		// TODO: how to make a function that contains appropriate
-		// answers for the corresponding action
-		if (relationFactor > 0.6) {
-			other.addMessageFrom(this,
-					"C'était vraiment un chouette moment! " +
-					"Tu es hyper sympathique et incroyable merci pour tout!",
-					MsgType.Info);
+	public void automaticAnswer(Person other, InteractionType type, double appreciationLevel) {
+		String message = AutomaticAnswers.getAutomaticAnswer(type, appreciationLevel);
+		MsgType msgType = MsgType.Info;
+		
+		if (appreciationLevel > 0.0) {
+			msgType = MsgType.Info;
 		}
-		else if (relationFactor > 0.3) {
-			other.addMessageFrom(this, 
-					"C'était vraiment cool d'être avec toi",
-					MsgType.Info);
-		}
-		else if (relationFactor > 0.0) {
-			other.addMessageFrom(this,
-					"Je n'avais rien d'autre à faire mais bon... Content de t'avoir vu",
-					MsgType.Info);
-		}
-		else if (relationFactor > -0.5) {
-			other.addMessageFrom(this,
-					"Je me suis ennuyé j'aurais pas du venir",
-					MsgType.Warning);
+		else if (appreciationLevel > -0.5) {
+			msgType = MsgType.Warning;
 		}
 		else {
-			other.addMessageFrom(this,
-					"T'es vraiment pas sympathique, ne me recontacte plus jamais!",
-					MsgType.Problem);
+			msgType = MsgType.Problem;
 		}
+
+		other.addMessageFrom(this, message, msgType);
 	}
 
 	public void eat(Food nourriture) {
@@ -382,46 +368,25 @@ public abstract class Person extends GameObject {
 		if (!useEnergy(10))
 			return;
 
-		applyInteractionEffect(people, 6, 15);
+		applyInteractionEffect(people, InteractionType.Discuss, 6, 15);
 	}
 
 	protected void playWith(Person people) {
 		if (!useEnergy(20))
 			return;
 
-		applyInteractionEffect(people, 12, 20);
+		applyInteractionEffect(people, InteractionType.Play, 12, 20);
 	}
 
-	protected void invite(Person people) {
-		if (!useEnergy(25))
-			return;
+	protected void applyInteractionEffect(Person people, InteractionType type, double relationWeight, double moodWeight) {
+		double appreciationFactor = getAppreciationOf(people);
 
-		applyInteractionEffect(people, 15, 25);
-
-		// TODO bringing the people at house!
-	}
-
-	protected void applyInteractionEffect(Person people, double relationWeight, double moodWeight) {
-		double relationFactor = getAppreciationOf(people);
-
-		modifyRelationPoints(people, relationWeight * relationFactor);
+		modifyRelationPoints(people, relationWeight * appreciationFactor);
 		people.modifyRelationPoints(this, relationWeight * people.getAppreciationOf(this));
-		modifyMood(moodWeight * relationFactor);
+		modifyMood(moodWeight * appreciationFactor);
 
-		automaticAnswer(people, relationFactor);
-		people.automaticAnswer(this, people.getAppreciationOf(this));
-
-		System.out.println(friendList.getOrDefault(people, 0.0));
-	}
-
-	protected void applyRejectedEffect(Person people, double relationWeight, double moodWeight) {
-		modifyRelationPoints(people, -relationWeight);
-		people.modifyRelationPoints(this, -relationWeight);
-		modifyMood(-moodWeight);
-
-		// TODO: adapted answers for this
-		addMessage(people.getName() + " n'a pas accepté votre demande", MsgType.Problem);
-		people.addMessage("Vous avez refusé la demande de " + getName(), MsgType.Problem);
+		automaticAnswer(people, type, appreciationFactor);
+		people.automaticAnswer(this, type, people.getAppreciationOf(this));
 
 		System.out.println(friendList.getOrDefault(people, 0.0));
 	}
@@ -441,9 +406,6 @@ public abstract class Person extends GameObject {
 			break;
 		case Play:
 			playWith(other);
-			break;
-		case Invite:
-			invite(other);
 			break;
 		default:
 			break;
@@ -490,6 +452,9 @@ public abstract class Person extends GameObject {
 					MsgType.Problem);
 		}
 		else {
+			if (isLocked())
+				return;
+			
 			Duration d = Duration.between(getLastActionTime(ActionType.Toilet), LocalDateTime.now());
 
 			// Don't block the Person every time he pass at proximity of the Toilet...

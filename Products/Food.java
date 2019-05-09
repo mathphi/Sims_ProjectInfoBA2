@@ -1,6 +1,8 @@
 package Products;
 
 public class Food extends Product {
+	private static final long serialVersionUID = 3798187371654542068L;
+
 	public Food(
 			String name,
 			String desc,

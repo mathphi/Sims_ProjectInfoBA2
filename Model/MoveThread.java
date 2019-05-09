@@ -78,7 +78,7 @@ public class MoveThread implements Runnable {
 					
 					for (int i = 0 ; i < STEPS ; i++) {
 						// Standby the personage moving when the game is paused
-						while (!g.isRunning() || p.isLocked()) {
+						while (!g.isRunning()) {
 							standby(100);
 						}
 						
@@ -96,6 +96,11 @@ public class MoveThread implements Runnable {
 					p.refresh();
 	
 					itinerary.remove(0);
+					
+					// Cancel itinerary if the person is locked
+					if (p.isLocked()) {
+						itinerary = new ArrayList<Point>();
+					}
 				}
 				
 				itinerary = null;

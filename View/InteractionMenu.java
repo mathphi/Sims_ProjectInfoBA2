@@ -27,7 +27,6 @@ public class InteractionMenu extends JDialog {
 
 	private JButton discussButton;
 	private JButton playButton;
-	private JButton inviteButton;
 	private JButton drinkButton;
 	private JButton kissButton;
 	private JButton marryButton;
@@ -54,7 +53,6 @@ public class InteractionMenu extends JDialog {
 		
 		discussButton = new JButton("Discuter");
 		playButton = new JButton("Jouer");
-		inviteButton = new JButton("Inviter");
 		drinkButton = new JButton("Aller boire un verre");
 		kissButton = new JButton("Embrasser");
 		marryButton = new JButton("Se marier");
@@ -81,7 +79,6 @@ public class InteractionMenu extends JDialog {
 			// This section comes after SeriousRelation because a
 			// Person cannot marry with his parents...
 		case CloseFriend:
-			mainPanel.add(inviteButton);
 			if (p1_type != PersonType.Kid && p2_type != PersonType.Kid) {
 				// A Kid cannot drink
 				mainPanel.add(drinkButton);
@@ -107,8 +104,6 @@ public class InteractionMenu extends JDialog {
 					selectedInterraction = InteractionType.Discuss;
 				} else if (src == playButton) {
 					selectedInterraction = InteractionType.Play;
-				} else if (src == inviteButton) {
-					selectedInterraction = InteractionType.Invite;
 				} else if (src == kissButton) {
 					selectedInterraction = InteractionType.Kiss;
 				} else if (src == drinkButton) {
@@ -123,7 +118,6 @@ public class InteractionMenu extends JDialog {
 
 		discussButton.addActionListener(buttonsAction);
 		playButton.addActionListener(buttonsAction);
-		inviteButton.addActionListener(buttonsAction);
 		kissButton.addActionListener(buttonsAction);
 		drinkButton.addActionListener(buttonsAction);
 		marryButton.addActionListener(buttonsAction);

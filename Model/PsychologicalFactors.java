@@ -23,10 +23,10 @@ public class PsychologicalFactors implements Serializable {
 	
 	public static PsychologicalFactors RandomFactors() {
 		return new PsychologicalFactors(
-				Random.range(10, 25),
-				Random.range(10, 25),
-				Random.range(10, 25),
-				Random.range(10, 25)
+				Random.range(15, 25),
+				Random.range(15, 25),
+				Random.range(15, 25),
+				Random.range(15, 25)
 			);
 	}
 	

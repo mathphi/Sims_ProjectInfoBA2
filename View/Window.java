@@ -77,12 +77,12 @@ public class Window extends JFrame {
 		gameButtonPanel.setPreferredSize(new Dimension(300, 50));
 
 		gameMenuButton = new JButton("Menu");
-		friendListButton = new JButton("Liste d'amis");
 		inventoryButton = new JButton("Inventaire");
+		friendListButton = new JButton("Liste d'amis");
 
 		gameButtonPanel.add(gameMenuButton);
-		gameButtonPanel.add(friendListButton);
 		gameButtonPanel.add(inventoryButton);
+		gameButtonPanel.add(friendListButton);
 
 		editorButtonPanel = new JPanel();
 		editorButtonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -97,8 +97,8 @@ public class Window extends JFrame {
 		 */
 		gameMenuButton.setFocusable(false);
 		editorMenuButton.setFocusable(false);
-		friendListButton.setFocusable(false);
 		inventoryButton.setFocusable(false);
+		friendListButton.setFocusable(false);
 
 		borderPanel = new JPanel();
 		borderPanel.setPreferredSize(new Dimension(350, 600));

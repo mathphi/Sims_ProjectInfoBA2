@@ -1,6 +1,8 @@
 package Products;
 
 public class Cloth extends Product implements GenderConstrained {
+	private static final long serialVersionUID = 2384544436230416316L;
+	
 	private GenderConstraint genderConstrain;
 	
 	public Cloth(

@@ -71,12 +71,7 @@ public class Teenager extends Person implements Worker {
 			if (!useEnergy(40))
 				return;
 		
-			applyInteractionEffect(people, 20, 30);
-			
-			//TODO move to bar pay
-		} else {
-			// The other don't want
-			applyRejectedEffect(people, 10, 10);
+			applyInteractionEffect(people, InteractionType.Drink, 20, 30);
 		}
 	}
 
@@ -85,10 +80,7 @@ public class Teenager extends Person implements Worker {
 			if (!useEnergy(5))
 				return;
 			
-			applyInteractionEffect(people, 30, 40);
-		} else {
-			// The other don't want
-			applyRejectedEffect(people, 15, 30);
+			applyInteractionEffect(people, InteractionType.Kiss, 30, 40);
 		}
 	}
 	
@@ -108,9 +100,6 @@ public class Teenager extends Person implements Worker {
 			break;
 		case Play:
 			playWith(other);
-			break;
-		case Invite:
-			invite(other);
 			break;
 		case Kiss:
 			kiss(other);

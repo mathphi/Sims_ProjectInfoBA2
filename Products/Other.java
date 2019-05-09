@@ -1,6 +1,8 @@
 package Products;
 
 public class Other extends Product implements AgeLimited {
+	private static final long serialVersionUID = 2501725112673122860L;
+	
 	private int minimumAge = 0;
 	
 	public Other(

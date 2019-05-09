@@ -1,0 +1,76 @@
+// Event	// LevelMin	// Message
+Discuss	80	J'ai adoré cette conversation, je n'aurais jamais cru rencontrer quelqu'un d'aussi intéressant !
+Discuss	80	C'était super de discuter avec toi, j'avais jamais eu un tel débat !
+Discuss	80	Tu as une intelligence remarquable et de la répartie ! C'était un vrai plaisir !
+Discuss	80	C'était un sujet incroyable, tu t'y connais vraiment, tu es impressionnant !
+Discuss	80	C'est incroyable comme tu es passioné par ce que tu racontes, à bientôt j'espère !
+Discuss	80	N'hésite pas à me recontacter c'était une incroyable discussion !
+Discuss	60	Content de t'avoir vu, c'est chouette de discuter !
+Discuss	60	Ca faisait longtemps mais ça vallait la peine de te voir pour parler !
+Discuss	60	C'est vraiment intéressant ce que tu racontes, j'espère te revoir bientôt !
+Discuss	60	J'ai bien aimé notre conversation, à bientôt !
+Discuss	60	Tu as mon numéro, n'hésites pas à me téléphoner si tu veux rediscuter, j'ai vraiment bien aimé !
+Discuss	40	J'avais pas grand-chose d'autres à faire… A+
+Discuss	40	Bon, je dois y aller. À la prochaine peut-être
+Discuss	40	Ce n'est pas vraiment mon sujet de conversation préféré, à bientôt
+Discuss	40	Pas la meilleure conversation que j'aie eue…
+Discuss	20	C'était vraiment pas top comme conversation…
+Discuss	20	Tu devrais revoir ta manière de t'exprimer…
+Discuss	20	C'était un peu ennuyant comme sujet de conversaton, salut.
+Discuss	20	Bon je te laisse, c'était pas le meilleur moment de ma vie
+Discuss	0	Je me suis vraiment ennuyé…
+Discuss	0	J'aurais préféré ne jamais t'adresser la parole
+Discuss	0	On a vraiment pas les mêmes sujets de conversation
+Discuss	0	J'ai pas tellement envie que tu me recontactes !
+Discuss	0	Cette discussion m'a semblé interminable, évites de me recontacter !
+Play	80	Je me suis super amusé, c'était génial de jouer avec toi !
+Play	80	Invite moi encore quand tu veux c'était trop cool !!
+Play	80	C'était un jeux incroyable ! Et tu es aussi super sympa !
+Play	80	J'ai hâte de te revoir, j'adore jouer avec toi !
+Play	60	J'ai bien fait d'accepter l'invitation, c'était un chouette jeu !
+Play	60	Le jeu était amusant et c'était chouette de te voir
+Play	60	J'ai bien aimé jouer avec toi, merci pour l'invitation
+Play	60	C'était un bon moment. Chouette jeu vraiment !
+Play	40	Bon... C'était pas le meilleur jeu que j'aie connu
+Play	40	Je sais pas trop si j'ai bien fais de jouer avec toi…
+Play	40	Tu es un peu ennuyant, je me suis pas vraiment amusé à jouer avec toi
+Play	20	C'était pas vraiment un jeu amusant
+Play	20	C'était ennuyant comme jeu, j'espère qu'on se reverra pas demain
+Play	20	Comment tu as pu aimer jouer à ce jeux ? C'est juste ennuyant !
+Play	20	Quel mauvais moment à jouer, j'aurais du m'amuser à autre chose !
+Play	0	C'était un jeu hyper mauvais ! Heureusement que c'est fini !
+Play	0	Enfin la fin de ce jeu mauvais ! Comment peux tu t'amuser ? Ne me recontacte plus !!!
+Play	0	Bon sang que c'était long et ennuyant, et je parle même pas de toi !
+Play	0	A dieu, j'espère.
+Kiss	80	Oh tu es si romantique, et tu embrasses si bien !
+Kiss	80	Mmmmh, depuis le temps que j'attendais ça... C'était si spécial et parfait
+Kiss	80	Tu es vraiment fantastique, j'adore être avec toi, tous ces moments…
+Kiss	80	Le meilleur moment de ma journée, tu embrasses tellement bien et tu es si beau
+Kiss	60	Mmmh, je sais pas si c'était une si bonne idée…
+Kiss	60	Je t'apprécie vraiment mais ça va un peu trop vite….
+Kiss	60	Laisse moi respirer un peu, tu es quelqu'un de bien et de gentil mais je suis pas prête
+Kiss	40	Mais tu as fait quoi ?? T'es malade ?
+Kiss	40	Mon dieu tu as essayé de m'embrasser ?
+Kiss	40	Ne m'embrasse plus jamais ou je porte plainte !
+Kiss	40	Mais arrête t'es pas bien ? On est juste pote !
+Kiss	40	T'as bu ou quoi ? D'où tu essayes de m'embrasser ?
+Kiss	40	C'est mieux qu'on en reste là, je veux plus te voir...
+Marry	80	Mon dieu tu es si fantastique, bien sûr que je veux me marier avec toi, j'attendais ça depuis tellement longtemps !! C'est juste incroyable !
+Marry	0	Non écoute je suis désolé mais j'ai besoin de temps… Ça va trop vite entre nous, je t'apprécie vraiment, mais je ne suis pas prête
+Drink	80	C'était un moment fantastique, n'hésite pas à m'inviter à nouveau boire un verre !
+Drink	80	Waw c'était incroyable comme coktail ! Et tu es si drôle !
+Drink	80	C'est un bar hyper cool et branché, j'ai adoré passer ce moment avec toi !
+Drink	80	J'ai bien fait d'accepter l'invitation j'ai passé un moment magnifique à parler et boire avec toi !
+Drink	60	C'était un très bon moment, merci pour l'invitation !
+Drink	60	J'ai bien aimé boire ce verre avec toi, c'était vraiment sympa !
+Drink	60	Merci de m'avoir invité, c'était cool de te voir et discuter autour d'un verre !
+Drink	40	Content de t'avoir vu, à bientôt
+Drink	40	Cool d'avoir bu un verre avec toi, A+
+Drink	40	Merci pour l'invitation c'était sympa cette petite bière
+Drink	40	A bientot pour un autre petit verre ? C'était cool
+Drink	20	Bon... A+
+Drink	20	Merci pour le verre.
+Drink	20	Tu payeras l'addition ?
+Drink	0	J'aurais jamais du accepter de venir boire un verre.
+Drink	0	C'était ultra nul ce bar, et tu étais hyper lourd !
+Drink	0	A jamais j'espère, je sais même pas pourquoi j'ai accepté de venir boire !

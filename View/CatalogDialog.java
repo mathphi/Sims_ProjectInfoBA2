@@ -33,7 +33,7 @@ import javax.swing.border.EmptyBorder;
 
 public class CatalogDialog extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
-	private static final String productsFilePath = "src/Data/Products.csv";
+	private static final String PRODUCTS_FILE_PATH = "src/Data/Products.csv";
 	
 	// Static list to load the file once
 	private static ArrayList<Product> catalogProductsList;
@@ -245,7 +245,7 @@ public class CatalogDialog extends JDialog {
 		
 		try {
             // Get the Products csv file 
-            FileReader file = new FileReader(productsFilePath);
+            FileReader file = new FileReader(PRODUCTS_FILE_PATH);
             buffer = new BufferedReader(file);
 
             String line = null;

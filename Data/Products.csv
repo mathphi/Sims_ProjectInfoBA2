@@ -1,9 +1,9 @@
 // Type	// Name	// Price	// MinAge	// Gender (F/M)	// MoodImpact	// EnergyImpact	// HungerImpact	// HygieneImpact	// GKImpact	// VisibleImpact	// Description
 Food	Café	3			5	20	5	0	0	0	Apporte de l'énergie mais nourrit très peu
-Food	Collation	4			7	15	5	0	0	0	Restaure un peu d'énergie et nourrit peu
-Food	Salade	5			10	17	10	0	0	0	Restaure de l'énergie et apporte des nutriments
-Food	Burger	7			12	17	20	0	0	0	Restaure de l'énergie et nourrit bien
-Food	Repas complet	10			15	20	30	0	0	0	Restaure beaucoup d'énergie et rassasie
+Food	Collation	4			7	15	15	0	0	0	Restaure un peu d'énergie et nourrit peu
+Food	Salade	5			10	17	20	0	0	0	Restaure de l'énergie et apporte des nutriments
+Food	Burger	7			12	17	40	0	0	0	Restaure de l'énergie et nourrit bien
+Food	Repas complet	10			15	20	50	0	0	0	Restaure beaucoup d'énergie et rassasie
 Toy	Jeu de carte	5			10	-5	0	0	0	0	Vous amusera un peu
 Toy	Ballon de foot	6			17	-15	0	0	0	0	Vous amusera un peu plus
 Toy	Jeu de société	10			20	-8	0	0	0	0	Vous amusera bien
