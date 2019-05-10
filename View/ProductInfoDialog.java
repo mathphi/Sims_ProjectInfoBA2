@@ -1,6 +1,7 @@
 package View;
 
 import Products.Product;
+import Tools.Size;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -9,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -17,6 +19,7 @@ import javax.swing.border.EmptyBorder;
 
 public class ProductInfoDialog extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
+	private static final Size ICON_SIZE = new Size(64, 64);
 	
 	private JButton buyButton;
 	private JButton closeButton;
@@ -36,9 +39,18 @@ public class ProductInfoDialog extends JDialog {
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		mainPanel.setLayout(new BorderLayout());
 		
-		JLabel iconLabel = new JLabel("ICONE", JLabel.CENTER);
-		iconLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		ImageIcon icon = product.getIcon(ICON_SIZE);
 		
+		JLabel iconLabel;
+		if (icon != null) {
+			iconLabel = new JLabel(icon, JLabel.CENTER);
+		}
+		else {
+			iconLabel = new JLabel(product.getName(), JLabel.CENTER);
+		}
+		
+		iconLabel.setBorder(new EmptyBorder(20, 20, 20, 20));
+			
 		JLabel infosLabel = new JLabel(
 				String.format(
 						"<html>"
