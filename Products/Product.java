@@ -1,6 +1,12 @@
 package Products;
 
+import java.awt.Image;
 import java.io.Serializable;
+
+import javax.swing.ImageIcon;
+
+import Tools.ImagesFactory;
+import Tools.Size;
 
 public abstract class Product implements Serializable {
 	private static final long serialVersionUID = 3734644445361401634L;
@@ -8,6 +14,8 @@ public abstract class Product implements Serializable {
 	private int price;
 	private String name;
 	private String description;
+	
+	private String imgID;
 
 	protected int moodImpact = 0;
 	protected int energyImpact = 0;
@@ -16,10 +24,12 @@ public abstract class Product implements Serializable {
 	protected int generalKnowledgeImpact = 0;
 	protected int otherImpressionImpact = 0;
 
-	public Product(String name, String description, int price) {
+	public Product(String name, String description, int price, String imgID) {
 		this.name = name;
 		this.price = price;
 		this.description = description;
+		
+		this.imgID = imgID;
 	}
 
 	public int getMoodImpact() {
@@ -56,5 +66,11 @@ public abstract class Product implements Serializable {
 	
 	public String getDescription() {
 		return description;
+	}
+	
+	public ImageIcon getIcon(Size s) {
+		return new ImageIcon(
+				ImagesFactory.getImage(imgID)
+					.getScaledInstance(s.getWidth(), s.getWidth(), Image.SCALE_SMOOTH));
 	}
 }

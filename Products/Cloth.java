@@ -9,11 +9,12 @@ public class Cloth extends Product implements GenderConstrained {
 			String name,
 			String desc,
 			int price,
+			String imgID,
 			int moodImpact,
 			int otherImpressionImpact,
 			GenderConstraint genderConstrain)
 	{
-		super(name, desc, price);
+		super(name, desc, price, imgID);
 		
 		this.moodImpact = moodImpact;
 		this.otherImpressionImpact = otherImpressionImpact;

@@ -10,6 +10,7 @@ import Products.Other;
 import Products.GenderConstrained.GenderConstraint;
 import Products.Product;
 import Products.Toy;
+import Tools.Size;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -23,6 +24,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -34,6 +36,7 @@ import javax.swing.border.EmptyBorder;
 public class CatalogDialog extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
 	private static final String PRODUCTS_FILE_PATH = "src/Data/Products.csv";
+	private static final Size ICON_SIZE = new Size(48, 48);
 	
 	// Static list to load the file once
 	private static ArrayList<Product> catalogProductsList;
@@ -167,6 +170,14 @@ public class CatalogDialog extends JDialog {
 						+ "</body></html>",
 						prod.getName(), prod.getPrice()));
 		
+		ImageIcon icon = prod.getIcon(ICON_SIZE);
+		
+		if (icon != null) {
+			bt.setIcon(icon);
+			bt.setHorizontalAlignment(JButton.CENTER);
+			bt.setIconTextGap(20);
+		}
+		
 		if (prod instanceof AgeLimited) {
 			AgeLimited al = (AgeLimited) prod;
 			
@@ -176,7 +187,7 @@ public class CatalogDialog extends JDialog {
 			}
 		}
 
-		bt.setPreferredSize(new Dimension(150, 75));
+		bt.setPreferredSize(new Dimension(175, 90));
 		bt.setFocusable(false);
 		
 		// Set product button action
@@ -261,7 +272,7 @@ public class CatalogDialog extends JDialog {
             	// The -1 is to prevent to remove trailing empty strings
             	String[] data = line.split("\t", -1);
             	
-            	if (data.length != 12) {
+            	if (data.length != 13) {
                     buffer.close();
                     
             		throw new IllegalArgumentException(
@@ -270,7 +281,10 @@ public class CatalogDialog extends JDialog {
             	}
             	
             	Product prod = createProductFromData(data);
-            	catalogProductsList.add(prod);
+            	
+            	if (prod != null) {
+            		catalogProductsList.add(prod);
+            	}
             }   
 
             buffer.close();
@@ -281,9 +295,6 @@ public class CatalogDialog extends JDialog {
 	}
 	
 	private Product createProductFromData(String[] data) {
-    	if (data.length != 12)
-    		return null;
-    		
 		Product prod = null;
 		
     	// Switch on the Product's type
@@ -293,6 +304,7 @@ public class CatalogDialog extends JDialog {
 					data[1],
 					data[11],
 					convertDataToInt(data[2]),
+					data[12],
 					convertDataToInt(data[5]),
 					convertDataToInt(data[6]),
 					convertDataToInt(data[7]));
@@ -302,6 +314,7 @@ public class CatalogDialog extends JDialog {
 					data[1],
 					data[11],
 					convertDataToInt(data[2]),
+					data[12],
 					convertDataToInt(data[5]),
 					convertDataToInt(data[6]));
 			break;
@@ -310,6 +323,7 @@ public class CatalogDialog extends JDialog {
 					data[1],
 					data[11],
 					convertDataToInt(data[2]),
+					data[12],
 					convertDataToInt(data[5]),
 					convertDataToInt(data[10]),
 					convertGenderConstrain(data[4]));
@@ -319,6 +333,7 @@ public class CatalogDialog extends JDialog {
 					data[1],
 					data[11],
 					convertDataToInt(data[2]),
+					data[12],
 					convertDataToInt(data[5]),
 					convertDataToInt(data[6]),
 					convertDataToInt(data[7]),

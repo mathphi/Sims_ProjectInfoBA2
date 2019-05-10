@@ -7,10 +7,11 @@ public class Toy extends Product {
 			String name,
 			String desc,
 			int price,
+			String imgID,
 			int moodImpact,
 			int energyImpact)
 	{
-		super(name, desc, price);
+		super(name, desc, price, imgID);
 		
 		this.moodImpact = moodImpact;
 		this.energyImpact = energyImpact;

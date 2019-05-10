@@ -9,6 +9,7 @@ public class Other extends Product implements AgeLimited {
 			String name,
 			String desc,
 			int price,
+			String imgID,
 			int moodImpact,
 			int energyImpact,
 			int hungerImpact,
@@ -17,7 +18,7 @@ public class Other extends Product implements AgeLimited {
 			int otherImpressionImpact,
 			int minimumAge)
 	{
-		super(name, desc, price);
+		super(name, desc, price, imgID);
 		
 		this.moodImpact = moodImpact;
 		this.energyImpact = energyImpact;

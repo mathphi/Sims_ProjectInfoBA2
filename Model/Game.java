@@ -11,6 +11,7 @@ import View.Message;
 import View.Message.MsgType;
 import View.MessagesZone;
 import View.Status;
+import Tools.ImagesFactory;
 import Tools.ObjectRestorer;
 import Tools.ObjectSaver;
 import Tools.Point;
@@ -165,6 +166,16 @@ public class Game implements DeletableObserver {
 		
 		Bath bath = new Bath(new Point(7, 1));
 		attachObjectToGame(bath);
+		
+		
+		/*
+		 * Load all images at starting of the program
+		 */
+		try {
+			ImagesFactory.loadAllImages();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		notifyView();
 	}
