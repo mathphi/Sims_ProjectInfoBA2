@@ -3,6 +3,7 @@ package View;
 import Model.Game;
 import Model.Person;
 import Products.Product;
+import Tools.Size;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,16 +14,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-//TODO: add icons !!!
 public class InventoryDialog extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
 	private static final int INVENTORY_SIZE = 5;
+	private static final Size ICON_SIZE = new Size(48, 48);
 
 	private ArrayList<JButton> itemButtons = new ArrayList<JButton>();
 	private ArrayList<Product> productsList = new ArrayList<Product>();
@@ -57,6 +59,18 @@ public class InventoryDialog extends JDialog {
 			}
 			
 			JButton item = createItem(prod);
+			
+			if (prod != null) {
+				ImageIcon icon = prod.getIcon(ICON_SIZE);
+				
+				if (icon != null) {
+					item.setIcon(icon);
+					item.setVerticalTextPosition(JButton.BOTTOM);
+					item.setHorizontalTextPosition(JButton.CENTER);
+					item.setHorizontalAlignment(JButton.CENTER);
+					item.setIconTextGap(20);
+				}
+			}
 			
 			itemButtons.add(item);
 			listPanel.add(item);
