@@ -19,6 +19,12 @@ public abstract class GameObject implements Directable, Serializable {
 	private Rect rect;
 	private Color color;
 	private ArrayList<GameObject> allMapObjects = new ArrayList<GameObject>();
+	
+	/*
+	 * Mark this to false in children classes to prevent the
+	 * size permutation with rotation
+	 */
+	protected boolean sizePermutable = true;
 
 	public GameObject(Point pos, Size size, Color color) {
 		this.rect = new Rect(pos, size);
@@ -40,7 +46,7 @@ public abstract class GameObject implements Directable, Serializable {
 	public Size getSize() {
 		Size s = rect.getSize();
 
-		if (direction == Direction.EAST || direction == Direction.WEST) {
+		if (sizePermutable && (direction == Direction.EAST || direction == Direction.WEST)) {
 			s = s.permuted();
 		}
 
@@ -50,7 +56,7 @@ public abstract class GameObject implements Directable, Serializable {
 	public Rect getRect() {
 		Rect r = rect;
 
-		if (direction == Direction.EAST || direction == Direction.WEST) {
+		if (sizePermutable && (direction == Direction.EAST || direction == Direction.WEST)) {
 			r = r.permuted();
 		}
 
@@ -70,7 +76,7 @@ public abstract class GameObject implements Directable, Serializable {
 	}
 
 	public void setSize(Size sz) {
-		if (direction == Direction.EAST || direction == Direction.WEST) {
+		if (sizePermutable && (direction == Direction.EAST || direction == Direction.WEST)) {
 			sz = sz.permuted();
 		}
 
@@ -112,7 +118,7 @@ public abstract class GameObject implements Directable, Serializable {
 
 	public abstract GameObject clone();
 	
-	private String getDirectionLetter() {
+	protected String getDirectionLetter() {
 		String letter = "S";
 		
 		switch (direction) {
@@ -139,8 +145,8 @@ public abstract class GameObject implements Directable, Serializable {
 		String imgID = String.format("%s_%s", this.getClass().getSimpleName(), getDirectionLetter());
 		BufferedImage img = ImagesFactory.getImage(imgID);
 		
-		// Try to get the SOUTH image (default image)
 		if (img == null) {
+			// Try to get the SOUTH image (default image)
 			imgID = String.format("%s_S", this.getClass().getSimpleName());
 			img = ImagesFactory.getImage(imgID);
 		}
@@ -151,6 +157,7 @@ public abstract class GameObject implements Directable, Serializable {
 	public void paint(Graphics g, int BLOC_SIZE) {
 		BufferedImage img = getCurrentImage();
 		
+		// If we have an image, paint it
 		if (img != null) {
 			g.drawImage(
 					img,
@@ -160,6 +167,7 @@ public abstract class GameObject implements Directable, Serializable {
 					getSize().getHeight() * BLOC_SIZE,
 					null);
 		}
+		// If we don't have an image -> fallback to coloured rectangle
 		else {
 			g.setColor(color);
 			g.fillRect(

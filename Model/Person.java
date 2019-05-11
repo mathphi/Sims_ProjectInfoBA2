@@ -1,5 +1,6 @@
 package Model;
 
+import Tools.ImagesFactory;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
@@ -7,10 +8,13 @@ import View.AutomaticAnswers;
 import View.Message;
 import View.Message.MsgType;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ import Products.Product;
 public abstract class Person extends GameObject {
 	private static final long serialVersionUID = 8476495059211784395L;
 	private static final int INVENTORY_MAX_SIZE = 5;
+	private static final int ANIM_STEPS_COUNT = 4;
 
 	public static enum Gender {
 		Male, Female
@@ -40,10 +45,14 @@ public abstract class Person extends GameObject {
 		Sleep, Nap, Toilet, Shower, Bath, Work
 	}
 
-	private static Size SIZE = new Size(2, 2);
+	private static Size SIZE = new Size(2, 4);
 
+	// Global Person state attributes
 	private boolean isActivePerson;
 	private boolean isLocked = false;
+	
+	// Index for the moving animation 
+	private int animIndex = 1;
 
 	// General informations
 	protected String name;
@@ -144,6 +153,9 @@ public abstract class Person extends GameObject {
 
 	public Person(Point pos, String name, int age, Gender gender, Adult mother, Adult father) {
 		super(pos, SIZE, Color.BLUE);
+		
+		// A person has no permutable size
+		this.sizePermutable = false;
 
 		this.name = name;
 		this.age = age;
@@ -771,40 +783,6 @@ public abstract class Person extends GameObject {
 
 	}
 
-	public void paint(Graphics g, int BLOC_SIZE) {
-		super.paint(g, BLOC_SIZE);
-
-		if (isActivePerson()) {
-			g.setColor(Color.YELLOW);
-			g.drawRect((int) (getPos().getX() * BLOC_SIZE), (int) (getPos().getY() * BLOC_SIZE),
-					(BLOC_SIZE * getSize().getWidth()) - 2, (BLOC_SIZE * getSize().getHeight()) - 2);
-		}
-
-		int deltaX = 0;
-		int deltaY = 0;
-
-		Size realSize = new Size(BLOC_SIZE * getSize().getWidth(), BLOC_SIZE * getSize().getHeight());
-
-		switch (getDirection()) {
-		case EAST:
-			deltaX = +(realSize.getWidth() - 2) / 2;
-			break;
-		case NORTH:
-			deltaY = -(realSize.getHeight() - 2) / 2;
-			break;
-		case WEST:
-			deltaX = -(realSize.getWidth() - 2) / 2;
-			break;
-		case SOUTH:
-			deltaY = (realSize.getHeight() - 2) / 2;
-			break;
-		}
-
-		int xCenter = (int) (getPos().getX() * BLOC_SIZE) + (realSize.getWidth() - 2) / 2;
-		int yCenter = (int) (getPos().getY() * BLOC_SIZE) + (realSize.getHeight() - 2) / 2;
-		g.drawLine(xCenter, yCenter, xCenter + deltaX, yCenter + deltaY);
-	}
-
 	public GameObject clone() {
 		return null;
 	}
@@ -923,4 +901,75 @@ public abstract class Person extends GameObject {
 		
 		rotate(d);
 	}
+	
+	public void incrementAnimIndex() {
+		if (animIndex + 1 > ANIM_STEPS_COUNT) {
+			animIndex = 1;
+		}
+		else {
+			animIndex++;
+		}
+	}
+	
+	public void resetAnimIndex() {
+		animIndex = 1;
+	}
+	
+	public int getCurrentAnimIndex() {
+		return animIndex;
+	}
+	
+	private String getGenderLetter() {
+		String letter = "M";
+		
+		switch (gender) {
+		case Male:
+			letter = "M";
+			break;
+		case Female:
+			letter = "F";
+			break;
+		default:
+			break;
+		}
+		
+		return letter;
+	}
+	
+	@Override
+	public BufferedImage getCurrentImage() {
+		String imgID = String.format(
+				"%s_%s_%s_%d",
+				this.getClass().getSimpleName(),
+				getGenderLetter(),
+				getDirectionLetter(),
+				getCurrentAnimIndex());
+		
+		BufferedImage img = ImagesFactory.getImage(imgID);
+		
+		if (img == null) {
+			// Try to get the first SOUTH image (as default image)
+			imgID = String.format("%s_%s_S_1", this.getClass().getSimpleName(), getGenderLetter());
+			img = ImagesFactory.getImage(imgID);
+		}
+		
+		return img;
+	}
+
+	public void paint(Graphics g, int BLOC_SIZE) {
+		Graphics2D g2d = (Graphics2D) g;
+		
+		if (isActivePerson()) {
+			g2d.setColor(Color.BLUE);
+			g2d.setStroke(new BasicStroke(2));
+			g2d.drawOval(
+					(int) (getPos().getX() * BLOC_SIZE + 2),
+					(int) ((getPos().getY() + getSize().getHeight() - 1) * BLOC_SIZE),
+					BLOC_SIZE * getSize().getWidth() - 4,
+					BLOC_SIZE * getSize().getWidth() - 4);
+		}
+
+		super.paint(g2d, BLOC_SIZE);
+	}
+
 }

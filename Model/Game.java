@@ -108,7 +108,7 @@ public class Game implements DeletableObserver {
 			attachObjectToGame(new WallBlock(0, i));
 
 			// Make a door in the wall
-			if (i != 10 && i != 11) {
+			if (i != 9 && i != 10 && i != 11 && i != 12) {
 				attachObjectToGame(new WallBlock(20 - 1, i));
 				attachObjectToGame(new WallBlock(i, 20 - 1));
 			}
@@ -119,7 +119,7 @@ public class Game implements DeletableObserver {
 			attachObjectToGame(new WallBlock(20 + i, 0));
 
 			// Make a door in the wall
-			if (i != 10 && i != 11) {
+			if (i != 9 && i != 10 && i != 11 && i != 12) {
 				attachObjectToGame(new WallBlock(20 + i, 15 - 1));
 			}
 		}
@@ -131,7 +131,7 @@ public class Game implements DeletableObserver {
 			attachObjectToGame(new WallBlock(35 + i, 25 - 1));
 
 			// Make a door in the wall
-			if (i != 15 && i != 16) {
+			if (i != 13 && i != 14 && i != 15 && i != 16) {
 				attachObjectToGame(new WallBlock(35 + 25 - 1, i));
 			}
 		}
@@ -142,7 +142,7 @@ public class Game implements DeletableObserver {
 			attachObjectToGame(new WallBlock(0, 20 + i - 1));
 
 			// Make a door in the wall
-			if (i != 2 && i != 3) {
+			if (i != 0 && i != 1 && i != 2 && i != 3) {
 				attachObjectToGame(new WallBlock(7, 20 + i));
 			}
 		}
@@ -224,6 +224,7 @@ public class Game implements DeletableObserver {
 			}
 		}
 		
+		//TODO: send the same signal with the Key Space event ?
 		if (!activePerson.isLocked()) {
 			object.clickedEvent(activePerson);
 		}
