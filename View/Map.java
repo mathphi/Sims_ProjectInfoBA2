@@ -35,7 +35,9 @@ public class Map extends JPanel {
     public Map() {
         this.setFocusable(true);
         this.requestFocusInWindow();
-        //this.setPreferredSize(new Dimension(mapSize.getWidth()*BLOC_SIZE, mapSize.getHeight()*BLOC_SIZE));
+        
+        // To receive key Tab events
+        this.setFocusTraversalKeysEnabled(false);
     }
     
     public void setMapSize(Size sz) {

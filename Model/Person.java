@@ -199,6 +199,29 @@ public abstract class Person extends GameObject {
 		return isActivePerson;
 	}
 
+	public Point getFrontPos() {
+		Point pos = getPos();
+		
+		switch (getDirection()) {
+		case NORTH:
+			pos = pos.add(getSize().getWidth()/2, -1);
+			break;
+		case EAST:
+			pos = pos.add(getSize().getWidth(), getSize().getHeight()/2);
+			break;
+		case SOUTH:
+			pos = pos.add(getSize().getWidth()/2, getSize().getHeight());
+			break;
+		case WEST:
+			pos = pos.add(-1, getSize().getHeight()/2);
+			break;
+		default:
+			break;
+		}
+		
+		return pos;
+	}
+	
 	private Direction convertOrientation(Point delta) {
 		Direction direction = Direction.EAST;
 

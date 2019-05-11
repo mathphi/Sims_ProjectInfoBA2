@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Tools.Point;
 
 public class MoveThread implements Runnable {
-	private final int STEPS = 2;
+	private final int STEPS = 4;
 
 	private boolean stopped = false;
 	
@@ -84,11 +84,16 @@ public class MoveThread implements Runnable {
 						// Move of deltaPos divided by the number of steps
 						Point subPos = p.getPos().add(deltaPos.multiply(1.0 / STEPS));
 						p.setPos(subPos);
-						p.incrementAnimIndex();
+						
+						if (i % 2 == 0) {
+							// Set animation every two steps
+							p.incrementAnimIndex();
+						}
+						
 						p.refresh();
 
 						// The speed varies with the energy of the player
-						standby((int) (200 - 75.0 * p.getEnergy()) / STEPS);
+						standby((int) (400 - 150.0 * p.getEnergy()) / STEPS);
 					}
 
 					// Set an integer endPos to ensure the Person is aligned with the grid

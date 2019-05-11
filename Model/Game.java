@@ -224,7 +224,7 @@ public class Game implements DeletableObserver {
 			}
 		}
 		
-		//TODO: send the same signal with the Key Space event ?
+		//TODO implements clickable interface
 		if (!activePerson.isLocked()) {
 			object.clickedEvent(activePerson);
 		}
@@ -237,6 +237,44 @@ public class Game implements DeletableObserver {
 			Person selectedPerson = (Person) (object);
 			setActivePerson(selectedPerson);
 		}
+	}
+	
+	public void activePlayerAction() {
+		if (activePerson.isLocked())
+			return;
+		
+		// Get the object at front of the activePerson
+		Point targetPos = activePerson.getFrontPos();
+		GameObject targetObject = getObjectAtPosition(targetPos);
+		
+		if (targetObject != null) {
+			targetObject.clickedEvent(activePerson);
+		}
+	}
+	
+	public void selectNextActivePerson(boolean backward) {
+		if (population.size() == 0)
+			return;
+		
+		// Get the index of the activePerson to find the next person in the list
+		int index = population.indexOf(activePerson);
+		
+		// The increment is -1 for backward, +1 forward
+		int increment = (backward ? -1 : 1);
+		
+		int nextIndex = index + increment;
+		
+		// If next index is -1 -> get the last person in the list
+		if (nextIndex < 0) {
+			nextIndex = population.size() - 1;
+		}
+		// If the next index is out of the list -> get the first person
+		else if (nextIndex > population.size() - 1) {
+			nextIndex = 0;
+		}
+
+		// Select the next Person in the list
+		setActivePerson(population.get(nextIndex));
 	}
 
 	public GameObject getObjectAtPosition(Point pos) {

@@ -32,6 +32,12 @@ public class GameKeyboard implements KeyListener {
 		case KeyEvent.VK_UP:
 			game.moveActivePlayer(0, -1);
 			break;
+		case KeyEvent.VK_SPACE:
+			game.activePlayerAction();
+			break;
+		case KeyEvent.VK_TAB:
+			game.selectNextActivePerson(event.isShiftDown());
+			break;
 		case KeyEvent.VK_ESCAPE:
 			game.openGameMenu();
 			break;
