@@ -267,6 +267,9 @@ public class Game implements DeletableObserver {
 		if (activePerson.isLocked())
 			return;
 		
+		// Try to place the bottom of the player on the mouse
+		pos = pos.add(0, -activePerson.getSize().getHeight()+1);
+		
 		Rect r = new Rect(0, 0, (int)map.getSize().getWidth(), (int)map.getSize().getHeight());
 		
 		if (r.contains(pos)) {
