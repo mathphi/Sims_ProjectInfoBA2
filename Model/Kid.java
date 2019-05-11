@@ -9,8 +9,8 @@ import View.Message.MsgType;
 public class Kid extends Person {
 	private static final long serialVersionUID = -6840034678894187001L;
 	
-	// Annual pocket money between 100€ and 150€ with a step of 10
-	private final int POCKET_MONEY = Random.rangeInt(10, 15) * 10;
+	// Annual pocket money between 50€ and 100€ with a step of 5
+	private final int POCKET_MONEY = Random.rangeInt(10, 20) * 5;
 
 	public Kid(Point pos, String name, int age, Gender gender, Adult mother, Adult father) {
 		super(pos, name, age, gender, mother, father);

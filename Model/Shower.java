@@ -20,7 +20,7 @@ public class Shower extends UsableStructure {
 		JUST_WENT_OUT_DELAY = 30;
 		
 		OCCUPIED_MSG = "Cette douche est déjà occupée !";
-		COMEBACK_LATER_MSG = "Voud devez encore attendre avant de pouvoir prendre à nouveau une douche";
+		COMEBACK_LATER_MSG = "Vous devez encore attendre avant de pouvoir prendre à nouveau une douche";
 		JUST_WENT_OUT_MSG = "Vous venez de prendre une douche";
 	}
 	

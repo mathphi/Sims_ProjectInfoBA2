@@ -18,7 +18,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import Controller.ImagesFactory;
 import Model.Activable.ActionType;
@@ -96,7 +95,7 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	protected ArrayList<Product> inventory = new ArrayList<Product>();
 	
 	// Relations
-	protected Map<Person, Double> friendList = new HashMap<Person, Double>();
+	protected HashMap<Person, Double> friendList = new HashMap<Person, Double>();
 	protected Adult mother;
 	protected Adult father;
 
@@ -696,7 +695,7 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 		return othersImpression / 100.0;
 	}
 
-	public Map<Person, Double> getFriendList() {
+	public HashMap<Person, Double> getFriendList() {
 		return friendList;
 	}
 
@@ -885,7 +884,7 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 			activateWashingState(20, 50, ActionType.Shower);
 		}
 	}
-	
+
 	public void takeBath() {
 		if (useEnergy(15)) {
 			addMessage("Vous êtes en train de prendre un bain", MsgType.Info);
@@ -910,6 +909,52 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 				setLocked(false);
 
 				addMessage("Vous vous êtes lavé, vous avez récupéré de l'hygiène", MsgType.Info);
+			}
+		});
+	}
+
+	public void viewTelevision() {
+		if (!useEnergy(10))
+			return;
+
+		addMessage("Vous êtes en train de regarder la télévision", MsgType.Info);
+		
+		// Mark Person as locked (prevent movements,...)
+		setLocked(true);
+
+		WaiterThread.wait(40, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				modifyMood(30);
+				modifyGeneralKnowledge(10);
+				
+				resetLastActionTime(ActionType.Television);
+				setLocked(false);
+
+				addMessage("Votre émission est terminée", MsgType.Info);
+			}
+		});
+	}
+	
+	public void readLibrary() {
+		if (!useEnergy(20))
+			return;
+
+		addMessage("Vous êtes en train de lire des livres", MsgType.Info);
+		
+		// Mark Person as locked (prevent movements,...)
+		setLocked(true);
+
+		WaiterThread.wait(70, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				modifyMood(10);
+				modifyGeneralKnowledge(25);
+				
+				resetLastActionTime(ActionType.Library);
+				setLocked(false);
+
+				addMessage("Vous avez terminer une série de livres très intéressants", MsgType.Info);
 			}
 		});
 	}

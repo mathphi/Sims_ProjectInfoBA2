@@ -63,11 +63,13 @@ public class EditorPanel extends JPanel {
 
 		// Event id 1 is for « add furniture object to map » action
 		addButtonToCateg(mobCateg, "WC", "Model.WaterClosed", 1);
-		addButtonToCateg(mobCateg, "Lit", "Model.Bed", 1);
-		addButtonToCateg(mobCateg, "Fauteuil", "Model.Sofa", 1);
-		addButtonToCateg(mobCateg, "Ordinateur", "Model.Computer", 1);
 		addButtonToCateg(mobCateg, "Douche", "Model.Shower", 1);
 		addButtonToCateg(mobCateg, "Baignoire", "Model.Bath", 1);
+		addButtonToCateg(mobCateg, "Lit", "Model.Bed", 1);
+		addButtonToCateg(mobCateg, "Fauteuil", "Model.Sofa", 1);
+		addButtonToCateg(mobCateg, "Bibliothèque", "Model.Library", 1);
+		addButtonToCateg(mobCateg, "Ordinateur", "Model.Computer", 1);
+		addButtonToCateg(mobCateg, "Télévision", "Model.Television", 1);
 
 		JPanel persCateg = createCategory(mainPanel, "Personnages");
 

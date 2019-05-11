@@ -5,9 +5,9 @@ import java.util.TimerTask;
 
 public class GameTime {	
 	public static final int DAY_LEN = 24*60*60; // in seconds
-	private final int TIMER_PERIOD = 1000; // in microseconds
+	private final int TIMER_PERIOD = 250; // in milliseconds
 	
-	// The scale factor between real time and virtual time speed (ie: one day is 1 seconds)
+	// The scale factor between real time and virtual time speed (ie: one day is 1 period)
 	private final double TIME_SCALE_FACTOR = DAY_LEN / 1;
 	
 	private long timeFromStart = 0;
@@ -33,7 +33,7 @@ public class GameTime {
 					game.updateGame();
 				}
 			}
-		}, 1000, TIMER_PERIOD/4);
+		}, 1000, TIMER_PERIOD);
 	}
 	
 	public void start() {

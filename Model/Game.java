@@ -32,6 +32,8 @@ import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
 public class Game implements RefreshableObserver, MessagesListener {
+	private static final String DEFAULT_LOAD_PATH = "src/Data/sample1.map";
+	
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
 	private HashMap<Person,MoveThread> moveThreadsList = new HashMap<Person,MoveThread>();
@@ -60,6 +62,9 @@ public class Game implements RefreshableObserver, MessagesListener {
 		 */
 		addMinimapObstacleArtefact();
 		
+		
+		/* Actions for buttons in the right panel */
+		
 		window.addGameMenuButtonAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				openGameMenu();
@@ -80,16 +85,16 @@ public class Game implements RefreshableObserver, MessagesListener {
 
 		mainMenu = new GameMenu(window, this);
 		
-
+		/* Create a testing map */
+		
 		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
-		Person p2 = new Teenager(new Point(17, 13), "Second Player", 18, Person.Gender.Female, null, null);
+		Person p2 = new Teenager(new Point(17, 13), "Second Player", 21, Person.Gender.Female, null, null);
 		Person p3 = new Adult(new Point(11, 16), "Third People", 30, Person.Gender.Male, null, null);
 		
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
 		attachPersonToGame(p3);
 		setActivePerson(p1);
-		
 
 		// Map building
 		// A sample of room
@@ -118,11 +123,11 @@ public class Game implements RefreshableObserver, MessagesListener {
 		for (int i = 0; i < 25; i++) {
 			attachObjectToGame(new WallBlock(35 + i, 0));
 			attachObjectToGame(new WallBlock(35 - 1, i));
-			attachObjectToGame(new WallBlock(35 + i, 25 - 1));
 
 			// Make a door in the wall
 			if (i != 13 && i != 14 && i != 15 && i != 16) {
 				attachObjectToGame(new WallBlock(35 + 25 - 1, i));
+				attachObjectToGame(new WallBlock(35 + i, 25 - 1));
 			}
 		}
 
@@ -157,7 +162,13 @@ public class Game implements RefreshableObserver, MessagesListener {
 		Bath bath = new Bath(new Point(7, 1));
 		bath.rotate(Direction.EAST);
 		attachObjectToGame(bath);
+
+		Television tv = new Television(new Point(35, 12));
+		tv.rotate(Direction.EAST);
+		attachObjectToGame(tv);
 		
+		Library library = new Library(new Point(39, 1));
+		attachObjectToGame(library);
 		
 		/*
 		 * Load all images at starting of the program
@@ -166,7 +177,13 @@ public class Game implements RefreshableObserver, MessagesListener {
 			ImagesFactory.loadAllImages();
 		} catch (Exception e) {
 			e.printStackTrace();
+			quit();
 		}
+
+		/*
+		 * Load a sample map file
+		 */
+		restoreFromFile(DEFAULT_LOAD_PATH);
 
 		notifyView();
 	}
@@ -190,7 +207,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 	public Point getMinimapOffset() {
 		return map.getMinimapOffset();
 	}
-
+	
 	/**
 	 *  This function adds an invisible obstacle at the position of the bottom left
 	 *  corner of the map to avoid to move objects under the minimap.
@@ -428,8 +445,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		 * can be modified in updatePerson() resulting in a
 		 * ConcurrentModificationException
 		 */
-		for (int i = 0; i < population.size(); i++) {
-			Person p = population.get(i);
+		for (Person p : new ArrayList<Person>(population)) {
 			updatePerson(p);
 		}
 	}
@@ -451,8 +467,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		 */
 		if (p.maxAgeReached()) {
 			if (p instanceof Adult) {
-				// TODO: He dies...
-				p.addMessage("Vous êtes mort !", MsgType.Problem);
+				// We don't do anything, an Adult can live infinitely...
 			} else if (p instanceof Teenager) {
 				Person newPers = new Adult(p);
 				replacePerson(p, newPers);
@@ -465,13 +480,35 @@ public class Game implements RefreshableObserver, MessagesListener {
 		}
 	}
 
+	/**
+	 * Replace the objects from the old Person to the upgraded one
+	 * @param from
+	 * @param to
+	 */
 	private void replacePerson(Person from, Person to) {
 		removePersonFromGame(from);
 		attachPersonToGame(to);
 
-		//
+		// Select the new Person as activePerson if the previous was the activePerson
 		if (from.isActivePerson()) {
 			setActivePerson(to);
+		}
+		
+		replaceAllPersonOccurences(from, to);
+	}
+	
+	/**
+	 * Replace all occurrences of the upgraded Person in the friendList of all Persons
+	 * @param from
+	 * @param to
+	 */
+	private void replaceAllPersonOccurences(Person from, Person to) {
+		for (Person p : population) {
+			HashMap<Person,Double> fl = p.getFriendList();
+			
+			if (fl.containsKey(from)) {
+				fl.put(to, fl.remove(from));
+			}
 		}
 	}
 
@@ -662,7 +699,6 @@ public class Game implements RefreshableObserver, MessagesListener {
 	
 	private void restoreFromFile(String filepath) {
 		gameTime.stop();
-		gameTime.cancel();
 
 		ObjectRestorer restorer = new ObjectRestorer(filepath);
 
@@ -678,6 +714,8 @@ public class Game implements RefreshableObserver, MessagesListener {
 				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		
+		gameTime.cancel();
 
 		loadGameMapPacket(mapPacket);
 

@@ -27,7 +27,7 @@ public class Teenager extends Person implements Worker {
 
 	@Override
 	public boolean maxAgeReached() {
-		return (getAge() > 21);
+		return (getAge() > 24);
 	}
 
 	@Override
