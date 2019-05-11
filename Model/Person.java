@@ -1024,9 +1024,9 @@ public abstract class Person extends GameObject {
 			g2d.setStroke(new BasicStroke(2));
 			g2d.drawOval(
 					(int) (getPos().getX() * BLOC_SIZE + 2),
-					(int) ((getPos().getY() + getSize().getHeight() - 1) * BLOC_SIZE),
-					BLOC_SIZE * getSize().getWidth() - 4,
-					BLOC_SIZE * getSize().getWidth() - 4);
+					(int) ((getPos().getY() + getSize().getHeight() + getSize().getWidth()/4.0 - 1) * BLOC_SIZE),
+					(int) (BLOC_SIZE * getSize().getWidth() - 4),
+					(int) (BLOC_SIZE * getSize().getWidth()/2.0 - 4));
 		}
 
 		BufferedImage img = getCurrentImage();

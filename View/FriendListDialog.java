@@ -207,7 +207,7 @@ public class FriendListDialog extends JDialog {
 			rel_str = "Relation sérieuse";
 			break;
 		case VerySeriousRelation:
-			rel_str = "Relation très sérieuse";
+			rel_str = "Très sérieuse";
 			break;
 		case Married:
 			rel_str = "Époux/Épouse";
