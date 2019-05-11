@@ -33,7 +33,7 @@ public class GameTime {
 					game.updateGame();
 				}
 			}
-		}, 1000, TIMER_PERIOD/2);
+		}, 1000, TIMER_PERIOD/4);
 	}
 	
 	public void start() {

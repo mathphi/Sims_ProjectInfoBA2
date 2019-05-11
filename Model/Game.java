@@ -81,13 +81,9 @@ public class Game implements RefreshableObserver, MessagesListener {
 		mainMenu = new GameMenu(window, this);
 		
 
-		Person p1 = new Adult(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
-		Person p2 = new Adult(new Point(17, 13), "Second Player", 18, Person.Gender.Female, null, null);
+		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
+		Person p2 = new Teenager(new Point(17, 13), "Second Player", 18, Person.Gender.Female, null, null);
 		Person p3 = new Adult(new Point(11, 16), "Third People", 30, Person.Gender.Male, null, null);
-
-		// Marry these persons
-		((Adult) p1).setPartner((Adult) p2);
-		((Adult) p2).setPartner((Adult) p1);
 		
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
@@ -411,7 +407,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		if (activePerson == null)
 			return;
 		
-		map.scrollToObject(activePerson);
+		map.centerViewToObject(activePerson);
 	}
 
 	private void notifyView() {
@@ -427,9 +423,11 @@ public class Game implements RefreshableObserver, MessagesListener {
 	}
 
 	private void updateAllPopulation() {
-		// We cannot use the 'foreach' structure here because population
-		// can be modified in updatePerson() resulting in a
-		// ConcurrentModificationException
+		/* 
+		 * We cannot use the 'foreach' structure here because population
+		 * can be modified in updatePerson() resulting in a
+		 * ConcurrentModificationException
+		 */
 		for (int i = 0; i < population.size(); i++) {
 			Person p = population.get(i);
 			updatePerson(p);
@@ -441,10 +439,16 @@ public class Game implements RefreshableObserver, MessagesListener {
 			return;
 
 		p.update(gameTime.getVirtualTime());
+		
 
-		// If this Person reached the age to evolve to the next Person level :
-		// Create a new object of the new level with the same properties to replace this
-		// Person.
+		if (p.getEnergy() == 0) {
+			// TODO: what can we do ? -> he dies...
+		}
+
+		/*
+		 * If this Person reached the age to evolve to the next Person level:
+		 * Create a new object of the new level with the same properties to replace this Person.
+		 */
 		if (p.maxAgeReached()) {
 			if (p instanceof Adult) {
 				// TODO: He dies...
@@ -549,7 +553,6 @@ public class Game implements RefreshableObserver, MessagesListener {
 	public void resumeGame() {
 		isRunning = true;
 		gameTime.start();
-
 	}
 
 	public void stopGame() {

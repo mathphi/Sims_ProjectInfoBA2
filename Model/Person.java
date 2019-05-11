@@ -47,7 +47,7 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	// Global Person state attributes
 	private boolean isActivePerson;
 	private boolean isLocked = false;
-	
+
 	// Index for the moving animation 
 	private int animIndex = 1;
 
@@ -75,22 +75,27 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	protected double hygiene;
 	protected double bladder;
 
-	// Automatic answer attributes
-	// Represents the knowledge of the player -> increase by going to school or
-	// thing like that
+	/* Automatic answer attributes */
+	
+	/*
+	 * Represents the knowledge of the player -> increase by reading books, etc
+	 */
 	protected double generalKnowledge;
 
-	// Represents the impression of other, if often go out, is in good hygiene,...
-	// -> higher
+	/*
+	 * Represents the impression of other (well dressed,...)
+	 */
 	protected double othersImpression;
 
-	// Represents the importance of mood, hygiene, generalKnwoledge and
-	// ohtersImpression
-	// for the automatic answers. Will be randomly generated for PNJ
+	/*
+	 * Represents the importance of mood, hygiene, generalKnwoledge and ohtersImpression
+	 * for the automatic answers in interactions.
+	 */
 	protected PsychologicalFactors psychologicalFactors;
 
 	protected ArrayList<Product> inventory = new ArrayList<Product>();
-	// relation
+	
+	// Relations
 	protected Map<Person, Double> friendList = new HashMap<Person, Double>();
 	protected Adult mother;
 	protected Adult father;
@@ -107,8 +112,8 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 
 	/*
 	 * WARNING: Use of transient keyword to avoid to save these attributes in the
-	 * saving file. These attributes are null when the object is restored from the
-	 * file.
+	 * saving file (they aren't serializable). These attributes are null when the object
+	 * is restored from the file.
 	 */
 
 	// Game messages history
@@ -290,18 +295,14 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 		if (isLocked())
 			return;
 
-		decreaseBladder(Random.range(2.0, 3.0) * bladderRandomFactor); // Random decrease
-		modifyHunger(Random.range(-1.0, -2.0) * hungerRandomFactor); // Random decrease
+		decreaseBladder(Random.range(1.0, 1.5) * bladderRandomFactor); // Random decrease
+		modifyHunger(Random.range(-0.5, -1.0) * hungerRandomFactor); // Random decrease
 
 		// Decrease more energy if hygiene is low
-		modifyEnergy((hygiene >= 20 ? -1.0 : -3.0) * energyRandomFactor);
+		modifyEnergy((hygiene >= 20 ? -0.5 : -1.5) * energyRandomFactor);
 
-		modifyMood(-0.5 * moodRandomFactor);
-		modifyHygiene(-0.8 * hygieneRandomFactor);
-
-		if (energy == 0) {
-			// TODO: what can we do ?
-		}
+		modifyMood(-0.25 * moodRandomFactor);
+		modifyHygiene(-0.4 * hygieneRandomFactor);
 	}
 
 	public void evolves() {
@@ -529,7 +530,6 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 					
 					// Move of 1 case in the opposite direction
 					move(convertDirection(getDirection()).multiply(-1));
-					//TODO: we want to call game.movePlayer...
 				}
 			});
 		}
@@ -848,16 +848,16 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	public void sleep() {
 		addMessage("Bonne nuit, vous êtes maintenant endormi", MsgType.Info);
 
-		activateSleepState(60, 100, ActionType.Sleep);
+		activateSleepState(60, 100, 20, ActionType.Sleep);
 	}
 
 	public void repose() {
 		addMessage("Bonne sieste, reposez-vous bien", MsgType.Info);
 
-		activateSleepState(20, 40, ActionType.Nap);
+		activateSleepState(20, 40, 15, ActionType.Nap);
 	}
 
-	private void activateSleepState(int duration, int energyFactor, ActionType type) {
+	private void activateSleepState(int duration, int energyFactor, int moodFactor, ActionType type) {
 		if (type != ActionType.Nap && type != ActionType.Sleep) {
 			throw new IllegalArgumentException("Bad sleep state type");
 		}
@@ -869,8 +869,9 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				restoreEnergy(energyFactor);
+				modifyMood(moodFactor);
+				
 				resetLastActionTime(type);
-
 				setLocked(false);
 
 				addMessage("Vous vous êtes reposé, vous avez récupéré de l'énergie", MsgType.Info);

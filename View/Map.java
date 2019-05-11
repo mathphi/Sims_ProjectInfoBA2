@@ -53,11 +53,11 @@ public class Map extends JPanel {
     	viewOffset = new Point(0, 0);
     }
     
-    public void scrollToObject(GameObject o) {
-    	scrollToPos(o.getPos());
+    public void centerViewToObject(GameObject o) {
+    	centerViewToPos(o.getPos());
     }
     
-    public void scrollToPos(Point pos) {
+    public void centerViewToPos(Point pos) {
     	Point offset = pos
     			.multiply(BLOC_SIZE)
     			.add(-this.getVisibleRect().getWidth() / 2.0,
