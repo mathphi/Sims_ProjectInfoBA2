@@ -11,7 +11,7 @@ import Tools.Size;
 public class Sofa extends UsableStructure {
 	private static final long serialVersionUID = -7349847768725442782L;
 
-	private static final Size SIZE = new Size(3, 2);
+	private static final Size SIZE = new Size(6, 3);
 	private static final Color COLOR = Color.ORANGE;
 	
 	public Sofa(Point pos) {

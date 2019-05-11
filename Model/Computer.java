@@ -11,7 +11,7 @@ import View.Message.MsgType;
 
 public class Computer extends UsableStructure {
 	private static final long serialVersionUID = 5573360277831892967L;
-	private final static Size SIZE = new Size(4,2);
+	private final static Size SIZE = new Size(7, 3);
 
 	public Computer(Point pos) {
 		super(pos, SIZE, Color.GREEN);

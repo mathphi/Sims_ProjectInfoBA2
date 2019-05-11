@@ -31,8 +31,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
-//TODO: OPENGAMEART
-
 public class Game implements DeletableObserver {
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
@@ -148,16 +146,18 @@ public class Game implements DeletableObserver {
 				attachObjectToGame(new WallBlock(7, 20 + i));
 			}
 		}
-		WaterClosed wc = new WaterClosed(new Point(1, 22));
+		WaterClosed wc = new WaterClosed(new Point(1, 21));
+		wc.rotate(Direction.EAST);
 		attachObjectToGame(wc);
 
 		Bed bed = new Bed(new Point(1, 12));
+		bed.rotate(Direction.EAST);
 		attachObjectToGame(bed);
 
 		Sofa sofa = new Sofa(new Point(23, 1));
 		attachObjectToGame(sofa);
 
-		Computer computer = new Computer(new Point(32, 6));
+		Computer computer = new Computer(new Point(31, 5));
 		computer.rotate(Direction.WEST);
 		attachObjectToGame(computer);
 		
@@ -165,6 +165,7 @@ public class Game implements DeletableObserver {
 		attachObjectToGame(shower);
 		
 		Bath bath = new Bath(new Point(7, 1));
+		bath.rotate(Direction.EAST);
 		attachObjectToGame(bath);
 		
 		

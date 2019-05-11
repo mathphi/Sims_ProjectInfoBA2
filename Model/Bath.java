@@ -11,7 +11,7 @@ import Tools.Size;
 public class Bath extends UsableStructure {
 	private static final long serialVersionUID = -6219410139900137363L;
 
-	private static final Size SIZE = new Size(5, 3);
+	private static final Size SIZE = new Size(3, 6);
 	private static final Color COLOR = Color.WHITE;
 
 	public Bath(Point pos) {

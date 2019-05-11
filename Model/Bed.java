@@ -11,7 +11,7 @@ import Tools.Size;
 public class Bed extends UsableStructure {
 	private static final long serialVersionUID = 5573360277831892967L;
 	
-	private static final Size SIZE = new Size(6, 3);
+	private static final Size SIZE = new Size(3, 6);
 	private static final Color COLOR = Color.RED;
 	
 	public Bed(Point pos) {

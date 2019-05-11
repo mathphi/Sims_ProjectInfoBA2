@@ -1,11 +1,13 @@
 package Model;
 
+import Tools.ImagesFactory;
 import Tools.Point;
 import Tools.Size;
 import Tools.Rect;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -109,21 +111,70 @@ public abstract class GameObject implements Directable, Serializable {
 	public abstract void proximityEvent(GameObject o);
 
 	public abstract GameObject clone();
+	
+	private String getDirectionLetter() {
+		String letter = "S";
+		
+		switch (direction) {
+		case NORTH:
+			letter = "N";
+			break;
+		case EAST:
+			letter = "E";
+			break;
+		case WEST:
+			letter = "W";
+			break;
+		case SOUTH:
+			letter = "S";
+			break;
+		default:
+			break;
+		}
+		
+		return letter;
+	}
+	
+	public BufferedImage getCurrentImage() {
+		String imgID = String.format("%s_%s", this.getClass().getSimpleName(), getDirectionLetter());
+		BufferedImage img = ImagesFactory.getImage(imgID);
+		
+		// Try to get the SOUTH image (default image)
+		if (img == null) {
+			imgID = String.format("%s_S", this.getClass().getSimpleName());
+			img = ImagesFactory.getImage(imgID);
+		}
+		
+		return img;
+	}
 
 	public void paint(Graphics g, int BLOC_SIZE) {
-		g.setColor(color);
-		g.fillRect(
-				(int)(getPos().getX() * BLOC_SIZE),
-				(int)(getPos().getY() * BLOC_SIZE),
-				(BLOC_SIZE * getSize().getWidth()) - 2,
-				(BLOC_SIZE * getSize().getHeight()) - 2);
-
-		g.setColor(Color.BLACK);
-
-		g.drawRect(
-				(int)(getPos().getX() * BLOC_SIZE),
-				(int)(getPos().getY() * BLOC_SIZE),
-				(BLOC_SIZE * getSize().getWidth()) - 2,
-				(BLOC_SIZE * getSize().getHeight()) - 2);
+		BufferedImage img = getCurrentImage();
+		
+		if (img != null) {
+			g.drawImage(
+					img,
+					(int)(getPos().getX() * BLOC_SIZE),
+					(int)(getPos().getY() * BLOC_SIZE),
+					getSize().getWidth() * BLOC_SIZE,
+					getSize().getHeight() * BLOC_SIZE,
+					null);
+		}
+		else {
+			g.setColor(color);
+			g.fillRect(
+					(int)(getPos().getX() * BLOC_SIZE),
+					(int)(getPos().getY() * BLOC_SIZE),
+					(BLOC_SIZE * getSize().getWidth()) - 2,
+					(BLOC_SIZE * getSize().getHeight()) - 2);
+	
+			g.setColor(Color.BLACK);
+	
+			g.drawRect(
+					(int)(getPos().getX() * BLOC_SIZE),
+					(int)(getPos().getY() * BLOC_SIZE),
+					(BLOC_SIZE * getSize().getWidth()) - 2,
+					(BLOC_SIZE * getSize().getHeight()) - 2);
+		}
 	}
 }
