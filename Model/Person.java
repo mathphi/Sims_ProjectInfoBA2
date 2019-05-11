@@ -21,10 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Controller.ImagesFactory;
+import Model.Activable.ActionType;
 import Products.Cloth;
 import Products.Product;
 
-public abstract class Person extends GameObject {
+public abstract class Person extends GameObject implements Refreshable, MessagesSender {
 	private static final long serialVersionUID = 8476495059211784395L;
 	private static final int INVENTORY_MAX_SIZE = 5;
 	private static final int ANIM_STEPS_COUNT = 4;
@@ -39,10 +40,6 @@ public abstract class Person extends GameObject {
 
 	public static enum InteractionType {
 		None, Discuss, Play, Drink, Kiss, Marry
-	}
-	
-	public static enum ActionType {
-		Sleep, Nap, Toilet, Shower, Bath, Work
 	}
 
 	private static Size SIZE = new Size(2, 3);
@@ -69,7 +66,7 @@ public abstract class Person extends GameObject {
 	 * TODO: This may be good to use the GameTime instead.
 	 */
 	private HashMap<ActionType,LocalDateTime> lastActionsTime = 
-			new HashMap<Person.ActionType,LocalDateTime>();
+			new HashMap<ActionType,LocalDateTime>();
 
 	// visible properties, if = 100 no need
 	protected double energy;
@@ -116,10 +113,12 @@ public abstract class Person extends GameObject {
 
 	// Game messages history
 	protected ArrayList<Message> messagesHistory = new ArrayList<Message>();
-	private transient ArrayList<MessageEventListener> msgListeners = new ArrayList<MessageEventListener>();
+	private transient ArrayList<MessagesListener> messagesListeners =
+			new ArrayList<MessagesListener>();
 
-	// Refresh listeners
-	private transient ArrayList<ActionListener> refreshListeners = new ArrayList<ActionListener>();
+	// Refreshable observers
+	private transient ArrayList<RefreshableObserver> refreshableObservers = 
+			new ArrayList<RefreshableObserver>();
 
 	// Constructor used when the Person evolves (ie from Kid to Teenager)
 	public Person(Person other) {
@@ -268,7 +267,7 @@ public abstract class Person extends GameObject {
 
 		rotate(delta);
 		setPos(getPos().add(delta));
-		refresh();
+		notifyRefresh();
 	}
 
 	public boolean isObstacle() {
@@ -721,20 +720,20 @@ public abstract class Person extends GameObject {
 		return messagesHistory;
 	}
 
-	public void addMessageEventListener(MessageEventListener mel) {
+	public void attachMessagesListener(MessagesListener ml) {
 		// msgListeners is null when Person is restored from the save file
-		if (msgListeners == null) {
-			msgListeners = new ArrayList<MessageEventListener>();
+		if (messagesListeners == null) {
+			messagesListeners = new ArrayList<MessagesListener>();
 		}
 
-		msgListeners.add(mel);
+		messagesListeners.add(ml);
 	}
 
 	public void addMessage(Message msg) {
 		messagesHistory.add(msg);
 
-		for (MessageEventListener mel : msgListeners) {
-			mel.messageEvent(msg);
+		for (MessagesListener ml : messagesListeners) {
+			ml.messageEvent(this, msg);
 		}
 	}
 
@@ -750,21 +749,21 @@ public abstract class Person extends GameObject {
 		addMessage(String.format("<b>%s :</b> %s", other.getName(), text), type);
 	}
 
-	public void addRefreshListener(ActionListener a) {
-		// refreshListeners is null when Person is restored from the save file
-		if (refreshListeners == null) {
-			refreshListeners = new ArrayList<ActionListener>();
+	public void attachRefreshableObserver(RefreshableObserver ro) {
+		// refreshableObservers is null when Person is restored from the save file
+		if (refreshableObservers == null) {
+			refreshableObservers = new ArrayList<RefreshableObserver>();
 		}
 
-		refreshListeners.add(a);
+		refreshableObservers.add(ro);
 	}
 
-	public void refresh() {
-		if (refreshListeners == null)
+	public void notifyRefresh() {
+		if (refreshableObservers == null)
 			return;
 
-		for (ActionListener a : refreshListeners) {
-			a.actionPerformed(null);
+		for (RefreshableObserver a : refreshableObservers) {
+			a.refresh(this);
 		}
 	}
 

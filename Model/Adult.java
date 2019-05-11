@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 
+import Model.Activable.ActionType;
 import Tools.Point;
 import Tools.Random;
 import View.Message.MsgType;

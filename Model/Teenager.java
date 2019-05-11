@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Model.Activable.ActionType;
 import Tools.Point;
 import View.Message.MsgType;
 

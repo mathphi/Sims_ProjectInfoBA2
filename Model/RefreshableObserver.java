@@ -1,5 +1,5 @@
 package Model;
 
 public interface RefreshableObserver {
-    void refresh();
+    void refresh(Refreshable r);
 }

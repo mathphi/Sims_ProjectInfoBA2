@@ -32,7 +32,7 @@ public abstract class UsableStructure extends GameObject implements Activable {
 		
 		Person p = (Person) o;
 		p.rotateToObjectDirection(this);
-		p.refresh();
+		p.notifyRefresh();
 		
 		boolean occupied = checkOccupied();
 		

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import Model.Person.ActionType;
 import Tools.Point;
 import Tools.Size;
 import View.Message.MsgType;

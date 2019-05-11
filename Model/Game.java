@@ -31,7 +31,7 @@ import Controller.ImagesFactory;
 import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
-public class Game implements DeletableObserver {
+public class Game implements RefreshableObserver, MessagesListener {
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
 	private HashMap<Person,MoveThread> moveThreadsList = new HashMap<Person,MoveThread>();
@@ -364,7 +364,7 @@ public class Game implements DeletableObserver {
 		}
 		else {
 			pers.rotate(movement);
-			pers.refresh();
+			pers.notifyRefresh();
 		}
 	}
 	
@@ -420,15 +420,6 @@ public class Game implements DeletableObserver {
 
 	public ArrayList<GameObject> getGameObjects() {
 		return this.objects;
-	}
-
-	@Override
-	synchronized public void delete(Deletable ps, ArrayList<GameObject> loot) {
-		objects.remove((GameObject) ps);
-		if (loot != null) {
-			attachObjectsToGame(loot);
-		}
-		notifyView();
 	}
 
 	public void quit() {
@@ -535,12 +526,12 @@ public class Game implements DeletableObserver {
 
 		// Re-attach message listener (transient property)
 		for (Person p : population) {
-			attachMessageListener(p);
+			p.attachMessagesListener(this);
 		}
 		
 		// Re-attach refresh listener (transient property)
 		for (Person p : population) {
-			attachRefreshListener(p);
+			p.attachRefreshableObserver(this);
 		}
 
 		notifyView();
@@ -698,13 +689,7 @@ public class Game implements DeletableObserver {
 				activePerson,
 				gameTime.getTimeFromStart());
 	}
-
-	private void attachObjectsToGame(ArrayList<GameObject> lst) {
-		for (GameObject o : lst) {
-			attachObjectToGame(o);
-		}
-	}
-
+	
 	private void attachObjectToGame(GameObject o) {
 		objects.add(o);
 		o.setMapObjectsList(objects);
@@ -720,8 +705,9 @@ public class Game implements DeletableObserver {
 
 		population.add(p);
 		attachObjectToGame(p);
-		attachRefreshListener(p);
-		attachMessageListener(p);
+		
+		p.attachRefreshableObserver(this);
+		p.attachMessagesListener(this);
 	}
 
 	private void removePersonFromGame(Person p) {
@@ -745,28 +731,20 @@ public class Game implements DeletableObserver {
 		}
 	}
 
-	private void attachRefreshListener(Person p) {
-		p.addRefreshListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				centerViewOnPlayer();
-				map.redraw();
-				playerMoveEvent(p);
-			}
-		});
+	public void refresh(Refreshable r) {
+		centerViewOnPlayer();
+		map.redraw();
+		
+		if (r instanceof Person) {
+			playerMoveEvent((Person) r);
+		}
 	}
 
-	private void attachMessageListener(Person p) {
-		Game that = this;
-		p.addMessageEventListener(new MessageEventListener() {
-			private static final long serialVersionUID = 2371305630711900167L;
-
-			public void messageEvent(Message msg) {
-				if (p == that.getActivePerson()) {
-					msgZone.appendMessage(msg);
-				}
-			}
-		});
+	@Override
+	public void messageEvent(MessagesSender sender, Message msg) {
+		if (sender instanceof Person && sender == getActivePerson()) {
+			msgZone.appendMessage(msg);
+		}
 	}
 
 	public void sendMessageTo(Person p, Message msg) {

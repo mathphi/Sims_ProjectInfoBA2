@@ -90,7 +90,7 @@ public class MoveThread implements Runnable {
 							p.incrementAnimIndex();
 						}
 						
-						p.refresh();
+						p.notifyRefresh();
 
 						// The speed varies with the energy of the player
 						standby((int) (300 - 100.0 * p.getEnergy()) / STEPS);
@@ -98,7 +98,7 @@ public class MoveThread implements Runnable {
 
 					// Set an integer endPos to ensure the Person is aligned with the grid
 					p.setPos(new Point(Math.round(nextPos.getX()), Math.round(nextPos.getY())));
-					p.refresh();
+					p.notifyRefresh();
 
 					if (itinerary != null && itinerary.size() > 0) {
 						itinerary.remove(0);
@@ -111,7 +111,7 @@ public class MoveThread implements Runnable {
 				}
 
 				p.resetAnimIndex();
-				p.refresh();
+				p.notifyRefresh();
 				
 				itinerary = null;
 				targetPos = null;
