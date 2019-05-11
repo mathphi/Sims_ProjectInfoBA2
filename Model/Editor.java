@@ -132,6 +132,7 @@ public class Editor {
 	 */
 	private void addMinimapObstacleArtefact() {
 		Rect minimapRect = map.getMinimapRect();
+		Rect mapRect = map.getViewRect();
 
 		// Compute the size and the position of the minimap in the map limit
 		int wm = minimapRect.getWidth() / map.getBlockSize().getWidth();
@@ -140,7 +141,11 @@ public class Editor {
 		double xm = 0 ;
 		double ym = map.getMapSize().getHeight() - hm ;
 		
-		// Add the invisible obstacle to the game
+		double criticalY = mapRect.getSize().getHeight() / map.getBlockSize().getHeight() - hm;
+		
+		ym = (criticalY > ym ? criticalY : ym);
+		
+		// Add the invisible obstacle to the editor
 		addObject(new InvisibleObstacle(new Point(xm, ym), new Size(wm, hm)));
 	}
 	

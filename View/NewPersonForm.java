@@ -46,6 +46,7 @@ public class NewPersonForm extends JDialog {
 		
 		setPreferredSize(new Dimension(300, 250));
 		setLayout(new BorderLayout());
+		setUndecorated(true);
 		
 		JPanel mainPanel = new JPanel();
 		

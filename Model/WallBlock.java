@@ -43,6 +43,8 @@ public class WallBlock extends GameObject {
 	
 	@Override
 	public void paint(Graphics g, int BLOC_SIZE) {
+		//TODO: 3D aspect ?
+		
 		g.setColor(getColor());
         g.fillRect(
         		(int)(getPos().getX() * BLOC_SIZE-1),

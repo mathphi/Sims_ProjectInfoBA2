@@ -58,17 +58,7 @@ public class Game implements DeletableObserver {
 		 *  Add an invisible obstacle at the position of the bottom left corner of
 		 *  the map to avoid to move objects under the minimap.
 		 */
-		Rect minimapRect = map.getMinimapRect();
-
-		// Compute the size and the position of the minimap in the map limit
-		int wm = minimapRect.getWidth() / map.getBlockSize().getWidth();
-		int hm = minimapRect.getHeight() / map.getBlockSize().getHeight();
-		
-		double xm = 0 ;
-		double ym = map.getMapSize().getHeight() - hm ;
-		
-		// Add the invisible obstacle to the game
-		attachObjectToGame(new InvisibleObstacle(new Point(xm, ym), new Size(wm, hm)));
+		addMinimapObstacleArtefact();
 		
 		window.addGameMenuButtonAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -93,7 +83,7 @@ public class Game implements DeletableObserver {
 
 		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
 		Person p2 = new Teenager(new Point(17, 13), "Second Player", 18, Person.Gender.Female, null, null);
-		Person p3 = new Adult(new Point(11, 16), "Third People", 30, Person.Gender.Female, null, null);
+		Person p3 = new Adult(new Point(11, 16), "Third People", 30, Person.Gender.Male, null, null);
 
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
@@ -199,6 +189,29 @@ public class Game implements DeletableObserver {
 
 	public Point getMinimapOffset() {
 		return map.getMinimapOffset();
+	}
+
+	/**
+	 *  This function adds an invisible obstacle at the position of the bottom left
+	 *  corner of the map to avoid to move objects under the minimap.
+	 */
+	private void addMinimapObstacleArtefact() {
+		Rect minimapRect = map.getMinimapRect();
+		Rect mapRect = map.getViewRect();
+
+		// Compute the size and the position of the minimap in the map limit
+		int wm = minimapRect.getWidth() / map.getBlockSize().getWidth();
+		int hm = minimapRect.getHeight() / map.getBlockSize().getHeight();
+		
+		double xm = 0 ;
+		double ym = map.getMapSize().getHeight() - hm ;
+		
+		double criticalY = mapRect.getSize().getHeight() / map.getBlockSize().getHeight() - hm;
+		
+		ym = (criticalY > ym ? criticalY : ym);
+		
+		// Add the invisible obstacle to the game
+		attachObjectToGame(new InvisibleObstacle(new Point(xm, ym), new Size(wm, hm)));
 	}
 	
 	public void playerMoveEvent(Person p) {
