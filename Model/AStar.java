@@ -66,7 +66,7 @@ public class AStar {
 		// Add contour to border of the map to allow to move object with size larger than 1x1
 		for (int x = 0 ; x < mapSize.getWidth() ; x++) {
 			for (int h = 0 ; h < movedObj.getSize().getHeight()-1 ; h++) {
-				Point pt = new Point(x, mapSize.getHeight()-1 - h);
+				Point pt = new Point(x, mapSize.getHeight()-1 + h);
 				if (mapRect.contains(pt)) {
 					grid[pt.getXInt()][pt.getYInt()] = null;
 				}
@@ -162,7 +162,7 @@ public class AStar {
 		int level = 1;
 		int count = 1;
 		for (int i = 1 ; i < w * h + 1 ; i++) {
-			Point testPos = new Point(pos.getX() - dx, pos.getY() - dy);
+			Point testPos = new Point(pos.getX() - dx, pos.getY() + dy);
 			
 			if (mapRect.contains(testPos)) {
 				if (grid[testPos.getXInt()][testPos.getYInt()] != null) {

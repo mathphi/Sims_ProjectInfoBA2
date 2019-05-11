@@ -270,14 +270,15 @@ public class Game implements DeletableObserver {
 		// Try to place the bottom of the player on the mouse
 		pos = pos.add(0, -activePerson.getSize().getHeight()+1);
 		
-		Rect r = new Rect(0, 0, (int)map.getSize().getWidth(), (int)map.getSize().getHeight());
+		Rect r = new Rect(0, 0, map.getMapSize().getWidth(), map.getMapSize().getHeight());
 		
-		if (r.contains(pos)) {
-			getPlayerMoveThread(activePerson).setTargetPosition(pos);
+		if (!r.contains(pos)) {
+			pos = new Point(
+					Math.max(0, Math.min(pos.getX(), map.getMapSize().getWidth()-1)),
+					Math.max(0, Math.min(pos.getY(), map.getMapSize().getHeight()-1)));
 		}
-		else {
-			activePerson.setPos(pos);
-		}
+		
+		getPlayerMoveThread(activePerson).setTargetPosition(pos);
 	}
 
 	public void moveActivePlayer(int x, int y) {
