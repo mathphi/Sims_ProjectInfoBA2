@@ -18,7 +18,10 @@ public class ImagesFactory implements Serializable {
 		imagesDatabase = new HashMap<String,BufferedImage>();
 		
 		File folder = new File(IMAGES_DIRECTORY_PATH);
-		
+		loadDirectory(folder);
+	}
+	
+	private static void loadDirectory(File folder) throws IOException {
 		if (!folder.exists() || !folder.isDirectory()) {
 			throw new IOException("Unable to open the images directory");
 		}
@@ -26,6 +29,12 @@ public class ImagesFactory implements Serializable {
 		File[] filesList = folder.listFiles();
 		
 		for (File imgFile : filesList) {
+			// Check if the file is a directory and load it where appropriate
+			if (imgFile.isDirectory()) {
+				loadDirectory(imgFile);
+				continue;
+			}
+			
 			// Check the file has an image extension
 			if (!imgFile.getName().matches("^.*\\.(jpg|jpeg|png|gif)$"))
 				continue;

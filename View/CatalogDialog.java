@@ -233,17 +233,30 @@ public class CatalogDialog extends JDialog {
 		}
 		else {
 			activePerson.buyProduct(product);
-			
-			JOptionPane.showMessageDialog(
-					this,
-					String.format(
-							"<html>"
-							+ "<p>Vous avez acheté un(e) %s.</p>"
-							+ "<p>Il a été placé dans votre inventaire personnel."
-							+ "</html>",
-							product.getName().toLowerCase()),
-					"Achat effectué",
-					JOptionPane.INFORMATION_MESSAGE);
+
+			if (product instanceof Cloth) {
+				JOptionPane.showMessageDialog(
+						this,
+						String.format(
+								"<html>"
+								+ "<p>Vous venez d'enfiler un(e) %s.</p>"
+								+ "</html>",
+								product.getName().toLowerCase()),
+						"Achat effectué",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(
+						this,
+						String.format(
+								"<html>"
+								+ "<p>Vous avez acheté un(e) %s.</p>"
+								+ "<p>Il a été placé dans votre inventaire personnel."
+								+ "</html>",
+								product.getName().toLowerCase()),
+						"Achat effectué",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 		
 		updateRemainingAccount();
