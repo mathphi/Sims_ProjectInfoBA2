@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
-import Tools.ImagesFactory;
+import Controller.ImagesFactory;
 import Tools.Size;
 
 public abstract class Product implements Serializable {

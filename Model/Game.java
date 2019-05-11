@@ -11,7 +11,6 @@ import View.Message;
 import View.Message.MsgType;
 import View.MessagesZone;
 import View.Status;
-import Tools.ImagesFactory;
 import Tools.ObjectRestorer;
 import Tools.ObjectSaver;
 import Tools.Point;
@@ -28,6 +27,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import Controller.ImagesFactory;
 import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
@@ -205,7 +205,9 @@ public class Game implements DeletableObserver {
 		ArrayList<GameObject> obj_lst = p.getObjectsAround();
 
 		for (GameObject o : obj_lst) {
-			o.proximityEvent(p);
+			if (o instanceof Activable) {
+				((Activable) o).proximityEvent(p);
+			}
 		}
 	}
 
@@ -223,10 +225,9 @@ public class Game implements DeletableObserver {
 				interractWith(other);
 			}
 		}
-		
-		//TODO implements clickable interface
-		if (!activePerson.isLocked()) {
-			object.clickedEvent(activePerson);
+
+		if (object instanceof Activable && !activePerson.isLocked()) {
+			((Activable) object).clickedEvent(activePerson);
 		}
 	}
 
@@ -247,8 +248,8 @@ public class Game implements DeletableObserver {
 		Point targetPos = activePerson.getFrontPos();
 		GameObject targetObject = getObjectAtPosition(targetPos);
 		
-		if (targetObject != null) {
-			targetObject.clickedEvent(activePerson);
+		if (targetObject != null && targetObject instanceof Activable) {
+			((Activable) targetObject).clickedEvent(activePerson);
 		}
 	}
 	

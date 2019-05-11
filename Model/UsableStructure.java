@@ -6,7 +6,7 @@ import Tools.Point;
 import Tools.Size;
 import View.Message.MsgType;
 
-public abstract class UsableStructure extends GameObject {
+public abstract class UsableStructure extends GameObject implements Activable {
 	private static final long serialVersionUID = 6948483223727288003L;
 
 	protected String OCCUPIED_MSG;
@@ -83,5 +83,4 @@ public abstract class UsableStructure extends GameObject {
 
 	@Override
 	public void proximityEvent(GameObject o) {}
-
 }

@@ -35,12 +35,6 @@ public class WallBlock extends GameObject {
 		return true;
 	}
 	
-	// A wall does nothing
-	public void clickedEvent(GameObject o) {}
-	
-	// A wall does nothing
-	public void proximityEvent(GameObject o) {}
-	
 	public GameObject clone() {
 		WallBlock clone = new WallBlock(getPos(), type);
 		clone.rotate(this.getDirection());

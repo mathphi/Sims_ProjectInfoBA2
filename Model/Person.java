@@ -1,6 +1,5 @@
 package Model;
 
-import Tools.ImagesFactory;
 import Tools.Point;
 import Tools.Random;
 import Tools.Size;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import Controller.ImagesFactory;
 import Products.Cloth;
 import Products.Product;
 
@@ -181,12 +181,6 @@ public abstract class Person extends GameObject {
 		money = 200;
 
 		psychologicalFactors = PsychologicalFactors.RandomFactors();
-	}
-
-	public void clickedEvent(GameObject o) {
-	}
-
-	public void proximityEvent(GameObject o) {
 	}
 
 	public abstract boolean maxAgeReached();

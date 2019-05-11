@@ -16,13 +16,7 @@ public class InvisibleObstacle extends GameObject {
 	public boolean isObstacle() {
 		return true;
 	}
-
-	@Override
-	public void clickedEvent(GameObject o) {}
-
-	@Override
-	public void proximityEvent(GameObject o) {}
-
+	
 	@Override
 	public GameObject clone() {
 		return null;

@@ -1,6 +1,5 @@
 package Model;
 
-import Tools.ImagesFactory;
 import Tools.Point;
 import Tools.Size;
 import Tools.Rect;
@@ -10,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import Controller.ImagesFactory;
 
 public abstract class GameObject implements Directable, Serializable {
 	private static final long serialVersionUID = 5238309657819264811L;
@@ -111,10 +112,6 @@ public abstract class GameObject implements Directable, Serializable {
 	}
 
 	public abstract boolean isObstacle();
-
-	public abstract void clickedEvent(GameObject o);
-
-	public abstract void proximityEvent(GameObject o);
 
 	public abstract GameObject clone();
 	

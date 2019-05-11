@@ -5,7 +5,7 @@ import java.awt.Color;
 import Tools.Point;
 import Tools.Size;
 
-public class WaterClosed extends GameObject{
+public class WaterClosed extends GameObject implements Activable {
 	private static final long serialVersionUID = 5573360277831892967L;
 	private final static Size SIZE = new Size(3,3);
 
