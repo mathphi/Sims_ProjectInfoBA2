@@ -2,6 +2,7 @@ package View;
 
 import Model.GameObject;
 import Model.GroundObject;
+import Model.Person;
 import Tools.Point;
 import Tools.Rect;
 import Tools.Size;
@@ -141,12 +142,16 @@ public class Map extends JPanel {
     public void generateMap(Graphics g) {
         // Separate GroundObject from others to avoid to paint ground objects over the other objects
         ArrayList<GameObject> groundObjects = new ArrayList<GameObject>();
+        ArrayList<GameObject> personObjects = new ArrayList<GameObject>();
         ArrayList<GameObject> otherObjects = new ArrayList<GameObject>();
 
         // Filter GoundObject and others
         for (GameObject object : this.objects) {
         	if (object instanceof GroundObject) {
         		groundObjects.add(object);
+        	}
+        	else if (object instanceof Person) {
+        		personObjects.add(object);
         	}
         	else {
         		otherObjects.add(object);
@@ -157,6 +162,7 @@ public class Map extends JPanel {
         ArrayList<GameObject> ordered = new ArrayList<GameObject>();
         ordered.addAll(groundObjects);
         ordered.addAll(otherObjects);
+        ordered.addAll(personObjects);
         
         for (GameObject o : ordered) {
         	o.paint(g, BLOC_SIZE);

@@ -3,6 +3,7 @@ package View;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
@@ -35,18 +36,28 @@ public class Status extends JPanel {
         if (p == null)
         	return;
         
-		// Draw avatar
-        g.setColor(Color.BLUE);
-        g.fillRect(20, 50, AVATAR_SIZE, AVATAR_SIZE);
+		/* Draw avatar */
+        BufferedImage avatarImg = p.getAvatarImage();
         
-		// Draw person infos
+        // Try to draw avatar image
+        if (avatarImg != null) {
+        	g.drawImage(p.getAvatarImage(), 20, 50, AVATAR_SIZE, AVATAR_SIZE, null);
+        }
+        // Fallback to coloured rectangle
+        else {
+        	g.setColor(p.getColor());
+        	g.fillRect(20, 50, AVATAR_SIZE, AVATAR_SIZE);
+        }
+        
+        
+		/* Draw person infos */
         g.setColor(Color.BLACK);
         g.drawString(p.getName(), 130, 65);
         g.drawString((p.getGender() == Person.Gender.Male) ? "Homme" : "Femme", 130, 95);
         g.drawString(p.getAge() + " ans", 130, 115);
         g.drawString("Fortune : " + p.getMoney() + "€", 130, 145);
 
-		// Draw bars
+		/* Draw bars */
         paintLevelBar(g, 20, 200, BAR_LENGTH*2 + 30, BAR_HEIGHT, "Énergie", p.getEnergy());
         paintLevelBar(g, 20, 240, BAR_LENGTH, BAR_HEIGHT, "Humeur",  p.getMood());
         paintLevelBar(g, 130, 240, BAR_LENGTH, BAR_HEIGHT, "Faim", 	 p.getHunger());

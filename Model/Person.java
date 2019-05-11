@@ -45,7 +45,7 @@ public abstract class Person extends GameObject {
 		Sleep, Nap, Toilet, Shower, Bath, Work
 	}
 
-	private static Size SIZE = new Size(2, 4);
+	private static Size SIZE = new Size(2, 3);
 
 	// Global Person state attributes
 	private boolean isActivePerson;
@@ -972,6 +972,15 @@ public abstract class Person extends GameObject {
 		
 		return img;
 	}
+	
+	public BufferedImage getAvatarImage() {
+		String avatarID = String.format(
+				"Avatar_%s_%s",
+				this.getClass().getSimpleName(),
+				getGenderLetter());
+		
+		return ImagesFactory.getImage(avatarID);
+	}
 
 	public void paint(Graphics g, int BLOC_SIZE) {
 		Graphics2D g2d = (Graphics2D) g;
@@ -986,7 +995,26 @@ public abstract class Person extends GameObject {
 					BLOC_SIZE * getSize().getWidth() - 4);
 		}
 
-		super.paint(g2d, BLOC_SIZE);
+		BufferedImage img = getCurrentImage();
+		
+		// If we have an image, paint it
+		if (img != null) {
+			/*
+			 * We have to translate the image on Y axis because the sprites for
+			 * personages are larger than the dimensions of the personage itself
+			 */
+			g2d.drawImage(
+					img,
+					(int)(getPos().getX() * BLOC_SIZE),
+					(int)((getPos().getY() - 1) * BLOC_SIZE),
+					getSize().getWidth() * BLOC_SIZE,
+					(getSize().getHeight() + 1) * BLOC_SIZE,
+					null);
+		}
+		// If we don't have an image -> fallback to coloured rectangle
+		else {
+			super.paint(g2d, BLOC_SIZE);
+		}
 	}
 
 }
