@@ -14,6 +14,9 @@ public class Adult extends Person implements Worker {
 	
 	// Random maxAge between 80 and 100
 	private int maxAge = 80 + Random.rangeInt(0, 20);
+	
+	// The partner if married
+	private Adult partner = null;
 
 	public boolean isWorking = false;
 	public LocalDateTime lastWorkTime = LocalDateTime.now().minusDays(1);
@@ -82,27 +85,70 @@ public class Adult extends Person implements Worker {
 		Relationship relationship = super.getRelationship(other);
 		
 		if (relationship == Relationship.VerySeriousRelation) {
-			//TODO: Check if i'm married ->
-			// 		if true we don't want a VerySeriousRelation (disable marry interaction)
-			
-			// relationship = Relationship.SeriousRelation
+			if (getPartner() != null) {
+				if (getPartner() == other) {
+					// Return the married status if it's my partner
+					relationship = Relationship.Married;
+				}
+				else {
+					// I don't want a very serious relation if I'm married
+					relationship = Relationship.SeriousRelation;
+				}
+			}
 		}
 		
 		return relationship;
 	}
 
+	public void setPartner(Adult partner) {
+		this.partner = partner;
+		friendList.put(partner, 100.0);
+	}
+	
+	public Adult getPartner() {
+		return partner;
+	}
+	
 	private void marry(Person people) {
-		/*
-		 * TODO big todo to do including to do what's suppose to be done
-		 * because it should already have be done as it was to be done
-		 */
+		// Only adults can marry...
+		if (!(people instanceof Adult))
+			return;
 		
-		//TODO: add a condition if already married (the other person refuses)
+		Adult a = (Adult) people;
 
 		if (!useEnergy(15))
 			return;
 		
-		applyInteractionEffect(people, InteractionType.Marry, 40, 50);
+		// Send message to other
+		a.addMessageFrom(this, "Veux tu m'épouser ?", MsgType.Info);
+		
+		// The other is already married !
+		if (a.getPartner() != null) {
+			addMessageFrom(a, "Euh... Je suis déjà marié !", MsgType.Info);
+			return;
+		}
+		
+		double appreciationFactor = 0.0;
+		
+		// Both must want to marry to apply...
+		if (getAppreciationOf(a) > 0.8 && a.getAppreciationOf(this) > 0.8) {
+			setPartner(a);
+			a.setPartner(this);
+			
+			appreciationFactor = 1.0;
+
+			addMessage("Vous êtes maintenant marié à " + a.getName(), MsgType.Info);
+			a.addMessage("Vous êtes maintenant marié à " + this.getName(), MsgType.Info);
+		}
+		else {
+			appreciationFactor = -0.4;
+		}
+
+		modifyRelationPoints(people, 40 * appreciationFactor);
+		people.modifyRelationPoints(this, 40 * appreciationFactor);
+		modifyMood(50 * appreciationFactor);
+		
+		a.automaticAnswer(this, InteractionType.Marry, appreciationFactor);
 	}
 
 	private void drinkWith(Person people) {

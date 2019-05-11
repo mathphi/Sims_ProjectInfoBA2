@@ -81,10 +81,14 @@ public class Game implements DeletableObserver {
 		mainMenu = new GameMenu(window, this);
 		
 
-		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
-		Person p2 = new Teenager(new Point(17, 13), "Second Player", 18, Person.Gender.Female, null, null);
+		Person p1 = new Adult(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
+		Person p2 = new Adult(new Point(17, 13), "Second Player", 18, Person.Gender.Female, null, null);
 		Person p3 = new Adult(new Point(11, 16), "Third People", 30, Person.Gender.Male, null, null);
 
+		// Marry these persons
+		((Adult) p1).setPartner((Adult) p2);
+		((Adult) p2).setPartner((Adult) p1);
+		
 		attachPersonToGame(p1);
 		attachPersonToGame(p2);
 		attachPersonToGame(p3);
@@ -264,6 +268,9 @@ public class Game implements DeletableObserver {
 		if (targetObject != null && targetObject instanceof Activable) {
 			((Activable) targetObject).clickedEvent(activePerson);
 		}
+		else if (targetObject != null && targetObject instanceof Person) {
+			interractWith((Person) targetObject);
+		}
 	}
 	
 	public void selectNextActivePerson(boolean backward) {
@@ -354,6 +361,10 @@ public class Game implements DeletableObserver {
 		
 		if (!isTargetUnreachable(pers, nextPos)) {
 			getPlayerMoveThread(pers).addMovement(movement);
+		}
+		else {
+			pers.rotate(movement);
+			pers.refresh();
 		}
 	}
 	

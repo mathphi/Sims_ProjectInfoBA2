@@ -209,7 +209,9 @@ public class FriendListDialog extends JDialog {
 		case VerySeriousRelation:
 			rel_str = "Relation très sérieuse";
 			break;
-		//TODO: what if married ???
+		case Married:
+			rel_str = "Époux/Épouse";
+			break;
 		case Parent:
 			if (activePerson.getFather() == p)
 				rel_str = "Père";

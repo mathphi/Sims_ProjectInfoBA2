@@ -34,7 +34,7 @@ public abstract class Person extends GameObject {
 	}
 
 	public static enum Relationship {
-		Unknown, Acquaintance, CloseFriend, SeriousRelation, VerySeriousRelation, Parent
+		Unknown, Acquaintance, CloseFriend, SeriousRelation, VerySeriousRelation, Married, Parent
 	}
 
 	public static enum InteractionType {
@@ -215,7 +215,7 @@ public abstract class Person extends GameObject {
 		
 		return pos;
 	}
-	
+
 	private Direction convertOrientation(Point delta) {
 		Direction direction = Direction.EAST;
 
@@ -232,6 +232,29 @@ public abstract class Person extends GameObject {
 			direction = Direction.WEST;
 
 		return direction;
+	}
+	
+	private Point convertDirection(Direction direction) {
+		Point delta = new Point(0, 0);
+
+		switch (direction) {
+		case NORTH:
+			delta = new Point(0, -1);
+			break;
+		case SOUTH:
+			delta = new Point(0, 1);
+			break;
+		case EAST:
+			delta = new Point(1, 0);
+			break;
+		case WEST:
+			delta = new Point(-1, 0);
+			break;
+		default:
+			break;
+		}
+		
+		return delta;
 	}
 
 	public void rotate(Point delta) {
@@ -300,7 +323,7 @@ public abstract class Person extends GameObject {
 
 		// Set the relationship level
 		if (other == mother || other == father ||	// Other is my parent ?
-			other.getMother() == this || other.getFather() == this) { // Other is my child ? //TODO: use a children list in Adult ?
+			other.getMother() == this || other.getFather() == this) { // Other is my child ?
 			relationship = Relationship.Parent;
 		} else if (relationPoints > 75 && this.getClass() == other.getClass()) {
 			// Don't enter in a very serious relation if the Person are not on the same level
@@ -373,6 +396,13 @@ public abstract class Person extends GameObject {
 
 	}
 
+	/**
+	 * Send an automatic message to the other person
+	 * 
+	 * @param other
+	 * @param type
+	 * @param appreciationLevel
+	 */
 	public void automaticAnswer(Person other, InteractionType type, double appreciationLevel) {
 		String message = AutomaticAnswers.getAutomaticAnswer(type, appreciationLevel);
 		MsgType msgType = MsgType.Info;
@@ -497,6 +527,10 @@ public abstract class Person extends GameObject {
 					addMessage("*bruit de chasse d'eau*", MsgType.Info);
 
 					resetLastActionTime(ActionType.Toilet);
+					
+					// Move of 1 case in the opposite direction
+					move(convertDirection(getDirection()).multiply(-1));
+					//TODO: we want to call game.movePlayer...
 				}
 			});
 		}

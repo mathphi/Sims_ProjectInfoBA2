@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+//TODO: add icons !!!
 public class InventoryDialog extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
 	private static final int INVENTORY_SIZE = 5;
