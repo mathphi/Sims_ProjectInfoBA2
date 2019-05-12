@@ -51,6 +51,7 @@ public class PersonDataForm extends JDialog {
 
 		titleLabel = new JLabel("Nouveau personnage", JLabel.CENTER);
 		titleLabel.setFont(titleLabel.getFont().deriveFont((float) 20));
+		titleLabel.setBorder(new EmptyBorder(10, 0, 0, 0));
 		
 		JPanel mainPanel = new JPanel();
 		

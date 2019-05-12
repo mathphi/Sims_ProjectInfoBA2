@@ -53,6 +53,10 @@ public class EditorMouse extends MouseController implements MouseListener, Mouse
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					editor.mouseLeftDoubleClickEvent(getMapEventPos(e));
 				}
+				// Right click
+				else if (e.getButton() == MouseEvent.BUTTON3) {
+					editor.mouseRightDoubleClickEvent(getMapEventPos(e));
+				}
 			}
 		}
 	}

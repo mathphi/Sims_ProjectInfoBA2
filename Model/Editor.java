@@ -240,9 +240,11 @@ public class Editor {
 			return;
 		}
 		
-		// If we are not placing an object and the clicked object is a Person instance
+		/* If we are not placing an object */
+		
 		GameObject clickedObject = getObjectAtPosition(pos);
 		
+		// If the clicked object is a Person instance -> mark it as active
 		if (clickedObject instanceof Person) {
 			// If clickedObject is null, we just select nobody as activePerson
 			Person p = (Person) clickedObject;
@@ -267,17 +269,13 @@ public class Editor {
 			return;
 		}
 		
+		/* If there was no object in placement */
+		
 		GameObject obj = getObjectAtPosition(pos);
 		
-		if (obj != null) {
-			// Remove object under cursor on right click
-			objects.remove(obj);
-			
-			if (obj instanceof Person) {
-				population.remove(obj);
-			}
-			
-			notifyView();
+		// Move the clicked object
+		if (obj != null && currentPlacing == null) {
+			currentPlacing = obj;
 		}
 	}
 	
@@ -306,10 +304,11 @@ public class Editor {
 			notifyView();
 		}
 	}
-	
+
 	public void mouseLeftDoubleClickEvent(Point pos) {
 		GameObject obj = getObjectAtPosition(pos);
 		
+		// If the double-clicked object is a Person instance -> edit the Person
 		if (obj != null && obj instanceof Person) {
 			Person p = (Person) obj;
 			
@@ -328,6 +327,22 @@ public class Editor {
 			p.setMother(form.getMother());
 			p.setAge(form.getAge());
 			p.setPlayable(form.getPlayable());
+		}
+	}
+	
+	public void mouseRightDoubleClickEvent(Point pos) {		
+		GameObject obj = getObjectAtPosition(pos);
+		
+		// If there is an object under the mouse -> remove it
+		if (obj != null) {
+			// Remove object under cursor on right click
+			objects.remove(obj);
+			
+			if (obj instanceof Person) {
+				population.remove(obj);
+			}
+			
+			notifyView();
 		}
 	}
 	
