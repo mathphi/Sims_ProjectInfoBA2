@@ -25,7 +25,7 @@ public class PsychologicalFactors implements Serializable {
 		parametrizeFactors();
 	}
 	
-	public static PsychologicalFactors RandomFactors() {
+	public static PsychologicalFactors randomFactors() {
 		return new PsychologicalFactors(
 				Random.range(15, 25),
 				Random.range(15, 25),
@@ -65,7 +65,7 @@ public class PsychologicalFactors implements Serializable {
 		return othersImpression;
 	}
 	
-	public CharacterTraits getPrincipleCharacterTrait() {
+	public CharacterTraits getPrincipalCharacterTrait() {
 		CharacterTraits ct = CharacterTraits.GeneralKnowledge;
 		
 		if (mood > hygiene && mood > generalKnowledge && mood > othersImpression) {

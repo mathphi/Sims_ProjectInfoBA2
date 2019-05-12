@@ -13,6 +13,8 @@ public class MoveThread implements Runnable {
 	private Person p;
 	private Point targetPos = null;
 	private ArrayList<Point> itinerary = null;
+	
+	private double speedFactor = 1.0;
 
 	public MoveThread(Game g, Person p) {
 		this.g = g;
@@ -37,6 +39,20 @@ public class MoveThread implements Runnable {
 		if (itinerary.size() < 2) {
 			itinerary.add(movement);
 		}
+	}
+	
+	public int getItineraryLength() {
+		int length = 0;
+		
+		if (itinerary != null) {
+			length = itinerary.size();
+		}
+		
+		return length;
+	}
+	
+	public void setSpeedFactor(double factor) {
+		speedFactor = factor;
 	}
 	
 	private void standby(int duration) {
@@ -93,7 +109,7 @@ public class MoveThread implements Runnable {
 						p.notifyRefresh();
 
 						// The speed varies with the energy of the player
-						standby((int) (300 - 150.0 * p.getEnergy()) / STEPS);
+						standby((int)((300 - 150.0 * p.getEnergy()) / STEPS / speedFactor));
 					}
 
 					// Set an integer endPos to ensure the Person is aligned with the grid

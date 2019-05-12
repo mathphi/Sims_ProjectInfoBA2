@@ -46,6 +46,7 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	// Global Person state attributes
 	private boolean isActivePerson;
 	private boolean isLocked = false;
+	private boolean isPlayable = true;
 
 	// Index for the moving animation 
 	private int animIndex = 1;
@@ -54,7 +55,6 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	protected String name;
 	protected int age;
 	protected Gender gender;
-	protected boolean isPlayable = true;
 
 	protected int money;
 
@@ -153,6 +153,8 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 		messagesHistory = other.getMessagesHistory();
 
 		friendList = other.getFriendList();
+		
+		isPlayable = other.isPlayable();
 
 		rotate(other.getDirection());
 	}
@@ -186,7 +188,7 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 		// Initial money
 		money = 200;
 
-		psychologicalFactors = PsychologicalFactors.RandomFactors();
+		psychologicalFactors = PsychologicalFactors.randomFactors();
 	}
 
 	public abstract boolean maxAgeReached();
@@ -293,8 +295,8 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	}
 
 	public void increaseNeeds() {
-		// Don't update the needs when sleeping...
-		if (isLocked())
+		// Don't update the needs when sleeping... or if the person is a NPC
+		if (isLocked() || !isPlayable())
 			return;
 
 		decreaseBladder(Random.range(1.0, 1.5) * bladderRandomFactor); // Random decrease

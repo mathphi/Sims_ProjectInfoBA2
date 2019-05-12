@@ -169,7 +169,7 @@ public class FriendListDialog extends JDialog {
 	}
 	
 	private String getCharacterToStr(Person p) {
-		CharacterTraits ct = p.getPsychologicalFactor().getPrincipleCharacterTrait();
+		CharacterTraits ct = p.getPsychologicalFactor().getPrincipalCharacterTrait();
 		String char_str = "/";
 		
 		switch (ct) {

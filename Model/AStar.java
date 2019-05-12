@@ -272,8 +272,9 @@ public class AStar {
 				}
 				current = current.parent;
 			}
-		} else
-			System.out.println("No possible path");
+		} else {
+			//System.out.println("No possible path");
+		}
 
 		return direction;
 	}
@@ -293,9 +294,14 @@ public class AStar {
 				
 				current = current.parent;
 			}
-		} else
-			System.out.println("No possible path");
+		} else {
+			//System.out.println("No possible path");
+		}
 
 		return points;
+	}
+	
+	public boolean isPossiblePath() {
+		return closed[posEnd.getXInt()][posEnd.getYInt()];
 	}
 }

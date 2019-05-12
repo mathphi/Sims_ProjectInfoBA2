@@ -31,12 +31,15 @@ import Controller.ImagesFactory;
 import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
-public class Game implements RefreshableObserver, MessagesListener {
-	private static final String DEFAULT_LOAD_PATH = "src/Data/sample1.map";
-	
+public class Game implements RefreshableObserver, MessagesListener {	
 	private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	private ArrayList<Person> population = new ArrayList<Person>();
-	private HashMap<Person,MoveThread> moveThreadsList = new HashMap<Person,MoveThread>();
+	
+	private HashMap<Person,MoveThread> moveThreadsList =
+			new HashMap<Person,MoveThread>();
+	private HashMap<Person,NonPlayableThread> NPCThreadsList =
+			new HashMap<Person,NonPlayableThread>();
+	
 	private Person activePerson = null;
 	private Window window;
 	private Map map;
@@ -95,6 +98,8 @@ public class Game implements RefreshableObserver, MessagesListener {
 		attachPersonToGame(p2);
 		attachPersonToGame(p3);
 		setActivePerson(p1);
+		
+		p3.setPlayable(false);
 
 		// Map building
 		// A sample of room
@@ -180,11 +185,6 @@ public class Game implements RefreshableObserver, MessagesListener {
 			quit();
 		}
 
-		/*
-		 * Load a sample map file
-		 */
-		restoreFromFile(DEFAULT_LOAD_PATH);
-
 		notifyView();
 	}
 
@@ -245,7 +245,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		GameObject object = getObjectAtPosition(pos);
 		
 		if (object == null || !object.isObstacle()) {
-			sendPlayer(pos);
+			sendActivePlayer(pos);
 			return;
 		}
 		
@@ -334,13 +334,17 @@ public class Game implements RefreshableObserver, MessagesListener {
 		return map.getMapSize();
 	}
 
-	public void sendPlayer(Point pos) {
+	public void sendActivePlayer(Point pos) {
+		sendPlayer(activePerson, pos);
+	}
+	
+	public void sendPlayer(Person p, Point pos) {
 		// Don't act on the Person if he is locked
-		if (activePerson.isLocked())
+		if (p.isLocked())
 			return;
 		
 		// Try to place the bottom of the player on the mouse
-		pos = pos.add(0, -activePerson.getSize().getHeight()+1);
+		pos = pos.add(0, -p.getSize().getHeight()+1);
 		
 		Rect r = new Rect(0, 0, map.getMapSize().getWidth(), map.getMapSize().getHeight());
 		
@@ -350,7 +354,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 					Math.max(0, Math.min(pos.getY(), map.getMapSize().getHeight()-1)));
 		}
 		
-		getPlayerMoveThread(activePerson).setTargetPosition(pos);
+		getPlayerMoveThread(p).setTargetPosition(pos);
 	}
 
 	public void moveActivePlayer(int x, int y) {
@@ -438,6 +442,27 @@ public class Game implements RefreshableObserver, MessagesListener {
 	public void quit() {
 		window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
 	}
+	
+	private void startNPCAutomaticMoving() {
+		for (Person p : population) {
+			if (!p.isPlayable()) {
+				// Attribute a NonPlayableThread for each NPC Person
+				MoveThread mt = getPlayerMoveThread(p);
+				NonPlayableThread npt = NPCThreadsList.getOrDefault(p, null);
+				
+				// Don't assign a NonPlayerThread twice
+				if (npt == null) {
+					npt = new NonPlayableThread(this, p, mt);
+					
+					// Run the NPT in his thread
+					Thread t = new Thread(npt);
+					t.start();
+				
+					NPCThreadsList.put(p, npt);
+				}
+			}
+		}
+	}
 
 	private void updateAllPopulation() {
 		/* 
@@ -455,7 +480,6 @@ public class Game implements RefreshableObserver, MessagesListener {
 			return;
 
 		p.update(gameTime.getVirtualTime());
-		
 
 		if (p.isDying()) {
 			// He dies...
@@ -546,7 +570,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		boolean isSomeoneAlive = false;
 		
 		for (Person p : population) {
-			if (p.isPlayable) {
+			if (p.isPlayable()) {
 				isSomeoneAlive = true;
 			}
 		}
@@ -635,6 +659,8 @@ public class Game implements RefreshableObserver, MessagesListener {
 
 		gameTime.start();
 		status.setGameTimeStr(gameTime.getCurrentTimeString());
+		
+		startNPCAutomaticMoving();
 
 		// Select the first person found in the game if none has been selected
 		if (activePerson == null) {
@@ -728,7 +754,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		restoreFromFile(chooser.getSelectedFile().getPath());
 	}
 	
-	private void restoreFromFile(String filepath) {
+	public void restoreFromFile(String filepath) {
 		gameTime.stop();
 
 		ObjectRestorer restorer = new ObjectRestorer(filepath);
@@ -796,7 +822,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 
 	private void selectDefaultActivePerson() {
 		for (Person p : population) {
-			if (p.isPlayable) {
+			if (p.isPlayable()) {
 				setActivePerson(p);
 				break;
 			}

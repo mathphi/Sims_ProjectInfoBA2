@@ -12,6 +12,8 @@ import Model.Game;
 import View.Window;
 
 public class Main {
+	private static final String DEFAULT_LOAD_PATH = "src/Data/sample1.map";
+	
 	public static void main(String[] args) {
 		Window window = new Window("Game");
 
@@ -48,7 +50,10 @@ public class Main {
 			}
 		});
 
-		game.startGame();
+		/*
+		 * Load a sample map file
+		 */
+		game.restoreFromFile(DEFAULT_LOAD_PATH);
 		game.openGameMenu();
 	}
 }
