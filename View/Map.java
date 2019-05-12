@@ -2,8 +2,6 @@ package View;
 
 import Model.GameObject;
 import Model.GroundTile;
-import Model.Person;
-import Model.Vegetation;
 import Tools.Point;
 import Tools.Rect;
 import Tools.Size;
@@ -16,6 +14,8 @@ import java.awt.Stroke;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 import javax.swing.JPanel;
 
@@ -141,37 +141,46 @@ public class Map extends JPanel {
     }
     
     public void generateMap(Graphics g) {
-        // Separate GroundObject from others to avoid to paint ground objects over the other objects
+        // Separate GroundTile from others to avoid to paint ground objects over the other objects
         ArrayList<GameObject> groundObjects = new ArrayList<GameObject>();
-        ArrayList<GameObject> personObjects = new ArrayList<GameObject>();
-        ArrayList<GameObject> vegetationObjects = new ArrayList<GameObject>();
-        ArrayList<GameObject> otherObjects = new ArrayList<GameObject>();
+        
+        // Store a list of objects for each y value
+        HashMap<Integer,ArrayList<GameObject>> yAxisOrdered =
+        		new HashMap<Integer,ArrayList<GameObject>>();
 
         // Filter GoundObject and others
         for (GameObject object : this.objects) {
         	if (object instanceof GroundTile) {
         		groundObjects.add(object);
         	}
-        	else if (object instanceof Person) {
-        		personObjects.add(object);
-        	}
-        	else if (object instanceof Vegetation) {
-        		vegetationObjects.add(object);
-        	}
         	else {
-        		otherObjects.add(object);
+        		int yIndex = object.getPos().getYInt() + object.getSize().getHeight();
+        		
+        		ArrayList<GameObject> ol = yAxisOrdered.getOrDefault(yIndex, null);
+        		
+        		if (ol == null) {
+        			ol = new ArrayList<GameObject>();
+        			yAxisOrdered.put(yIndex, ol);
+        		}
+        		
+        		ol.add(object);
+        		
         	}
         }
 
         // Paint GoundObject before other (paint them under the others)
-        ArrayList<GameObject> ordered = new ArrayList<GameObject>();
-        ordered.addAll(groundObjects);
-        ordered.addAll(otherObjects);
-        ordered.addAll(personObjects);
-        ordered.addAll(vegetationObjects);		
-
-        for (GameObject o : ordered) {
+        for (GameObject o : groundObjects) {
         	o.paint(g, BLOC_SIZE);
+        }
+        
+        ArrayList<Integer> keys = new ArrayList<Integer>(yAxisOrdered.keySet());
+        Collections.sort(keys);
+        
+        // Paint objects from the top to the bottom of the map
+        for (int k : keys) {
+        	for (GameObject o : yAxisOrdered.get(k)) {
+        		o.paint(g, BLOC_SIZE);
+        	}
         }
     }
 
