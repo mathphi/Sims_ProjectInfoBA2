@@ -38,7 +38,7 @@ public class GameMenu extends JDialog {
 		
 		titleLabel = new JLabel("Jeu en pause", JLabel.CENTER);
 		continueButton = new JButton("Continuer la partie");
-		creatorButton = new JButton("Créer une carte");
+		creatorButton = new JButton("Éditeur de carte");
 		openButton = new JButton("Ouvrir une carte");
 		saveButton = new JButton("Enregistrer la partie");
 		restoreButton = new JButton("Charger une partie");
