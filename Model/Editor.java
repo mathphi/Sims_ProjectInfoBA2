@@ -4,7 +4,7 @@ import View.EditorMenu;
 import View.EditorPanel;
 import View.Map;
 import View.MapSizeDialog;
-import View.NewPersonForm;
+import View.PersonDataForm;
 import View.Window;
 
 import java.awt.event.ActionEvent;
@@ -91,7 +91,7 @@ public class Editor {
 					else if (e.getID() == 2) {
 						// Place a Person object
 						// Ask user for Person informations (name,...) by using the NewPersonForm
-						NewPersonForm form = new NewPersonForm(window, population);
+						PersonDataForm form = new PersonDataForm(window, population);
 						boolean ans = form.showForm();
 						
 						// If form has been aborted
@@ -304,6 +304,30 @@ public class Editor {
 			// Move the object outside the map (to hide it)
 			currentPlacing.setPos(new Point(-100, -100));
 			notifyView();
+		}
+	}
+	
+	public void mouseLeftDoubleClickEvent(Point pos) {
+		GameObject obj = getObjectAtPosition(pos);
+		
+		if (obj != null && obj instanceof Person) {
+			Person p = (Person) obj;
+			
+			PersonDataForm form = new PersonDataForm(window, population);
+			form.setModifiedPerson(p);
+			boolean ans = form.showForm();
+			
+			// Form has been aborted
+			if (!ans) {
+				return;
+			}
+			
+			p.setName(form.getName());
+			p.setGender(form.getGender());
+			p.setFather(form.getFather());
+			p.setMother(form.getMother());
+			p.setAge(form.getAge());
+			p.setPlayable(form.getPlayable());
 		}
 	}
 	

@@ -25,7 +25,10 @@ public class EditorMouse extends MouseController implements MouseListener, Mouse
     }
     
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
 		synchronized(editor) {
 			if (!editor.isActive())
 				return;
@@ -34,19 +37,25 @@ public class EditorMouse extends MouseController implements MouseListener, Mouse
 			if (editor.getMinimapRect().contains(e.getX(), e.getY()))
 				return;
 			
-			// Left click
-			if (e.getButton() == MouseEvent.BUTTON1) {
-				editor.mouseLeftClickEvent(getMapEventPos(e));
+			// Simple click
+			if (e.getClickCount() == 1) {
+				// Left click
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					editor.mouseLeftClickEvent(getMapEventPos(e));
+				}
+				// Right click
+				else if (e.getButton() == MouseEvent.BUTTON3) {
+					editor.mouseRightClickEvent(getMapEventPos(e));
+				}
 			}
-			// Right click
-			else if (e.getButton() == MouseEvent.BUTTON3) {
-				editor.mouseRightClickEvent(getMapEventPos(e));
+			else {
+				// Left click
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					editor.mouseLeftDoubleClickEvent(getMapEventPos(e));
+				}
 			}
 		}
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {}

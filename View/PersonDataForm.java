@@ -26,12 +26,13 @@ import Model.Adult;
 import Model.Person;
 import Model.Person.Gender;
 
-public class NewPersonForm extends JDialog {
+public class PersonDataForm extends JDialog {
 	private static final long serialVersionUID = -6014304203322845327L;
 	
 	private boolean validated = false;
 	private ArrayList<Person> population;
 	
+	private JLabel titleLabel;
 	private JTextField nameField;
 	private JComboBox<String> genderField;
 	private JComboBox<String> fatherField;
@@ -39,14 +40,17 @@ public class NewPersonForm extends JDialog {
 	private JSpinner ageField;
 	private JCheckBox unplayableField;
 
-	public NewPersonForm(Frame parent, ArrayList<Person> population) {
+	public PersonDataForm(Frame parent, ArrayList<Person> population) {
 		super(parent, "Nouveau personnage", true);
 		
 		this.population = population;
 		
-		setPreferredSize(new Dimension(300, 250));
+		setPreferredSize(new Dimension(300, 275));
 		setLayout(new BorderLayout());
 		setUndecorated(true);
+
+		titleLabel = new JLabel("Nouveau personnage", JLabel.CENTER);
+		titleLabel.setFont(titleLabel.getFont().deriveFont((float) 20));
 		
 		JPanel mainPanel = new JPanel();
 		
@@ -135,6 +139,7 @@ public class NewPersonForm extends JDialog {
 		buttonsContainer.add(btnCancel);
 		buttonsContainer.add(btnOk);
 		
+		add(titleLabel, BorderLayout.NORTH);
 		add(mainPanel, BorderLayout.CENTER);
 		add(buttonsContainer, BorderLayout.SOUTH);
 
@@ -189,6 +194,21 @@ public class NewPersonForm extends JDialog {
 	
 	public void closeForm() {
 		setVisible(false);
+	}
+	
+	public void setModifiedPerson(Person p) {
+		titleLabel.setText("Modifier le personnage");
+		
+		String gender_str = (p.getGender() == Gender.Male ? "Homme" : "Femme");
+		String father_str = (p.getFather() != null ? p.getFather().getName() : "Aucun");
+		String mother_str = (p.getMother() != null ? p.getMother().getName() : "Aucun");
+		
+		nameField.setText(p.getName());
+		genderField.setSelectedItem(gender_str);
+		fatherField.setSelectedItem(father_str);
+		motherField.setSelectedItem(mother_str);
+		ageField.setValue(p.getAge());
+		unplayableField.setSelected(!p.isPlayable());
 	}
 	
 	public String getName() {

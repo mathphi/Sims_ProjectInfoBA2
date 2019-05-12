@@ -745,6 +745,30 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	public ArrayList<Message> getMessagesHistory() {
 		return messagesHistory;
 	}
+	
+	/* Setters for editor actions */
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public void setGender(Gender g) {
+		this.gender = g;
+	}
+	
+	public void setFather(Adult f) {
+		this.father = f;
+	}
+	
+	public void setMother(Adult m) {
+		this.mother = m;
+	}
+	
+	public void setAge(int age) {
+		this.age = age;
+	}
+	
+	/* End of Setters for editor actions */
 
 	public void attachMessagesListener(MessagesListener ml) {
 		// msgListeners is null when Person is restored from the save file
