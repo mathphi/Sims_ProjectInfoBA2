@@ -8,16 +8,18 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import Resources.ResourceLoader;
+
 public class ImagesFactory implements Serializable {
 	private static final long serialVersionUID = -7238205571545656262L;
-	private static final String IMAGES_DIRECTORY_PATH = "src/Data/images";
+	private static final String IMAGES_DIRECTORY_PATH = "images";
 	
 	private static HashMap<String,BufferedImage> imagesDatabase = null;
 	
 	public static void loadAllImages() throws IOException {
 		imagesDatabase = new HashMap<String,BufferedImage>();
 		
-		File folder = new File(IMAGES_DIRECTORY_PATH);
+		File folder = new File(ResourceLoader.getResourcePath(IMAGES_DIRECTORY_PATH));
 		loadDirectory(folder);
 	}
 	

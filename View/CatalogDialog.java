@@ -8,6 +8,7 @@ import Products.Food;
 import Products.GenderConstrained;
 import Products.Other;
 import Products.GenderConstrained.GenderConstraint;
+import Resources.ResourceLoader;
 import Products.Product;
 import Products.Toy;
 import Tools.Size;
@@ -35,7 +36,7 @@ import javax.swing.border.EmptyBorder;
 
 public class CatalogDialog extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
-	private static final String PRODUCTS_FILE_PATH = "src/Data/Products.csv";
+	private static final String PRODUCTS_FILE_PATH = "Products.csv";
 	private static final Size ICON_SIZE = new Size(48, 48);
 	
 	// Static list to load the file once
@@ -269,7 +270,7 @@ public class CatalogDialog extends JDialog {
 		
 		try {
             // Get the Products csv file 
-            FileReader file = new FileReader(PRODUCTS_FILE_PATH);
+            FileReader file = new FileReader(ResourceLoader.getResourcePath(PRODUCTS_FILE_PATH));
             buffer = new BufferedReader(file);
 
             String line = null;

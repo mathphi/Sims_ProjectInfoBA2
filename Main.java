@@ -8,11 +8,11 @@ import Controller.GameMouse;
 
 import Model.Editor;
 import Model.Game;
-
+import Resources.ResourceLoader;
 import View.Window;
 
 public class Main {
-	private static final String DEFAULT_LOAD_PATH = "src/Data/sample2.map";
+	private static final String DEFAULT_LOAD_PATH = "sample2.map";
 	
 	public static void main(String[] args) {
 		Window window = new Window("Game");
@@ -53,7 +53,7 @@ public class Main {
 		/*
 		 * Load a sample map file
 		 */
-		game.restoreFromFile(DEFAULT_LOAD_PATH);
+		game.restoreFromFile(ResourceLoader.getResourcePath(DEFAULT_LOAD_PATH));
 		game.openGameMenu();
 	}
 }

@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import Model.Person.InteractionType;
+import Resources.ResourceLoader;
 import Tools.Random;
 
 public class AutomaticAnswers implements Serializable {
@@ -42,7 +43,7 @@ public class AutomaticAnswers implements Serializable {
 	
 	/////////////////////////////////////////////////////////////////////////////////
 	
-	private static final String MESSAGES_FILE_PATH = "src/Data/Messages.csv";
+	private static final String MESSAGES_FILE_PATH = "Messages.csv";
 	private static ArrayList<AutomaticMessage> messagesDatabase = null;
 	
 	private AutomaticAnswers() {
@@ -62,7 +63,7 @@ public class AutomaticAnswers implements Serializable {
 		
 		try {
             // Get the Products csv file 
-            FileReader file = new FileReader(MESSAGES_FILE_PATH);
+            FileReader file = new FileReader(ResourceLoader.getResourcePath(MESSAGES_FILE_PATH));
             buffer = new BufferedReader(file);
 
             String line = null;
