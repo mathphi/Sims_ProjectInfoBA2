@@ -257,6 +257,11 @@ public class Editor {
 		if (currentPlacing != null) {
 			// Cancel current placement on right click
 			objects.remove(currentPlacing);
+			
+			if (currentPlacing instanceof Person) {
+				population.remove(currentPlacing);
+			}
+			
 			currentPlacing = null;
 			notifyView();
 			return;
@@ -267,6 +272,11 @@ public class Editor {
 		if (obj != null) {
 			// Remove object under cursor on right click
 			objects.remove(obj);
+			
+			if (obj instanceof Person) {
+				population.remove(obj);
+			}
+			
 			notifyView();
 		}
 	}
