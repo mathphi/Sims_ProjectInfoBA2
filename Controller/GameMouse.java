@@ -40,23 +40,20 @@ public class GameMouse extends MouseController implements MouseListener, MouseMo
 			if (!game.isRunning())
 				return;
 			
+			Point clickPosConverted = getMapEventPos(e);
+			
 			// If the click is done on the minimap -> get the pos on the real map
 			if (game.getMinimapRect().contains(e.getX(), e.getY())) {
-				// Left click
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					game.mouseLeftClickEvent(getMinimapEventPos(e));
-				}
-				
-				return;
+				clickPosConverted = getMinimapEventPos(e);
 			}
 			
 			// Left click
 			if (e.getButton() == MouseEvent.BUTTON1) {
-				game.mouseLeftClickEvent(getMapEventPos(e));
+				game.mouseLeftClickEvent(clickPosConverted);
 			}
 			// Right click
 			else if (e.getButton() == MouseEvent.BUTTON3) {
-				game.mouseRightClickEvent(getMapEventPos(e));
+				game.mouseRightClickEvent(clickPosConverted);
 			}
 		}
 	}

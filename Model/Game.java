@@ -508,7 +508,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		removePersonFromGame(p);
 		
 		sendMessageToAll(
-				String.format("%s vient de être éliminé !", p.getName()),
+				String.format("%s vient d'être éliminé !", p.getName()),
 				MsgType.Warning);
 	}
 	
