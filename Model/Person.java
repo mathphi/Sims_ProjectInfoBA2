@@ -945,7 +945,7 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 		// Mark Person as locked (prevent movements,...)
 		setLocked(true);
 
-		WaiterThread.wait(70, new ActionListener() {
+		WaiterThread.wait(50, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				modifyMood(10);
@@ -954,7 +954,7 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 				resetLastActionTime(ActionType.Library);
 				setLocked(false);
 
-				addMessage("Vous avez terminer une série de livres très intéressants", MsgType.Info);
+				addMessage("Vous avez terminé une série de livres très intéressants", MsgType.Info);
 			}
 		});
 	}

@@ -49,5 +49,6 @@ public class Main {
 		});
 
 		game.startGame();
+		game.openGameMenu();
 	}
 }
