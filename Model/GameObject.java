@@ -158,8 +158,8 @@ public abstract class GameObject implements Directable, Serializable {
 		if (img != null) {
 			g.drawImage(
 					img,
-					(int)(getPos().getX() * BLOC_SIZE),
-					(int)(getPos().getY() * BLOC_SIZE),
+					(int)(getPos().getX() * BLOC_SIZE - 1),
+					(int)(getPos().getY() * BLOC_SIZE - 1),
 					getSize().getWidth() * BLOC_SIZE,
 					getSize().getHeight() * BLOC_SIZE,
 					null);

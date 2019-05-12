@@ -61,21 +61,26 @@ public class Editor {
 					objects.remove(currentPlacing);
 				}
 				try {
-					// Event id 0 is for « add ground object to map » action
+					// Event id 0 is for « add wall object to map » action
+					// Event id 3 is for « add ground object to map » action
 					// Event id 1 is for « add furniture object to map » action
 					// Event id 2 is for « add person to map » action
 					if (e.getID() == 0) {
+						// Place the new object outside the map to be invisible (he will be moved to the mouse later)
+						currentPlacing = (GameObject) Class.forName(e.getActionCommand())
+								.getDeclaredConstructor(Point.class, int.class)
+								.newInstance(new Point(-100,-100), editorPanel.getTileSize());
+					}
+					if (e.getID() == 3) {
 						List<String> args = Arrays.asList(e.getActionCommand().split("\t"));
-
-						int typeArg = 0;
-						if (args.size() > 1) {
-							typeArg = Integer.valueOf(args.get(1));
-						}
+						
+						if (args.size() < 2)
+							return;
 						
 						// Place the new object outside the map to be invisible (he will be moved to the mouse later)
 						currentPlacing = (GameObject) Class.forName(args.get(0))
-								.getDeclaredConstructor(Point.class, int.class)
-								.newInstance(new Point(-100,-100), typeArg);
+								.getDeclaredConstructor(Point.class, String.class, int.class)
+								.newInstance(new Point(-100,-100), args.get(1), editorPanel.getTileSize());
 					}
 					else if (e.getID() == 1) {
 						// Place the new object outside the map to be invisible (he will be moved to the mouse later)
@@ -315,7 +320,7 @@ public class Editor {
 		
 		for (GameObject o : objects) {
 			if (o.isAtPosition(pos)) {
-				if (obj == null || (obj instanceof GroundObject)) {
+				if (obj == null || (obj instanceof GroundTile)) {
 					obj = o;
 				}
 			}

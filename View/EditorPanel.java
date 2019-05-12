@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
@@ -16,8 +17,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import Tools.Size;
 
@@ -27,6 +31,7 @@ public class EditorPanel extends JPanel {
 	private ArrayList<ActionListener> actionListeners = new ArrayList<ActionListener>();
 	private JLabel mapSizeLabel;
 	private JCheckBox gridCheckbox;
+	private JSlider tileSizeSlider;
 	
 	public EditorPanel() {
 		setLayout(new BorderLayout());
@@ -48,16 +53,51 @@ public class EditorPanel extends JPanel {
 		
 		JPanel mapCateg = createCategory(mainPanel, "Éléments de terrain");
 
-		// Event id 0 is for « add ground object to map » action
-		addButtonToCateg(mapCateg, "Herbe 1", "Model.GroundGrass\t1", 0);
-		addButtonToCateg(mapCateg, "Herbe 2", "Model.GroundGrass\t2", 0);
-		addButtonToCateg(mapCateg, "Herbe 5", "Model.GroundGrass\t5", 0);
-		addButtonToCateg(mapCateg, "Parquet 1", "Model.GroundFlooring\t1", 0);
-		addButtonToCateg(mapCateg, "Parquet 2", "Model.GroundFlooring\t2", 0);
-		addButtonToCateg(mapCateg, "Parquet 5", "Model.GroundFlooring\t5", 0);
-		addButtonToCateg(mapCateg, "Mur 1", "Model.WallBlock\t1", 0);
-		addButtonToCateg(mapCateg, "Mur 2", "Model.WallBlock\t2", 0);
-		addButtonToCateg(mapCateg, "Mur 5", "Model.WallBlock\t5", 0);
+		// Event id 3 is for « add ground object to map » action
+		addButtonToCateg(mapCateg, "Herbe", 			"Model.GroundTile\tGrass", 3);
+		addButtonToCateg(mapCateg, "Sable", 			"Model.GroundTile\tSand", 3);
+		addButtonToCateg(mapCateg, "Terre",	 			"Model.GroundTile\tSoil", 3);
+		addButtonToCateg(mapCateg, "Parquet clair", 	"Model.GroundTile\tLightParquet", 3);
+		addButtonToCateg(mapCateg, "Parquet foncé", 	"Model.GroundTile\tParquet", 3);
+		addButtonToCateg(mapCateg, "Plancher", 			"Model.GroundTile\tWood", 3);
+		addButtonToCateg(mapCateg, "Carrelage bleu", 	"Model.GroundTile\tBlueTile", 3);
+		addButtonToCateg(mapCateg, "Carrelage beige", 	"Model.GroundTile\tBeigeTile", 3);
+		addButtonToCateg(mapCateg, "Carrelage brun", 	"Model.GroundTile\tBrownTile", 3);
+
+		// Event id 1 is for « add furniture object to map » action
+		addButtonToCateg(mapCateg, "Arbre", "Model.Tree", 1);
+		addButtonToCateg(mapCateg, "Buisson", "Model.Bush", 1);
+		addButtonToCateg(mapCateg, "Cerisier", "Model.CherryTree", 1);
+		
+		// Event id 0 is for « add well object to map » action
+		addButtonToCateg(mapCateg, "Mur", "Model.WallBlock", 0);
+		
+		/* Tile size Slider */
+		
+		JPanel sliderPanel = new JPanel();
+		sliderPanel.setLayout(new BorderLayout(8, 0));
+		sliderPanel.setBorder(new EmptyBorder(20, 8, 5, 8));
+		
+		JLabel sliderNameLabel = new JLabel("Taille :");
+		tileSizeSlider = new JSlider(JSlider.HORIZONTAL, 1, 9, 3);
+		JLabel sliderValueLabel = new JLabel("3x3");
+
+		sliderPanel.add(sliderNameLabel, BorderLayout.LINE_START);
+		sliderPanel.add(tileSizeSlider, BorderLayout.CENTER);
+		sliderPanel.add(sliderValueLabel, BorderLayout.LINE_END);
+		
+		mainPanel.add(sliderPanel);
+		
+		tileSizeSlider.setFocusable(false);
+		tileSizeSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				int v = tileSizeSlider.getValue();
+				sliderValueLabel.setText(String.format("%dx%d", v, v));
+			}
+		});
+		
+		/* End of Tile size Slider */
 
 		JPanel mobCateg = createCategory(mainPanel, "Éléments du mobilier");
 
@@ -138,6 +178,9 @@ public class EditorPanel extends JPanel {
 		EditorPanel that = this;
 		JButton btn = new JButton(text);
 		
+		// Reduce the text margin in the buttons
+		btn.setMargin(new Insets(0, 0, 0, 0));
+		
 		// Avoid the bold text for the buttons
 		btn.setFont(btn.getFont().deriveFont(Font.PLAIN));
 		
@@ -171,5 +214,9 @@ public class EditorPanel extends JPanel {
 				String.format("Taille de la carte : %dx%d",
 						mapSize.getWidth(),
 						mapSize.getHeight()));
+	}
+	
+	public int getTileSize() {
+		return tileSizeSlider.getValue();
 	}
 }

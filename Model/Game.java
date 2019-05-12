@@ -317,7 +317,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		for (GameObject o : objects) {
 			if (o.isAtPosition(pos)) {
 				// Get important object before any GroundObject
-				if (obj == null || (obj instanceof GroundObject)) {
+				if (obj == null || (obj instanceof GroundTile)) {
 					obj = o;
 				}
 			}
@@ -441,7 +441,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 
 	private void updateAllPopulation() {
 		/* 
-		 * We cannot use the 'foreach' structure here because population
+		 * We cannot use the 'foreach' structure on the population list because it
 		 * can be modified in updatePerson() resulting in a
 		 * ConcurrentModificationException
 		 */
