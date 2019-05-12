@@ -457,15 +457,15 @@ public class Game implements RefreshableObserver, MessagesListener {
 		p.update(gameTime.getVirtualTime());
 		
 
-		if (p.getEnergy() == 0) {
-			// TODO: what can we do ? -> he dies...
+		if (p.isDying()) {
+			// He dies...
+			killPerson(p);
 		}
-
-		/*
-		 * If this Person reached the age to evolve to the next Person level:
-		 * Create a new object of the new level with the same properties to replace this Person.
-		 */
-		if (p.maxAgeReached()) {
+		else if (p.maxAgeReached()) {
+			/*
+			 * If this Person reached the age to evolve to the next Person level:
+			 * Create a new object of the new level with the same properties to replace this Person.
+			 */
 			if (p instanceof Adult) {
 				// We don't do anything, an Adult can live infinitely...
 			} else if (p instanceof Teenager) {
@@ -480,6 +480,14 @@ public class Game implements RefreshableObserver, MessagesListener {
 		}
 	}
 
+	private void killPerson(Person p) {
+		removePersonFromGame(p);
+		
+		sendMessageToAll(
+				String.format("%s vient de être éliminé !", p.getName()),
+				MsgType.Warning);
+	}
+	
 	/**
 	 * Replace the objects from the old Person to the upgraded one
 	 * @param from
@@ -530,8 +538,31 @@ public class Game implements RefreshableObserver, MessagesListener {
 		updateAllPopulation();
 
 		notifyView();
+		
+		checkPopulation();
 	}
 
+	private void checkPopulation() {
+		boolean isSomeoneAlive = false;
+		
+		for (Person p : population) {
+			if (p.isPlayable) {
+				isSomeoneAlive = true;
+			}
+		}
+		
+		// Everybody is dead -> GameOver
+		if (!isSomeoneAlive) {
+			doGameOver();
+		}
+	}
+	
+	public void doGameOver() {
+		stopGame();
+
+		mainMenu.showGameOverMenu();
+	}
+	
 	public void setActivePerson(Person p) {
 		if (p != null && !p.isPlayable())
 			return;
@@ -616,7 +647,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 
 	public void openGameMenu() {
 		pauseGame();
-		mainMenu.showMenu();
+		mainMenu.showGamePausedMenu();
 	}
 	
 	public void closeGameMenu() {
@@ -792,6 +823,10 @@ public class Game implements RefreshableObserver, MessagesListener {
 		p.addMessage(msg);
 	}
 
+	public void sendMessageToAll(String msg, MsgType type) {
+		sendMessageToAll(new Message(msg, type));
+	}
+	
 	public void sendMessageToAll(Message msg) {
 		for (Person p : population) {
 			sendMessageTo(p, msg);

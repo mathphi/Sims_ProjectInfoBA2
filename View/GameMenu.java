@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 public class GameMenu extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
 	
+	private JLabel titleLabel;
 	private JButton continueButton;
 	private JButton creatorButton;
 	private JButton openButton;
@@ -35,7 +36,7 @@ public class GameMenu extends JDialog {
 		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		mainPanel.setLayout(new GridLayout(0, 1, 0, 10));
 		
-		JLabel pausedLabel = new JLabel("Jeu en pause", JLabel.CENTER);
+		titleLabel = new JLabel("Jeu en pause", JLabel.CENTER);
 		continueButton = new JButton("Continuer la partie");
 		creatorButton = new JButton("Créer une carte");
 		openButton = new JButton("Ouvrir une carte");
@@ -43,7 +44,7 @@ public class GameMenu extends JDialog {
 		restoreButton = new JButton("Charger une partie");
 		exitButton = new JButton("Quitter");
 
-		mainPanel.add(pausedLabel);
+		mainPanel.add(titleLabel);
 		mainPanel.add(continueButton);
 		mainPanel.add(creatorButton);
 		mainPanel.add(openButton);
@@ -53,7 +54,7 @@ public class GameMenu extends JDialog {
 		
 		add(mainPanel);
 		
-		pausedLabel.setFont(pausedLabel.getFont().deriveFont((float)28));
+		titleLabel.setFont(titleLabel.getFont().deriveFont((float)28));
 
 		continueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -87,7 +88,19 @@ public class GameMenu extends JDialog {
 		creatorButton.addActionListener(a);
 	}
 	
-	public void showMenu() {
+	public void showGamePausedMenu() {
+		titleLabel.setText("Jeu en pause");
+		continueButton.setEnabled(true);
+		showMenu();
+	}
+	
+	public void showGameOverMenu() {
+		titleLabel.setText("Game Over !");
+		continueButton.setEnabled(false);
+		showMenu();
+	}
+	
+	private void showMenu() {
 		pack();
 		setLocationRelativeTo(getOwner());
 		setVisible(true);

@@ -66,6 +66,9 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	 */
 	private HashMap<ActionType,LocalDateTime> lastActionsTime = 
 			new HashMap<ActionType,LocalDateTime>();
+	
+	private LocalDateTime lastEnergyTime = LocalDateTime.now();
+	private boolean lowEnergyAlertSent = false;
 
 	// visible properties, if = 100 no need
 	protected double energy;
@@ -302,10 +305,32 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 
 		modifyMood(-0.25 * moodRandomFactor);
 		modifyHygiene(-0.4 * hygieneRandomFactor);
+		
+		if (getEnergy() > 0) {
+			lastEnergyTime = LocalDateTime.now();
+			lowEnergyAlertSent = false;
+		} else {
+			if (!lowEnergyAlertSent) {
+				addMessage("Vous n'avez plus d'énergie ! Récupérez-en ou vous ne survivrez pas !", MsgType.Warning);
+				lowEnergyAlertSent = true;
+			}
+		}
 	}
 
 	public void evolves() {
 		age++;
+	}
+	
+	/**
+	 * The Person is considered as dead if he has no energy since more than 30 seconds
+	 */
+	public boolean isDying() {
+		if (lastEnergyTime == null) {
+			lastEnergyTime = LocalDateTime.now();
+		}
+		
+		Duration d = Duration.between(lastEnergyTime, LocalDateTime.now());
+		return (!isLocked() && getEnergy() == 0 && d.getSeconds() > 30);
 	}
 
 	/**
@@ -1072,6 +1097,24 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 					(int) ((getPos().getY() + getSize().getHeight() + getSize().getWidth()/4.0 - 1) * BLOC_SIZE),
 					(int) (BLOC_SIZE * getSize().getWidth() - 4),
 					(int) (BLOC_SIZE * getSize().getWidth()/2.0 - 4));
+		}
+		
+		// Paint the warning symbol if energy is under 5%
+		if (getEnergy() < 0.05) {
+			BufferedImage warnImg = ImagesFactory.getImage("Warning");
+
+			if (warnImg != null) {
+				double warnImgSize = 1.5;
+				double warnImgPosY = 1;
+				
+				g2d.drawImage(
+						warnImg,
+						(int)((getPos().getX() + getSize().getWidth()/2.0 - warnImgSize/2.0) * BLOC_SIZE),
+						(int)((getPos().getY() - warnImgSize - warnImgPosY) * BLOC_SIZE),
+						(int)(warnImgSize * BLOC_SIZE),
+						(int)(warnImgSize * BLOC_SIZE),
+						null);
+			}
 		}
 
 		BufferedImage img = getCurrentImage();
