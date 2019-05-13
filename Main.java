@@ -9,14 +9,29 @@ import Controller.GameMouse;
 import Model.Editor;
 import Model.Game;
 import Resources.ResourceLoader;
+import View.LoadingFrame;
 import View.Window;
 
 public class Main {
-	private static final String DEFAULT_LOAD_PATH = "sample2.map";
+	private static final String DEFAULT_LOAD_PATH = "Data/sample2.map";
 	
 	public static void main(String[] args) {
+		/*
+		 * Try to load all resources in a temporary file (if we are running in a JAR)
+		 */
+		LoadingFrame splash = new LoadingFrame();
+		splash.showFrame();
+		
+		try {
+			ResourceLoader.loadAll("Data");
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		/* Build and run the game */
+		
 		Window window = new Window("Game");
-
+		
 		// Initialise game
 		Game game = new Game(window);
 		GameKeyboard gameKeyboard = new GameKeyboard(game);
@@ -54,6 +69,10 @@ public class Main {
 		 * Load a sample map file
 		 */
 		game.restoreFromFile(ResourceLoader.getResourcePath(DEFAULT_LOAD_PATH));
+		
+		splash.hideFrame();
+		window.setVisible(true);
+		
 		game.openGameMenu();
 	}
 }

@@ -12,7 +12,7 @@ import Resources.ResourceLoader;
 
 public class ImagesFactory implements Serializable {
 	private static final long serialVersionUID = -7238205571545656262L;
-	private static final String IMAGES_DIRECTORY_PATH = "images";
+	private static final String IMAGES_DIRECTORY_PATH = "Data/images";
 	
 	private static HashMap<String,BufferedImage> imagesDatabase = null;
 	

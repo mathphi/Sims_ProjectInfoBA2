@@ -137,7 +137,7 @@ public class Editor {
 	 */
 	private void addMinimapObstacleArtefact() {
 		Rect minimapRect = map.getMinimapRect();
-		Rect mapRect = map.getViewRect();
+		Rect mapRect = map.getMapRect();
 
 		// Compute the size and the position of the minimap in the map limit
 		int wm = minimapRect.getWidth() / map.getBlockSize().getWidth();
@@ -217,7 +217,7 @@ public class Editor {
 	public void mouseLeftClickEvent(Point pos) {
 		if (currentPlacing != null) {
 			if (currentPlacing.getPos().getDistance(pos) > 2.0 ||
-				!map.getViewRect().contains(currentPlacing.getPos()))
+				!map.getMapRect().contains(currentPlacing.getPos()))
 			{
 				// Don't place the object if it is far the mouse pointer
 				return;
@@ -469,7 +469,7 @@ public class Editor {
 		map.setObjects(objects);
 		
 		mainMenu.closeMenu();
-		
+
 		notifyView();
 	}
 	
@@ -482,7 +482,7 @@ public class Editor {
 		for (int i = 0 ; i < objects.size() ; i++) {
 			GameObject o = objects.get(i);
 			
-			if (!map.getViewRect().contains(o.getPos())) {
+			if (!map.getMapRectReduced().contains(o.getPos())) {
 				objects.remove(i);
 				i--;
 			}

@@ -116,8 +116,6 @@ public class Window extends JFrame {
 				map.redraw();
 			}
 		});
-
-		setVisible(true);
 	}
 
 	private void setupGameBorderPanel() {

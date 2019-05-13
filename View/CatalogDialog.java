@@ -36,7 +36,7 @@ import javax.swing.border.EmptyBorder;
 
 public class CatalogDialog extends JDialog {
 	private static final long serialVersionUID = 4870573801345257186L;
-	private static final String PRODUCTS_FILE_PATH = "Products.csv";
+	private static final String PRODUCTS_FILE_PATH = "Data/Products.csv";
 	private static final Size ICON_SIZE = new Size(48, 48);
 	
 	// Static list to load the file once

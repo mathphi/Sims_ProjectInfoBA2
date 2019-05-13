@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Controller.ImagesFactory;
-import Model.Directable.Direction;
 import Model.Person.InteractionType;
 
 public class Game implements RefreshableObserver, MessagesListener {	
@@ -58,6 +57,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 		msgZone = window.getMsgZone();
 
 		gameTime = new GameTime(this, 0);
+		mainMenu = new GameMenu(window, this);
 
 		/*
 		 *  Add an invisible obstacle at the position of the bottom left corner of
@@ -85,95 +85,6 @@ public class Game implements RefreshableObserver, MessagesListener {
 				openInventoryDialog();
 			}
 		});
-
-		mainMenu = new GameMenu(window, this);
-		
-		/* Create a testing map */
-		
-		Person p1 = new Kid(new Point(10, 10), "Test Person", 8, Person.Gender.Male, null, null);
-		Person p2 = new Teenager(new Point(17, 13), "Second Player", 21, Person.Gender.Female, null, null);
-		Person p3 = new Adult(new Point(11, 16), "Third People", 30, Person.Gender.Male, null, null);
-		
-		attachPersonToGame(p1);
-		attachPersonToGame(p2);
-		attachPersonToGame(p3);
-		setActivePerson(p1);
-		
-		p3.setPlayable(false);
-
-		// Map building
-		// A sample of room
-		for (int i = 0; i < 20; i++) {
-			attachObjectToGame(new WallBlock(i, 0));
-			attachObjectToGame(new WallBlock(0, i));
-
-			// Make a door in the wall
-			if (i != 9 && i != 10 && i != 11 && i != 12) {
-				attachObjectToGame(new WallBlock(20 - 1, i));
-				attachObjectToGame(new WallBlock(i, 20 - 1));
-			}
-		}
-
-		// A second sample of room
-		for (int i = 0; i < 15; i++) {
-			attachObjectToGame(new WallBlock(20 + i, 0));
-
-			// Make a door in the wall
-			if (i != 9 && i != 10 && i != 11 && i != 12) {
-				attachObjectToGame(new WallBlock(20 + i, 15 - 1));
-			}
-		}
-
-		// A third sample of room
-		for (int i = 0; i < 25; i++) {
-			attachObjectToGame(new WallBlock(35 + i, 0));
-			attachObjectToGame(new WallBlock(35 - 1, i));
-
-			// Make a door in the wall
-			if (i != 13 && i != 14 && i != 15 && i != 16) {
-				attachObjectToGame(new WallBlock(35 + 25 - 1, i));
-				attachObjectToGame(new WallBlock(35 + i, 25 - 1));
-			}
-		}
-
-		// A sample of toilet room
-		for (int i = 0; i < 7; i++) {
-			attachObjectToGame(new WallBlock(i, 20 + 7 - 1));
-			attachObjectToGame(new WallBlock(0, 20 + i - 1));
-
-			// Make a door in the wall
-			if (i != 0 && i != 1 && i != 2 && i != 3) {
-				attachObjectToGame(new WallBlock(7, 20 + i));
-			}
-		}
-		WaterClosed wc = new WaterClosed(new Point(1, 21));
-		wc.rotate(Direction.EAST);
-		attachObjectToGame(wc);
-
-		Bed bed = new Bed(new Point(1, 12));
-		bed.rotate(Direction.EAST);
-		attachObjectToGame(bed);
-
-		Sofa sofa = new Sofa(new Point(23, 1));
-		attachObjectToGame(sofa);
-
-		Computer computer = new Computer(new Point(31, 5));
-		computer.rotate(Direction.WEST);
-		attachObjectToGame(computer);
-		
-		Shower shower = new Shower(new Point(1, 1));
-		attachObjectToGame(shower);
-		
-		Bath bath = new Bath(new Point(7, 1));
-		bath.rotate(Direction.EAST);
-		attachObjectToGame(bath);
-
-		Television tv = new Television(new Point(35, 12));
-		tv.rotate(Direction.EAST);
-		attachObjectToGame(tv);
-		
-		Library library = new Library(new Point(39, 1));
-		attachObjectToGame(library);
 		
 		/*
 		 * Load all images at starting of the program
@@ -214,7 +125,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 	 */
 	private void addMinimapObstacleArtefact() {
 		Rect minimapRect = map.getMinimapRect();
-		Rect mapRect = map.getViewRect();
+		Rect mapRect = map.getMapRect();
 
 		// Compute the size and the position of the minimap in the map limit
 		int wm = minimapRect.getWidth() / map.getBlockSize().getWidth();
@@ -375,7 +286,7 @@ public class Game implements RefreshableObserver, MessagesListener {
 			return;
 		
 		Point nextPos = pers.getPos().add(movement);
-		
+				
 		if (!isTargetUnreachable(pers, nextPos)) {
 			getPlayerMoveThread(pers).addMovement(movement);
 		}

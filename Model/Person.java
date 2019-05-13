@@ -168,12 +168,10 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 		this.name = name;
 		this.age = age;
 		this.gender = gender;
-		this.mother = mother;
-		this.father = father;
 
 		// Considered as the higher level of relation but CAN't propose to marry, etc
-		if (father != null) friendList.put(father, 100.0);
-		if (mother != null) friendList.put(mother, 100.0);
+		if (father != null) setFather(father);
+		if (mother != null) setMother(mother);
 
 		// Initial Person properties (maximum is 100)
 		energy = 100;
@@ -758,10 +756,20 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 	
 	public void setFather(Adult f) {
 		this.father = f;
+		
+		if (f != null) {
+			friendList.put(f, 100.0);
+			f.getFriendList().put(this, 100.0);
+		}
 	}
 	
 	public void setMother(Adult m) {
 		this.mother = m;
+		
+		if (m != null) {
+			friendList.put(m, 100.0);
+			m.getFriendList().put(this, 100.0);
+		}
 	}
 	
 	public void setAge(int age) {

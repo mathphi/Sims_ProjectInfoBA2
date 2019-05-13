@@ -45,9 +45,13 @@ public class Map extends JPanel {
     public void setMapSize(Size sz) {
     	mapSize = sz;
     }
-    
-    public Rect getViewRect() {
+
+    public Rect getMapRect() {
     	return new Rect(0, 0, (int)getSize().getWidth(), (int)getSize().getHeight());
+    }
+    
+    public Rect getMapRectReduced() {
+    	return new Rect(new Point(0,0), mapSize);
     }
     
     public void resetViewOffset() {
@@ -139,9 +143,9 @@ public class Map extends JPanel {
             }
         }
     }
-    
-    public void generateMap(Graphics g) {
-        // Separate GroundTile from others to avoid to paint ground objects over the other objects
+
+    public void paintMap(Graphics g) {
+    	// Separate GroundTile from others to avoid to paint ground objects over the other objects
         ArrayList<GameObject> groundObjects = new ArrayList<GameObject>();
         
         // Store a list of objects for each y value
@@ -172,7 +176,7 @@ public class Map extends JPanel {
         for (GameObject o : groundObjects) {
         	o.paint(g, BLOC_SIZE);
         }
-        
+
         ArrayList<Integer> keys = new ArrayList<Integer>(yAxisOrdered.keySet());
         Collections.sort(keys);
         
@@ -196,10 +200,10 @@ public class Map extends JPanel {
 		if (isGridVisible) {
 			paintGrid(g);
 		}
-		
+    	
     	// Paint the map at full size
-		generateMap(g2d);
-
+		paintMap(g2d);
+		
 		double scale = getMinimapScale();
 		
     	// Position for the minimap
@@ -224,7 +228,7 @@ public class Map extends JPanel {
     	// Paint the minimap
     	g2d.translate(minimapOffsetX, minimapOffsetY);
     	g2d.scale(scale, scale);
-		generateMap(g2d);
+		paintMap(g2d);
 		
 		// Paint the view rectangle
 		Point vo = getViewOffset();

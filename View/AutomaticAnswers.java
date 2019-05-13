@@ -43,7 +43,7 @@ public class AutomaticAnswers implements Serializable {
 	
 	/////////////////////////////////////////////////////////////////////////////////
 	
-	private static final String MESSAGES_FILE_PATH = "Messages.csv";
+	private static final String MESSAGES_FILE_PATH = "Data/Messages.csv";
 	private static ArrayList<AutomaticMessage> messagesDatabase = null;
 	
 	private AutomaticAnswers() {
