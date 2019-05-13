@@ -27,7 +27,7 @@ public class Main {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		
+
 		/* Build and run the game */
 		
 		Window window = new Window("Game");

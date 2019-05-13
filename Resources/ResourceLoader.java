@@ -69,6 +69,7 @@ public class ResourceLoader {
 		}
 		
 		File destDir = new File(tempDirectory);
+		destDir.deleteOnExit();
 
 		// Open the JAR
 		JarFile jarFile = new JarFile(exeFile);
@@ -78,14 +79,21 @@ public class ResourceLoader {
 			JarEntry jarEntry = entriesList.nextElement();
 
 			File entryFile = new File(destDir, jarEntry.getName());
+			entryFile.deleteOnExit();
 
 			// Filter interesting content
-			if (jarEntry.isDirectory() || !jarEntry.getName().startsWith("Resources/" + dataPath + "/"))
+			if (!jarEntry.getName().startsWith("Resources/" + dataPath + "/"))
 				continue;
 
 			// Create directory tree
-			if (!entryFile.exists())
+			if (!entryFile.getParentFile().exists()) {
 				entryFile.getParentFile().mkdirs();
+				entryFile.getParentFile().deleteOnExit();
+			}
+			
+			if (jarEntry.isDirectory()) {
+				continue;
+			}
 
 			// Write the files it the temporary directory
 			InputStream is = jarFile.getInputStream(jarEntry);
@@ -93,8 +101,8 @@ public class ResourceLoader {
 
 			while (is.available() > 0) {
 				fo.write(is.read());
-			}
-
+			};
+			
 			fo.close();
 			is.close();
 		}
