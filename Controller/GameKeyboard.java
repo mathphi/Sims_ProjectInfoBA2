@@ -50,6 +50,11 @@ public class GameKeyboard implements KeyListener {
 		case KeyEvent.VK_C:
 			game.openCatalogDialog();
 			break;
+		case KeyEvent.VK_M:
+			if (event.isControlDown() && event.isShiftDown()) {	
+				game.cheatIncreaseActiveMoney();
+			}
+			break;
 		case KeyEvent.VK_S:
 			if (event.isControlDown()) {
 				game.pauseGame();

@@ -58,7 +58,6 @@ public abstract class Person extends GameObject implements Refreshable, Messages
 
 	protected int money;
 
-	// Use a past time as initial time
 	/*
 	 * WARNING: using this LocalDateTime method is buggy because the Real time
 	 * continues to run when the game is paused !

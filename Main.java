@@ -5,7 +5,7 @@ import Controller.EditorKeyboard;
 import Controller.EditorMouse;
 import Controller.GameKeyboard;
 import Controller.GameMouse;
-
+import Controller.ImagesFactory;
 import Model.Editor;
 import Model.Game;
 import Resources.ResourceLoader;
@@ -65,6 +65,16 @@ public class Main {
 			}
 		});
 
+		/*
+		 * Load all images at starting of the program
+		 */
+		try {
+			ImagesFactory.loadAllImages();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
 		/*
 		 * Load a sample map file
 		 */

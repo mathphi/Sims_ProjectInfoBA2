@@ -27,7 +27,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import Controller.ImagesFactory;
 import Model.Person.InteractionType;
 
 public class Game implements RefreshableObserver, MessagesListener {	
@@ -85,16 +84,6 @@ public class Game implements RefreshableObserver, MessagesListener {
 				openInventoryDialog();
 			}
 		});
-		
-		/*
-		 * Load all images at starting of the program
-		 */
-		try {
-			ImagesFactory.loadAllImages();
-		} catch (Exception e) {
-			e.printStackTrace();
-			quit();
-		}
 
 		notifyView();
 	}
@@ -373,6 +362,17 @@ public class Game implements RefreshableObserver, MessagesListener {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Cheat to increase money artificially for testings
+	 */
+	public void cheatIncreaseActiveMoney() {
+		if (activePerson == null)
+			return;
+		
+		// Add 100€
+		activePerson.modifyMoney(100);
 	}
 
 	private void updateAllPopulation() {
